@@ -1,0 +1,33 @@
+src/main/java/mg/projetfinal/
+├── entity/
+│   ├── Role.java
+│   ├── SignalementStatus.java
+│   ├── Entreprise.java
+│   ├── User.java
+│   ├── Session.java
+│   ├── LoginAttempt.java
+│   ├── FailedLoginTracking.java
+│   ├── Signalement.java
+│   ├── SignalementAction.java
+│   ├── HistoriqueStatus.java
+│   ├── SyncQueue.java
+│   └── SyncHistory.java
+├── repository/
+│   ├── RoleRepository.java
+│   ├── SignalementStatusRepository.java
+│   ├── EntrepriseRepository.java
+│   ├── UserRepository.java
+│   ├── SessionRepository.java
+│   ├── LoginAttemptRepository.java
+│   ├── FailedLoginTrackingRepository.java
+│   ├── SignalementRepository.java
+│   ├── SignalementActionRepository.java
+│   ├── HistoriqueStatusRepository.java
+│   ├── SyncQueueRepository.java
+│   └── SyncHistoryRepository.java
+└── enums/
+    ├── EntityType.java
+    ├── SyncAction.java
+    ├── SyncDirection.java
+    ├── SyncStatus.java
+    └── FailureReason.java
