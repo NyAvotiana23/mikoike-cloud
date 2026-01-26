@@ -1,0 +1,21 @@
+# APIs du Projet Cloud S5
+
+Voici la liste des APIs REST, avec pour chacune la méthode HTTP, l'URL, et son utilisation (description brève du but).
+
+-POST /api/auth/register : Inscription d'un nouveau utilisateur (par Manager uniquement).
+-POST /api/auth/login : Authentification d'un utilisateur (email/mot de passe, retourne un token).
+-PUT /api/auth/users/{id} : Modification des informations d'un utilisateur (nom, rôle, etc.).
+-POST /api/auth/unlock/{email} :  Déblocage d'un compte utilisateur bloqué (par Manager).
+-GET /api/auth/session : Liste des sessions actives pour l'utilisateur connecté.
+-POST /api/signalements : Création d'un nouveau signalement de problème routier.
+-GET /api/signalements : Liste de tous les signalements (avec filtres optionnels comme status ou userId).
+-GET /api/signalements/{id} : Détails d'un signalement spécifique.
+-PUT /api/signalements/{id} : Mise à jour d'un signalement (status, surface, budget, etc., par Manager).
+-GET /api/recap  : Récapitulatif global (nb de points, surface totale, % avancement, budget total).
+-POST /api/sync : Synchronisation des données avec Firebase (par Manager).
+-GET /api/users : Liste de tous les utilisateurs (pour Manager).
+-GET /api/users/blocked : Liste des utilisateurs bloqués (pour déblocage par Manager).
+
+
+
+cloud-project-7bc04

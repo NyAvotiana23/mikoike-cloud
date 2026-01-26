@@ -1,0 +1,460 @@
+# 📊 MCD - DIAGRAMME TEXTE COMPLET DES TABLES
+
+## Vue d'ensemble des relations
+
+```
+                    ┌─────────────────┐
+                    │      USER       │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼────────────────────────┐
+        │                    │                        │
+        │                    │                        │
+        ▼                    ▼                        ▼
+┌───────────────┐    ┌──────────────┐       ┌─────────────────┐
+│    SESSION    │    │ SIGNALEMENT  │       │ FAILED_LOGIN_   │
+└───────────────┘    └──────┬───────┘       │   TRACKING      │
+                            │                └─────────────────┘
+                            │
+                            │
+                            ▼
+                    ┌──────────────────┐
+                    │  HISTORIQUE_     │
+                    │     STATUS       │
+                    └──────────────────┘
+
+┌─────────────────┐
+│ LOGIN_ATTEMPT   │──────────────────→ USER (N:1)
+└─────────────────┘
+
+┌─────────────────┐
+│   SYNC_QUEUE    │──────────────────→ USER (N:1)
+└─────────────────┘
+
+┌─────────────────┐
+│  SYNC_HISTORY   │──────────────────→ USER (N:1)
+└────────┬────────┘──────────────────→ SYNC_QUEUE (N:1)
+         │
+         └────────────────────────────→ USER (N:1)
+```
+
+---
+
+## 1️⃣ TABLE : USER
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                           USER                               │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                     BIGINT           [PK]              │
+│ ⚡ email                  VARCHAR(255)     [UNIQUE, NOT NULL]│
+│    password_hash          VARCHAR(255)     [NOT NULL]        │
+│    name                   VARCHAR(100)     [NOT NULL]        │
+│                                                               │
+│ 🔥 firebase_uid           VARCHAR(128)     [UNIQUE]          │
+│    firebase_synced        BOOLEAN          [DEFAULT FALSE]   │
+│    firebase_sync_error    TEXT                               │
+│    synced_at              TIMESTAMP                          │
+│                                                               │
+│    role                   VARCHAR(20)      [NOT NULL]        │
+│                           • VISITEUR                         │
+│                           • UTILISATEUR                      │
+│                           • MANAGER                          │
+│                                                               │
+│ 🔒 is_locked              BOOLEAN          [DEFAULT FALSE]   │
+│    locked_until           TIMESTAMP                          │
+│    failed_attempts        INT              [DEFAULT 0]       │
+│    last_failed_attempt_at TIMESTAMP                          │
+│                                                               │
+│ 🔗 created_by             BIGINT           [FK → USER.id]    │
+│ 📅 created_at             TIMESTAMP        [DEFAULT NOW()]   │
+│    updated_at             TIMESTAMP        [DEFAULT NOW()]   │
+└──────────────────────────────────────────────────────────────┘
+
+Contraintes :
+- CHECK: role IN ('VISITEUR', 'UTILISATEUR', 'MANAGER')
+- CHECK: Si firebase_synced=TRUE alors firebase_uid NOT NULL
+
+Relations :
+- USER (1) ──crée──→ (N) USER [self-reference via created_by]
+- USER (1) ──possède──→ (N) SESSION
+- USER (1) ──crée──→ (N) SIGNALEMENT
+- USER (1) ──modifie──→ (N) HISTORIQUE_STATUS
+```
+
+---
+
+## 2️⃣ TABLE : SESSION
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                          SESSION                             │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                BIGINT           [PK]                   │
+│ 🔗 user_id           BIGINT           [FK → USER.id, NOT NULL]│
+│                                       [ON DELETE CASCADE]     │
+│                                                               │
+│ ⚡ token              VARCHAR(500)     [UNIQUE, NOT NULL]     │
+│    device_info       VARCHAR(255)                            │
+│    ip_address        VARCHAR(50)                             │
+│                                                               │
+│ 📅 created_at        TIMESTAMP        [DEFAULT NOW()]        │
+│    expires_at        TIMESTAMP        [NOT NULL]             │
+│    is_active         BOOLEAN          [DEFAULT TRUE]         │
+│    last_activity_at  TIMESTAMP        [DEFAULT NOW()]        │
+└──────────────────────────────────────────────────────────────┘
+
+Relations :
+- SESSION (N) ──appartient à──→ (1) USER
+```
+
+---
+
+## 3️⃣ TABLE : LOGIN_ATTEMPT
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       LOGIN_ATTEMPT                          │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                BIGINT           [PK]                   │
+│                                                               │
+│ ⚡ email              VARCHAR(255)     [NOT NULL]             │
+│ 🔗 user_id           BIGINT           [FK → USER.id]         │
+│                                       [ON DELETE SET NULL]    │
+│                                                               │
+│    success           BOOLEAN          [NOT NULL]             │
+│    failure_reason    VARCHAR(50)                             │
+│                      • USER_NOT_FOUND                        │
+│                      • INVALID_PASSWORD                      │
+│                      • ACCOUNT_LOCKED                        │
+│                      • FIREBASE_ERROR                        │
+│                                                               │
+│    ip_address        VARCHAR(50)                             │
+│    user_agent        VARCHAR(255)                            │
+│ 📅 attempted_at      TIMESTAMP        [DEFAULT NOW()]        │
+└──────────────────────────────────────────────────────────────┘
+
+Contraintes :
+- CHECK: (success=TRUE AND failure_reason IS NULL) OR
+         (success=FALSE AND failure_reason IS NOT NULL)
+
+Relations :
+- LOGIN_ATTEMPT (N) ──concerne──→ (1) USER [nullable]
+```
+
+---
+
+## 4️⃣ TABLE : FAILED_LOGIN_TRACKING
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                  FAILED_LOGIN_TRACKING                       │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                BIGINT           [PK]                   │
+│ ⚡ email              VARCHAR(255)     [UNIQUE, NOT NULL]     │
+│                                                               │
+│    failed_count      INT              [DEFAULT 0]            │
+│    first_failed_at   TIMESTAMP                               │
+│    last_failed_at    TIMESTAMP                               │
+│                                                               │
+│ 🔒 is_blocked        BOOLEAN          [DEFAULT FALSE]        │
+│    blocked_until     TIMESTAMP                               │
+│    blocked_reason    VARCHAR(100)                            │
+│                                                               │
+│ 🔗 unblocked_by      BIGINT           [FK → USER.id]         │
+│                                       [ON DELETE SET NULL]    │
+│    unblocked_at      TIMESTAMP                               │
+│                                                               │
+│ 📅 created_at        TIMESTAMP        [DEFAULT NOW()]        │
+│    updated_at        TIMESTAMP        [DEFAULT NOW()]        │
+└──────────────────────────────────────────────────────────────┘
+
+Relations :
+- FAILED_LOGIN_TRACKING (N) ──débloqué par──→ (1) USER [Manager]
+```
+
+---
+
+## 5️⃣ TABLE : SIGNALEMENT
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        SIGNALEMENT                           │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                    BIGINT           [PK]               │
+│ 🔗 user_id               BIGINT           [FK → USER.id]     │
+│                                           [ON DELETE SET NULL]│
+│                                                               │
+│ 🔥 firebase_id           VARCHAR(128)     [UNIQUE]           │
+│    firebase_synced       BOOLEAN          [DEFAULT FALSE]    │
+│    last_sync_at          TIMESTAMP                           │
+│                                                               │
+│ 📍 latitude              DECIMAL(10,8)    [NOT NULL]         │
+│    longitude             DECIMAL(11,8)    [NOT NULL]         │
+│    adresse               VARCHAR(255)                        │
+│                                                               │
+│    description           TEXT             [NOT NULL]         │
+│    photo_url             VARCHAR(500)                        │
+│                                                               │
+│    status                VARCHAR(20)      [NOT NULL]         │
+│                          • NOUVEAU         [DEFAULT]         │
+│                          • EN_COURS                          │
+│                          • TERMINE                           │
+│                                                               │
+│ 💰 surface_m2            DECIMAL(10,2)    [≥ 0]             │
+│    budget                DECIMAL(15,2)    [≥ 0]             │
+│    entreprise            VARCHAR(150)                        │
+│                                                               │
+│ 📅 date_signalement      TIMESTAMP        [DEFAULT NOW()]    │
+│    date_debut_travaux    TIMESTAMP                           │
+│    date_fin_travaux      TIMESTAMP                           │
+│                                                               │
+│    created_at            TIMESTAMP        [DEFAULT NOW()]    │
+│    updated_at            TIMESTAMP        [DEFAULT NOW()]    │
+│ 🔗 last_modified_by      BIGINT           [FK → USER.id]     │
+│                                           [ON DELETE SET NULL]│
+└──────────────────────────────────────────────────────────────┘
+
+Contraintes :
+- CHECK: status IN ('NOUVEAU', 'EN_COURS', 'TERMINE')
+- CHECK: surface_m2 IS NULL OR surface_m2 >= 0
+- CHECK: budget IS NULL OR budget >= 0
+- CHECK: date_debut_travaux IS NULL OR date_debut_travaux >= date_signalement
+- CHECK: date_fin_travaux IS NULL OR date_fin_travaux >= date_debut_travaux
+
+Relations :
+- SIGNALEMENT (N) ──créé par──→ (1) USER
+- SIGNALEMENT (N) ──modifié par──→ (1) USER
+- SIGNALEMENT (1) ──possède──→ (N) HISTORIQUE_STATUS
+```
+
+---
+
+## 6️⃣ TABLE : HISTORIQUE_STATUS
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     HISTORIQUE_STATUS                        │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                BIGINT           [PK]                   │
+│ 🔗 signalement_id    BIGINT           [FK → SIGNALEMENT.id]  │
+│                                       [ON DELETE CASCADE]     │
+│                                                               │
+│    ancien_status     VARCHAR(20)      [NOT NULL]             │
+│    nouveau_status    VARCHAR(20)      [NOT NULL]             │
+│                                                               │
+│ 🔗 modified_by       BIGINT           [FK → USER.id]         │
+│                                       [ON DELETE SET NULL]    │
+│                                                               │
+│    commentaire       TEXT                                    │
+│    metadata          JSONB                                   │
+│                                                               │
+│ 📅 changed_at        TIMESTAMP        [DEFAULT NOW()]        │
+└──────────────────────────────────────────────────────────────┘
+
+Relations :
+- HISTORIQUE_STATUS (N) ──appartient à──→ (1) SIGNALEMENT
+- HISTORIQUE_STATUS (N) ──modifié par──→ (1) USER
+```
+
+---
+
+## 7️⃣ TABLE : SYNC_QUEUE
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        SYNC_QUEUE                            │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                    BIGINT           [PK]               │
+│                                                               │
+│    entity_type           VARCHAR(50)      [NOT NULL]         │
+│                          • USER                              │
+│                          • SIGNALEMENT                       │
+│    entity_id             BIGINT           [NOT NULL]         │
+│                                                               │
+│ 🔥 firebase_id           VARCHAR(128)                        │
+│                                                               │
+│    action                VARCHAR(20)      [NOT NULL]         │
+│                          • CREATE                            │
+│                          • UPDATE                            │
+│                          • DELETE                            │
+│                                                               │
+│    direction             VARCHAR(20)      [NOT NULL]         │
+│                          • TO_FIREBASE                       │
+│                          • FROM_FIREBASE                     │
+│                                                               │
+│    status                VARCHAR(20)      [NOT NULL]         │
+│                          • PENDING         [DEFAULT]         │
+│                          • PROCESSING                        │
+│                          • SUCCESS                           │
+│                          • FAILED                            │
+│                                                               │
+│    error_message         TEXT                                │
+│    retry_count           INT              [DEFAULT 0]        │
+│    max_retries           INT              [DEFAULT 3]        │
+│                                                               │
+│    data_snapshot         JSONB                               │
+│                                                               │
+│ 🔗 synced_by             BIGINT           [FK → USER.id]     │
+│                                           [ON DELETE SET NULL]│
+│    priority              INT              [DEFAULT 5]        │
+│                                                               │
+│ 📅 created_at            TIMESTAMP        [DEFAULT NOW()]    │
+│    scheduled_at          TIMESTAMP        [DEFAULT NOW()]    │
+│    processing_started_at TIMESTAMP                           │
+│    processed_at          TIMESTAMP                           │
+└──────────────────────────────────────────────────────────────┘
+
+Contraintes :
+- CHECK: entity_type IN ('USER', 'SIGNALEMENT')
+- CHECK: action IN ('CREATE', 'UPDATE', 'DELETE')
+- CHECK: direction IN ('TO_FIREBASE', 'FROM_FIREBASE')
+- CHECK: status IN ('PENDING', 'PROCESSING', 'SUCCESS', 'FAILED')
+
+Relations :
+- SYNC_QUEUE (N) ──déclenchée par──→ (1) USER
+```
+
+---
+
+## 8️⃣ TABLE : SYNC_HISTORY
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       SYNC_HISTORY                           │
+├──────────────────────────────────────────────────────────────┤
+│ 🔑 id                BIGINT           [PK]                   │
+│ 🔗 sync_queue_id     BIGINT                                  │
+│                                                               │
+│    entity_type       VARCHAR(50)      [NOT NULL]             │
+│                      • USER                                  │
+│                      • SIGNALEMENT                           │
+│    entity_id         BIGINT           [NOT NULL]             │
+│                                                               │
+│    action            VARCHAR(20)      [NOT NULL]             │
+│                      • CREATE                                │
+│                      • UPDATE                                │
+│                      • DELETE                                │
+│                                                               │
+│    direction         VARCHAR(20)      [NOT NULL]             │
+│                      • TO_FIREBASE                           │
+│                      • FROM_FIREBASE                         │
+│                                                               │
+│    status            VARCHAR(20)      [NOT NULL]             │
+│                      • SUCCESS                               │
+│                      • FAILED                                │
+│                                                               │
+│    error_message     TEXT                                    │
+│    firebase_response JSONB                                   │
+│    duration_ms       INT                                     │
+│                                                               │
+│ 🔗 synced_by         BIGINT           [FK → USER.id]         │
+│                                       [ON DELETE SET NULL]    │
+│                                                               │
+│ 📅 synced_at         TIMESTAMP        [DEFAULT NOW()]        │
+│    created_at        TIMESTAMP        [DEFAULT NOW()]        │
+└──────────────────────────────────────────────────────────────┘
+
+Contraintes :
+- CHECK: entity_type IN ('USER', 'SIGNALEMENT')
+- CHECK: action IN ('CREATE', 'UPDATE', 'DELETE')
+- CHECK: direction IN ('TO_FIREBASE', 'FROM_FIREBASE')
+- CHECK: status IN ('SUCCESS', 'FAILED')
+
+Relations :
+- SYNC_HISTORY (N) ──référence──→ (1) SYNC_QUEUE [nullable]
+- SYNC_HISTORY (N) ──déclenchée par──→ (1) USER
+```
+
+---
+
+## 🔗 RÉSUMÉ DES RELATIONS
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MATRICE DES RELATIONS                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  USER (1) ──────────→ (N) USER                              │
+│    Relation : created_by (self-reference)                   │
+│    Manager crée des utilisateurs                            │
+│                                                              │
+│  USER (1) ──────────→ (N) SESSION                           │
+│    Un utilisateur a plusieurs sessions                      │
+│    ON DELETE CASCADE                                        │
+│                                                              │
+│  USER (1) ──────────→ (N) LOGIN_ATTEMPT                     │
+│    Un utilisateur a plusieurs tentatives                    │
+│    user_id peut être NULL (email inexistant)                │
+│                                                              │
+│  USER (1) ──────────→ (N) FAILED_LOGIN_TRACKING             │
+│    Manager débloque des comptes (unblocked_by)              │
+│                                                              │
+│  USER (1) ──────────→ (N) SIGNALEMENT                       │
+│    Un utilisateur crée plusieurs signalements               │
+│    Relation via user_id et last_modified_by                 │
+│                                                              │
+│  USER (1) ──────────→ (N) HISTORIQUE_STATUS                 │
+│    Un manager modifie plusieurs statuts                     │
+│    Relation via modified_by                                 │
+│                                                              │
+│  USER (1) ──────────→ (N) SYNC_QUEUE                        │
+│    Un utilisateur déclenche des syncs                       │
+│    Relation via synced_by                                   │
+│                                                              │
+│  USER (1) ──────────→ (N) SYNC_HISTORY                      │
+│    Un utilisateur a un historique de syncs                  │
+│    Relation via synced_by                                   │
+│                                                              │
+│  SIGNALEMENT (1) ───→ (N) HISTORIQUE_STATUS                 │
+│    Un signalement a plusieurs changements de statut         │
+│    ON DELETE CASCADE                                        │
+│                                                              │
+│  SYNC_QUEUE (1) ────→ (N) SYNC_HISTORY                      │
+│    Une entrée queue a plusieurs entrées historique          │
+│    sync_queue_id peut être NULL                             │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📊 LÉGENDE
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         LÉGENDE                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  🔑  Clé Primaire (Primary Key)                             │
+│  🔗  Clé Étrangère (Foreign Key)                            │
+│  ⚡  Clé Unique (Unique)                                     │
+│  🔥  Lié à Firebase                                         │
+│  🔒  Sécurité / Blocage                                     │
+│  💰  Informations budgétaires                               │
+│  📍  Géolocalisation                                        │
+│  📅  Date / Timestamp                                       │
+│                                                              │
+│  [PK]           Primary Key                                 │
+│  [FK]           Foreign Key                                 │
+│  [UNIQUE]       Contrainte d'unicité                        │
+│  [NOT NULL]     Champ obligatoire                           │
+│  [DEFAULT x]    Valeur par défaut                           │
+│  [≥ 0]          Valeur positive ou nulle                    │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ✅ VALIDATION COMPLÈTE
+
+**8 tables définies avec :**
+- ✅ Tous les attributs avec types et contraintes
+- ✅ Toutes les clés primaires et étrangères
+- ✅ Toutes les contraintes CHECK
+- ✅ Toutes les relations avec cardinalités
+- ✅ Toutes les valeurs d'énumération possibles
+- ✅ Actions ON DELETE spécifiées
+
+**MCD prêt pour implémentation ! 🚀**

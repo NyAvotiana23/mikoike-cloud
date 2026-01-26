@@ -1,0 +1,14 @@
+package mg.projetfinal.utils;
+
+import java.net.InetAddress;
+
+public class NetworkUtils {
+    public static boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            return !ipAddr.equals("");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
