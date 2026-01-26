@@ -6,9 +6,14 @@ import About from '../pages/About';
 import ProtectedRoute from '../components/ProtectedRoute';
 import MainLayout from '../layout/MainLayout';
 import UserLayout from '../layout/UserLayout';
+import CarteLayout from '../layout/CarteLayout';
 import UserList from '../pages/user/UserList';
 import UserForm from '../pages/user/UserForm.jsx';
-import MainCarte from "../pages/carte/MainCarte.jsx";
+import UserDetail from '../pages/user/UserDetail.jsx';
+import Map from '../pages/carte/Map.jsx';
+import SignalementList from '../pages/signalement/SignalementList.jsx';
+import SignalementDetail from '../pages/signalement/SignalementDetail.jsx';
+import SignalementStatistics from '../pages/signalement/SignalementStatistics.jsx';
 
 const router = createBrowserRouter([
   {
@@ -44,21 +49,34 @@ const router = createBrowserRouter([
             path: 'add',
             element: <UserForm />,
           },
-          // Routes futures pour view/edit
-          // {
-          //     path: ':id',
-          //     element: <UserDetail />,
-          // },
-          // {
-          //     path: ':id/edit',
-          //     element: <UserEdit />,
-          // },
+          {
+            path: ':id',
+            element: <UserDetail />,
+          }
         ],
       },
-      // Route Carte - Gestion des problèmes routiers
+      // Routes Carte - Gestion des problèmes routiers avec sous-layout
       {
-        path: 'map',
-        element: <MainCarte />,
+        path: 'carte',
+        element: <CarteLayout />,
+        children: [
+          {
+            index: true,
+            element: <Map />,
+          },
+          {
+            path: 'signalements',
+            element: <SignalementList />,
+          },
+          {
+            path: 'signalements/:id',
+            element: <SignalementDetail />,
+          },
+          {
+            path: 'statistiques',
+            element: <SignalementStatistics />,
+          },
+        ],
       },
       {
         path: 'stats',

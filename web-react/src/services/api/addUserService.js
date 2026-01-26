@@ -125,6 +125,51 @@ class AddUserService {
      */
     async getUserById(userId) {
         try {
+            // MOCK - Pour test uniquement
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const mockUsers = [
+                {
+                    id: '1',
+                    email: 'jean.dupont@example.com',
+                    nom: 'Dupont',
+                    prenom: 'Jean',
+                    age: 28,
+                    date_naissance: '1996-03-15',
+                    location: 'Paris, France',
+                    role: 'user',
+                    createdAt: '2024-01-15T10:30:00Z',
+                },
+                {
+                    id: '2',
+                    email: 'marie.martin@example.com',
+                    nom: 'Martin',
+                    prenom: 'Marie',
+                    age: 32,
+                    date_naissance: '1992-07-22',
+                    location: 'Lyon, France',
+                    role: 'manager',
+                    createdAt: '2024-01-20T14:45:00Z',
+                },
+                {
+                    id: '3',
+                    email: 'admin@example.com',
+                    nom: 'Admin',
+                    prenom: 'Super',
+                    age: 35,
+                    date_naissance: '1989-11-08',
+                    location: 'Marseille, France',
+                    role: 'admin',
+                    createdAt: '2023-12-01T09:00:00Z',
+                },
+            ];
+
+            const user = mockUsers.find(u => u.id === userId);
+            if (!user) {
+                throw new Error('Utilisateur non trouvé');
+            }
+            return user;
+
             // MODE PRODUCTION
             // const response = await api.get(`/users/${userId}`, {
             //     headers: {
@@ -134,7 +179,6 @@ class AddUserService {
             //
             // return response.data.user;
 
-            throw new Error('Méthode non implémentée en mode mock');
         } catch (error) {
             throw this.handleError(error);
         }
@@ -170,6 +214,11 @@ class AddUserService {
      */
     async deleteUser(userId) {
         try {
+            // MOCK - Pour test uniquement
+            await new Promise(resolve => setTimeout(resolve, 500));
+            console.log(`Utilisateur ${userId} supprimé (mock)`);
+            return;
+
             // MODE PRODUCTION
             // await api.delete(`/users/${userId}`, {
             //     headers: {
@@ -177,7 +226,6 @@ class AddUserService {
             //     }
             // });
 
-            throw new Error('Méthode non implémentée en mode mock');
         } catch (error) {
             throw this.handleError(error);
         }

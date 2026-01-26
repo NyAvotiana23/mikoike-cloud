@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Leaflet CSS import */
+@import 'leaflet/dist/leaflet.css';
+
+/* Custom marker styles */
+.custom-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Fix z-index issues with Leaflet */
+.leaflet-pane {
+    z-index: 1;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 10;
+}
+
+/* Popup styles */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leaflet-popup-content {
+    margin: 12px;
+}

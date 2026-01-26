@@ -1,8 +1,12 @@
 // src/layout/UserLayout.jsx
-import { Outlet, NavLink } from 'react-router-dom';
-import { UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { Outlet, NavLink, useMatch, useParams } from 'react-router-dom';
+import { UserGroupIcon, UserPlusIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 const UserLayout = () => {
+    const { id } = useParams();
+    const isDetailPage = useMatch('/users/:id');
+    const isEditPage = useMatch('/users/edit/:id');
+
     return (
         <div className="space-y-6">
             {/* Header avec navigation secondaire */}
@@ -40,6 +44,21 @@ const UserLayout = () => {
                         <UserPlusIcon className="h-5 w-5 mr-2" />
                         Ajouter un utilisateur
                     </NavLink>
+                    {(isDetailPage || isEditPage) && id && id !== 'add' && (
+                        <NavLink
+                            to={`/users/${id}`}
+                            className={({ isActive }) =>
+                                `inline-flex items-center px-4 py-2 text-body-sm font-medium rounded-lg transition-all ${
+                                    isActive
+                                        ? 'bg-primary-100 text-primary-700'
+                                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                                }`
+                            }
+                        >
+                            <EyeIcon className="h-5 w-5 mr-2" />
+                            Détail utilisateur
+                        </NavLink>
+                    )}
                 </nav>
             </div>
 

@@ -3,8 +3,7 @@ import { MapPin, Construction, Info, ArrowRight } from 'lucide-react';
 function Home() {
     return (
         <div className="min-h-screen bg-neutral-50 font-sans">
-            {/* Hero Section */}
-            <header className="bg-white border-b border-neutral-200">
+            <div className="bg-white border-b border-neutral-200">
                 <div className="container py-16 flex flex-col items-center text-center animate-fade-in">
                     <div className="mb-6 inline-flex items-center justify-center p-3 bg-primary-100 rounded-2xl text-primary-600">
                         <Construction size={48} />
@@ -25,10 +24,9 @@ function Home() {
                         </button>
                     </div>
                 </div>
-            </header>
+            </div>
 
-            {/* Statistiques / Features */}
-            <main className="container py-12">
+            <div className="container py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Carte 1 */}
                     <div className="bg-white p-8 rounded-4xl shadow-soft border border-neutral-100 animate-slide-up">
@@ -63,14 +61,7 @@ function Home() {
                         </p>
                     </div>
                 </div>
-            </main>
-
-            {/* Footer / Info simple */}
-            <footer className="container py-12 text-center border-t border-neutral-200 mt-12">
-                <div className="text-overline text-neutral-400">
-                    © 2025 Antananarivo Travaux • Améliorer la ville ensemble
-                </div>
-            </footer>
+            </div>
         </div>
     );
 }

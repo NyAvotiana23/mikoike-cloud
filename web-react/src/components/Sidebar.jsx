@@ -17,7 +17,7 @@ import {
 
 const navigation = [
     { name: 'Accueil', href: '/', icon: HomeIcon },
-    { name: 'Carte', href: '/map', icon: MapIcon },
+    { name: 'Carte', href: '/carte', icon: MapIcon },
     { name: 'Statistiques', href: '/stats', icon: ChartBarIcon },
     { name: 'Équipe', href: '/team', icon: UserGroupIcon },
 
@@ -173,18 +173,6 @@ const Sidebar = () => {
                         </div>
                     </nav>
                 </div>
-
-                {/*/!* Pied de sidebar (optionnel) *!/*/}
-                {/*<div className="flex-shrink-0 border-t border-neutral-200 p-4">*/}
-                {/*    <div className="bg-primary-50 rounded-lg p-3">*/}
-                {/*        <p className="text-caption font-semibold text-primary-900 mb-1">*/}
-                {/*            💡 Astuce du jour*/}
-                {/*        </p>*/}
-                {/*        <p className="text-caption text-primary-700">*/}
-                {/*            Utilisez les raccourcis clavier pour naviguer plus rapidement.*/}
-                {/*        </p>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
             </div>
         </aside>
     );

@@ -1,20 +1,26 @@
-// src/pages/MapPage.jsx
+
 import React, { useState } from 'react';
-import Map from "./Map.jsx";
-import SignalementDetail from "../signalement/SignalementDetail.jsx";
-import SignalementList from "../signalement/SignalementList.jsx";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { X, Calendar, DollarSign, TrendingUp, Wrench, AlertCircle, CheckCircle, Clock, MapPin } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
-const MainCarte = () => {
-    const [selectedPoint, setSelectedPoint] = useState(null);
+// Fix pour les icônes Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
-    // Static data for road issues
-    const roadIssues = [
+class SignalementService {
+    static roadIssues = [
         {
             id: 1,
             type: 'critical',
             icon: '!',
             color: '#DC2626',
-            position: { x: 35, y: 30 },
+            position: { lat: -18.8792, lng: 47.5079 },
             title: 'Nids de poule majeurs',
             date: '2025-01-15',
             status: 'nouveau',
@@ -32,14 +38,14 @@ const MainCarte = () => {
             type: 'water',
             icon: '💧',
             color: '#2563EB',
-            position: { x: 50, y: 55 },
-            title: 'Fuite d\'eau principale',
+            position: { lat: -18.9100, lng: 47.5250 },
+            title: "Fuite d'eau principale",
             date: '2025-01-10',
             status: 'en cours',
             surface: 30,
             budget: 3200000,
             entreprise: 'JIRAMA Réparations',
-            location: 'Avenue de l\'Indépendance',
+            location: "Avenue de l'Indépendance",
             actions: [
                 { date: '2025-01-10', action: 'Signalement créé', user: 'Citoyen' },
                 { date: '2025-01-11', action: 'Validation du signalement', user: 'Superviseur' },
@@ -52,7 +58,7 @@ const MainCarte = () => {
             type: 'success',
             icon: '✓',
             color: '#16A34A',
-            position: { x: 48, y: 38 },
+            position: { lat: -18.9137, lng: 47.5361 },
             title: 'Réparation route terminée',
             date: '2024-12-20',
             status: 'terminé',
@@ -73,7 +79,7 @@ const MainCarte = () => {
             type: 'warning',
             icon: '⚠',
             color: '#F59E0B',
-            position: { x: 62, y: 28 },
+            position: { lat: -18.8650, lng: 47.5390 },
             title: 'Dégradation chaussée',
             date: '2025-01-18',
             status: 'nouveau',
@@ -91,7 +97,7 @@ const MainCarte = () => {
             type: 'traffic',
             icon: '🚧',
             color: '#8B5CF6',
-            position: { x: 28, y: 48 },
+            position: { lat: -18.9204, lng: 47.5267 },
             title: 'Travaux en cours',
             date: '2025-01-05',
             status: 'en cours',
@@ -101,7 +107,7 @@ const MainCarte = () => {
             location: 'Pont de Behoririka',
             actions: [
                 { date: '2025-01-05', action: 'Projet planifié', user: 'Mairie' },
-                { date: '2025-01-08', action: 'Appel d\'offres lancé', user: 'Direction' },
+                { date: '2025-01-08', action: "Appel d'offres lancé", user: 'Direction' },
                 { date: '2025-01-12', action: 'Entreprise sélectionnée', user: 'Commission' },
                 { date: '2025-01-15', action: 'Début des travaux', user: 'CM' }
             ]
@@ -111,14 +117,14 @@ const MainCarte = () => {
             type: 'accident',
             icon: '🚗',
             color: '#DC2626',
-            position: { x: 45, y: 62 },
+            position: { lat: -18.9050, lng: 47.5300 },
             title: 'Zone accidentogène',
             date: '2025-01-12',
             status: 'en cours',
             surface: 60,
             budget: 3800000,
             entreprise: 'Sécurité Routière SA',
-            location: 'Boulevard de l\'Europe',
+            location: "Boulevard de l'Europe",
             actions: [
                 { date: '2025-01-12', action: 'Signalement multiple accidents', user: 'Police' },
                 { date: '2025-01-13', action: 'Étude de sécurité demandée', user: 'Préfecture' },
@@ -130,7 +136,7 @@ const MainCarte = () => {
             type: 'repair',
             icon: '🔧',
             color: '#EA580C',
-            position: { x: 68, y: 42 },
+            position: { lat: -18.9147, lng: 47.5220 },
             title: 'Réparation trottoir',
             date: '2025-01-14',
             status: 'nouveau',
@@ -148,7 +154,7 @@ const MainCarte = () => {
             type: 'urgent',
             icon: '🚨',
             color: '#EF4444',
-            position: { x: 70, y: 38 },
+            position: { lat: -18.9160, lng: 47.5240 },
             title: 'Effondrement partiel',
             date: '2025-01-19',
             status: 'nouveau',
@@ -164,48 +170,31 @@ const MainCarte = () => {
         }
     ];
 
-    const handleSelectPoint = (point) => {
-        setSelectedPoint(point);
-    };
+    static getAllSignalements() {
+        return this.roadIssues;
+    }
 
-    const handleCloseDetail = () => {
-        setSelectedPoint(null);
-    };
+    static getSignalementById(id) {
+        return this.roadIssues.find(issue => issue.id === id);
+    }
 
-    return (
-        <div className="space-y-6">
-            {/* Page Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900">Carte des Problèmes Routiers</h1>
-                <p className="text-gray-600 mt-1">
-                    Suivi et gestion des travaux routiers de la ville d'Antananarivo
-                </p>
-            </div>
+    static getStatistics() {
+        const total = this.roadIssues.length;
+        const totalSurface = this.roadIssues.reduce((sum, issue) => sum + issue.surface, 0);
+        const totalBudget = this.roadIssues.reduce((sum, issue) => sum + issue.budget, 0);
+        const nouveau = this.roadIssues.filter(i => i.status === 'nouveau').length;
+        const enCours = this.roadIssues.filter(i => i.status === 'en cours').length;
+        const termine = this.roadIssues.filter(i => i.status === 'terminé').length;
+        const avancement = ((termine / total) * 100).toFixed(1);
 
-            {/* Statistics Section */}
-            <SignalementList roadIssues={roadIssues} onSelectPoint={handleSelectPoint} />
-
-            {/* Map and Detail Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Map - Takes 2 columns */}
-                <div className="lg:col-span-2">
-                    <Map
-                        roadIssues={roadIssues}
-                        onSelectPoint={handleSelectPoint}
-                        selectedPointId={selectedPoint?.id}
-                    />
-                </div>
-
-                {/* Detail Panel - Takes 1 column */}
-                <div>
-                    <SignalementDetail
-                        selectedPoint={selectedPoint}
-                        onClose={handleCloseDetail}
-                    />
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default MainCarte;
+        return {
+            total,
+            totalSurface,
+            totalBudget,
+            nouveau,
+            enCours,
+            termine,
+            avancement
+        };
+    }
+}
