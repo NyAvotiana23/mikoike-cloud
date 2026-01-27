@@ -1,5 +1,5 @@
 # TileServer avec fichier mbtiles pré-téléchargé
-FROM maptiler/tileserver-gl:latest
+FROM angular_spring_gis-tileserver:latest
 
 WORKDIR /data
 
