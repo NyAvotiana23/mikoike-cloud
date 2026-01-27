@@ -63,8 +63,8 @@
 		<!-- Hibernate Types pour JSONB et Array support -->
 		<dependency>
 			<groupId>io.hypersistence</groupId>
-			<artifactId>hypersistence-utils-hibernate-63</artifactId>
-			<version>3.7.0</version>
+			<artifactId>hypersistence-utils-hibernate-60</artifactId>
+			<version>3.7.5</version>
 		</dependency>
 
 		<!-- JWT pour les tokens -->

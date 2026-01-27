@@ -5,59 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/ActionDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/CoordinatesDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/CreateSignalementDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/EntrepriseResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/ProjetFinalApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/config/FirebaseConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/config/SecurityConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/FailedLoginTracking$FailedLoginTrackingBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/FailedLoginTracking.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt$LoginAttemptBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Role$RoleBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Role.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Session$SessionBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Session.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement$SignalementBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction$SignalementActionBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementStatus$SignalementStatusBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementStatus.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncHistory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncQueue.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/User$UserBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/User.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/EntrepriseRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/FailedLoginTrackingRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/HistoriqueStatusRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/LoginAttemptRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/RoleRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SessionRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementActionRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementStatusRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncHistoryRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncQueueRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/UserRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/service/AuthService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/utils/NetworkUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/mg/projetfinal/ProjetFinalApplicationTests.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,18 +28,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Antonio6905"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Antonio6905&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/NyAvotiana23/mikoike-cloud.git",
-    "accountId": "f93df715-b08f-49a3-92f2-86a622e3052c"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NyAvotiana23/mikoike-cloud.git&quot;,
+    &quot;accountId&quot;: &quot;f93df715-b08f-49a3-92f2-86a622e3052c&quot;
   }
-}]]></component>
+}</component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
   </component>
@@ -117,7 +70,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mamna/Documents/ITU/S5/Web/mikoike-cloud/cloud-back",
+    "last_opened_file_path": "C:/Users/mamna/Documents/ITU/S5/Web/mikoike-cloud/cloud-back/src/main/resources",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -132,6 +85,11 @@
     ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\resources" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="ProjetFinalApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="ProjetFinal" />

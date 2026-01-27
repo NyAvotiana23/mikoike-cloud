@@ -1,8 +1,13 @@
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\UpdateUserRequest.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\AuthResponse.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\LoginResponse.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\SyncHistory.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\LoginAttemptRepository.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\AuthService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementActionRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\SignalementActionService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\HistoriqueStatusController.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\ErrorResponse.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\enums\SyncStatus.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\SignalementResponseDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementRepository.java
@@ -13,6 +18,8 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\enums\EntityType.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\Signalement.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\SignalementActionController.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\RegisterRequest.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\SessionResponse.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\HistoriqueStatus.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\AuthController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SyncQueueRepository.java
@@ -46,4 +53,5 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\enums\SyncDirection.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\HistoriqueStatusRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\EntrepriseRepository.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\LoginRequest.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\EntrepriseService.java
