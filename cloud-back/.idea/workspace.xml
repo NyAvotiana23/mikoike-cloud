@@ -5,30 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/FailureReason.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/AuthResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/ErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/LoginResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/RegisterRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/SessionResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/UpdateUserRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/HistoriqueStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/HistoriqueStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/EntrepriseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/EntrepriseRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/FailedLoginTrackingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/FailedLoginTrackingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/HistoriqueStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/HistoriqueStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/LoginAttemptRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/LoginAttemptRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/RoleRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementActionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementActionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncHistoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncQueueRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncQueueRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" afterDir="false" />
@@ -139,7 +126,7 @@
       <workItem from="1768896458764" duration="8310000" />
       <workItem from="1768905319263" duration="5337000" />
       <workItem from="1768915626129" duration="57000" />
-      <workItem from="1769492743644" duration="2648000" />
+      <workItem from="1769492743644" duration="3424000" />
     </task>
     <servers />
   </component>
