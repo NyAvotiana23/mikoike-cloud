@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1021976189737",
+    "firebase_url": "https://cloudproject-57d75-default-rtdb.firebaseio.com",
+    "project_id": "cloudproject-57d75",
+    "storage_bucket": "cloudproject-57d75.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021976189737:android:35ce1ab84d9b883fd6f538",
+        "android_client_info": {
+          "package_name": "com.itu.mikoike"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQhZleZxSbCPlCN7MqbX7LSlWm8aTQ87U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021976189737:android:044e3a708e6c0a9dd6f538",
+        "android_client_info": {
+          "package_name": "com.itu.projetCloud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQhZleZxSbCPlCN7MqbX7LSlWm8aTQ87U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
