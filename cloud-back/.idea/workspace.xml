@@ -5,16 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/AuthResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/ErrorResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/LoginRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/LoginResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/RegisterRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/SessionResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/UpdateUserRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" afterDir="false" />
@@ -126,7 +116,7 @@
       <workItem from="1768896458764" duration="8310000" />
       <workItem from="1768905319263" duration="5337000" />
       <workItem from="1768915626129" duration="57000" />
-      <workItem from="1769492743644" duration="3424000" />
+      <workItem from="1769492743644" duration="3772000" />
     </task>
     <servers />
   </component>

@@ -20,13 +20,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // ==================== INSCRIPTION ====================
-
     @PostMapping("/register")
     @Operation(summary = "Inscription d'un nouvel utilisateur")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
         try {
-            // Récupérer le créateur depuis la session (si Manager crée le compte)
             User createdBy = getCurrentUser(httpRequest);
 
             User user = authService.register(
@@ -48,7 +45,7 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ErrorResponse.builder()
+                    AuthResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
@@ -56,11 +53,9 @@ public class AuthController {
         }
     }
 
-    // ==================== CONNEXION ====================
-
     @PostMapping("/login")
     @Operation(summary = "Connexion d'un utilisateur")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         try {
             Session session = authService.login(request.getEmail(), request.getPassword(), httpRequest);
 
@@ -78,7 +73,7 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    ErrorResponse.builder()
+                    LoginResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
@@ -86,11 +81,9 @@ public class AuthController {
         }
     }
 
-    // ==================== DÉCONNEXION ====================
-
     @PostMapping("/logout")
     @Operation(summary = "Déconnexion d'un utilisateur")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<AuthResponse> logout(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = extractToken(authHeader);
             authService.logout(token);
@@ -103,7 +96,7 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ErrorResponse.builder()
+                    AuthResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
@@ -111,11 +104,9 @@ public class AuthController {
         }
     }
 
-    // ==================== MODIFICATION USER ====================
-
     @PutMapping("/update/{userId}")
     @Operation(summary = "Modification des informations utilisateur")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<AuthResponse> updateUser(
             @PathVariable Long userId,
             @RequestBody UpdateUserRequest request,
             HttpServletRequest httpRequest) {
@@ -141,7 +132,7 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ErrorResponse.builder()
+                    AuthResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
@@ -149,11 +140,9 @@ public class AuthController {
         }
     }
 
-    // ==================== DÉBLOCAGE COMPTE (MANAGER ONLY) ====================
-
     @PostMapping("/unlock/{email}")
     @Operation(summary = "Débloquer un compte utilisateur (Manager uniquement)")
-    public ResponseEntity<?> unlockAccount(
+    public ResponseEntity<AuthResponse> unlockAccount(
             @PathVariable String email,
             HttpServletRequest httpRequest) {
         try {
@@ -161,7 +150,7 @@ public class AuthController {
 
             if (manager == null || !manager.isManager()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                        ErrorResponse.builder()
+                        AuthResponse.builder()
                                 .success(false)
                                 .message("Accès refusé. Seul un Manager peut débloquer un compte.")
                                 .build()
@@ -178,7 +167,7 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ErrorResponse.builder()
+                    AuthResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
@@ -186,11 +175,9 @@ public class AuthController {
         }
     }
 
-    // ==================== VALIDATION SESSION ====================
-
     @GetMapping("/validate")
     @Operation(summary = "Valider une session")
-    public ResponseEntity<?> validateSession(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<SessionResponse> validateSession(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = extractToken(authHeader);
 
@@ -215,28 +202,26 @@ public class AuthController {
                     ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    ErrorResponse.builder()
+                    SessionResponse.builder()
                             .success(false)
+                            .valid(false)
                             .message(e.getMessage())
                             .build()
             );
         }
     }
 
-    // ==================== DÉCONNEXION DE TOUTES LES SESSIONS ====================
-
     @PostMapping("/logout-all/{userId}")
     @Operation(summary = "Déconnecter toutes les sessions d'un utilisateur")
-    public ResponseEntity<?> logoutAllSessions(
+    public ResponseEntity<AuthResponse> logoutAllSessions(
             @PathVariable Long userId,
             HttpServletRequest httpRequest) {
         try {
             User currentUser = getCurrentUser(httpRequest);
 
-            // Vérifier permissions
             if (!currentUser.getId().equals(userId) && !currentUser.isManager()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                        ErrorResponse.builder()
+                        AuthResponse.builder()
                                 .success(false)
                                 .message("Permission refusée")
                                 .build()
@@ -253,15 +238,13 @@ public class AuthController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ErrorResponse.builder()
+                    AuthResponse.builder()
                             .success(false)
                             .message(e.getMessage())
                             .build()
             );
         }
     }
-
-    // ==================== UTILITAIRES ====================
 
     private String extractToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
