@@ -141,7 +141,7 @@ class LocalAuthService {
 const authService = new LocalAuthService();
 
 export const useAuth = () => ({
-  currentUser: authService.getCurrentUser(),
+  currentUser: computed(() => authService.getCurrentUser()),
   isAuthenticated: authService.isAuthenticated,
   login: authService.login.bind(authService),
   logout: authService.logout.bind(authService)

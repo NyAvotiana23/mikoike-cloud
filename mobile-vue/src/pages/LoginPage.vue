@@ -39,9 +39,16 @@
             </ion-button>
           </form>
 
-          <p class="text-sm text-center text-gray-600">
-            Pas de compte ? Contactez un manager pour créer un compte.
-          </p>
+          <div class="text-center">
+            <p class="text-sm text-gray-600 mb-4">
+              Pas de compte ? Contactez un manager pour créer un compte.
+            </p>
+
+            <ion-button fill="clear" size="small" @click="goBack">
+              <ion-icon slot="start" :icon="arrowBack"></ion-icon>
+              Retour à l'accueil
+            </ion-button>
+          </div>
         </div>
       </div>
     </ion-content>
@@ -51,11 +58,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { IonPage, IonContent, IonItem, IonLabel, IonInput, IonButton, IonSpinner, toastController } from '@ionic/vue';
+import { IonPage, IonContent, IonItem, IonLabel, IonInput, IonButton, IonSpinner, IonIcon, toastController } from '@ionic/vue';
+import { arrowBack } from 'ionicons/icons';
 import { useAuth } from '@/services/auth.service';
+import { useUserContext } from '@/services/user-context.service';
 
 const router = useRouter();
 const { login } = useAuth();
+const { setAuthenticatedUser } = useUserContext();
 
 const email = ref('');
 const password = ref('');
@@ -68,7 +78,10 @@ const handleLogin = async () => {
   
   loading.value = false;
 
-  if (result.success) {
+  if (result.success && result.user) {
+    // Mettre à jour le contexte utilisateur
+    setAuthenticatedUser(result.user);
+
     const toast = await toastController.create({
       message: 'Connexion réussie !',
       duration: 2000,
@@ -76,7 +89,7 @@ const handleLogin = async () => {
       position: 'top'
     });
     await toast.present();
-    router.push('/map');
+    router.push('/tabs/map');
   } else {
     const toast = await toastController.create({
       message: result.error || 'Erreur de connexion',
@@ -87,4 +100,14 @@ const handleLogin = async () => {
     await toast.present();
   }
 };
+
+const goBack = () => {
+  router.push('/');
+};
 </script>
+
+<style scoped>
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>

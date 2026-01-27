@@ -1,11 +1,16 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import { useAuth } from '@/services/auth.service';
+import { useUserContext } from '@/services/user-context.service';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/welcome'
+  },
+  {
+    path: '/welcome',
+    name: 'Welcome',
+    component: () => import('@/pages/WelcomePage.vue')
   },
   {
     path: '/login',
@@ -13,10 +18,31 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/LoginPage.vue')
   },
   {
-    path: '/map',
-    name: 'Map',
-    component: () => import('@/pages/MapPage.vue'),
-    meta: { requiresAuth: true }
+    path: '/tabs',
+    component: () => import('@/views/TabsPage.vue'),
+    children: [
+      {
+        path: '',
+        redirect: '/tabs/map'
+      },
+      {
+        path: 'map',
+        name: 'Map',
+        component: () => import('@/pages/MapPage.vue')
+      },
+      {
+        path: 'signalements',
+        name: 'UserSignalements',
+        component: () => import('@/pages/UserSignalementsPage.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/pages/AccountPage.vue'),
+        meta: { requiresAuth: true }
+      }
+    ]
   },
   {
     path: '/dashboard',
@@ -33,12 +59,12 @@ const router = createRouter({
 
 // Auth Guard
 router.beforeEach((to, from, next) => {
-  const { isAuthenticated } = useAuth();
-  
+  const { isAuthenticated } = useUserContext();
+
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     next('/login');
   } else if (to.path === '/login' && isAuthenticated.value) {
-    next('/map');
+    next('/tabs/map');
   } else {
     next();
   }

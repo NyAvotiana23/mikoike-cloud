@@ -3,14 +3,29 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="map" href="/map">
+        <!-- Tab Carte - Toujours visible -->
+        <ion-tab-button tab="map" href="/tabs/map">
           <ion-icon :icon="map"></ion-icon>
           <ion-label>Carte</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="dashboard" href="/dashboard">
-          <ion-icon :icon="statsChart"></ion-icon>
-          <ion-label>Récap</ion-label>
+        <!-- Tabs pour utilisateurs connectés -->
+        <template v-if="isAuthenticated">
+          <ion-tab-button tab="signalements" href="/tabs/signalements">
+            <ion-icon :icon="list"></ion-icon>
+            <ion-label>Mes signalements</ion-label>
+          </ion-tab-button>
+
+          <ion-tab-button tab="account" href="/tabs/account">
+            <ion-icon :icon="person"></ion-icon>
+            <ion-label>Mon compte</ion-label>
+          </ion-tab-button>
+        </template>
+
+        <!-- Tab pour visiteurs -->
+        <ion-tab-button v-else tab="login" href="/login">
+          <ion-icon :icon="logIn"></ion-icon>
+          <ion-label>Se connecter</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -19,5 +34,8 @@
 
 <script setup lang="ts">
 import { IonPage, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/vue';
-import { map, statsChart } from 'ionicons/icons';
+import { map, list, person, logIn } from 'ionicons/icons';
+import { useUserContext } from '@/services/user-context.service';
+
+const { isAuthenticated } = useUserContext();
 </script>

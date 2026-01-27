@@ -1,0 +1,435 @@
+<template>
+  <ion-page>
+    <app-header title="Mes Signalements"></app-header>
+
+    <ion-content>
+      <!-- Statistiques -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.total }}</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-blue-600">{{ stats.nouveau }}</div>
+          <div class="stat-label">Nouveau</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-orange-600">{{ stats.en_cours }}</div>
+          <div class="stat-label">En cours</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-green-600">{{ stats.termine }}</div>
+          <div class="stat-label">Terminé</div>
+        </div>
+      </div>
+
+      <!-- Budget et Surface -->
+      <div class="summary-container">
+        <div class="summary-item">
+          <ion-icon :icon="cashOutline" class="text-2xl text-primary"></ion-icon>
+          <div>
+            <div class="summary-value">{{ formatCurrency(stats.budgetTotal) }}</div>
+            <div class="summary-label">Budget total</div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <ion-icon :icon="resizeOutline" class="text-2xl text-primary"></ion-icon>
+          <div>
+            <div class="summary-value">{{ stats.surfaceTotale }} m²</div>
+            <div class="summary-label">Surface totale</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filter-container">
+        <ion-button @click="showFilters = !showFilters" fill="outline" size="small">
+          <ion-icon slot="start" :icon="filterOutline"></ion-icon>
+          Filtres
+        </ion-button>
+      </div>
+
+      <div v-if="showFilters" class="filters-panel">
+        <div class="filter-group">
+          <ion-label>Statut</ion-label>
+          <ion-select
+            v-model="filters.status"
+            multiple
+            placeholder="Tous les statuts"
+            @ionChange="applyFilters"
+          >
+            <ion-select-option value="nouveau">Nouveau</ion-select-option>
+            <ion-select-option value="en_cours">En cours</ion-select-option>
+            <ion-select-option value="termine">Terminé</ion-select-option>
+            <ion-select-option value="annule">Annulé</ion-select-option>
+          </ion-select>
+        </div>
+
+        <div class="filter-group">
+          <ion-label>Priorité</ion-label>
+          <ion-select
+            v-model="filters.priorite"
+            multiple
+            placeholder="Toutes les priorités"
+            @ionChange="applyFilters"
+          >
+            <ion-select-option value="basse">Basse</ion-select-option>
+            <ion-select-option value="moyenne">Moyenne</ion-select-option>
+            <ion-select-option value="haute">Haute</ion-select-option>
+          </ion-select>
+        </div>
+
+        <ion-button expand="block" @click="resetFilters" fill="clear" size="small">
+          Réinitialiser les filtres
+        </ion-button>
+      </div>
+
+      <!-- Liste des signalements -->
+      <div class="signalements-list">
+        <div v-if="filteredSignalements.length === 0" class="empty-state">
+          <ion-icon :icon="alertCircleOutline" class="text-5xl text-gray-400 mb-2"></ion-icon>
+          <p>Aucun signalement trouvé</p>
+        </div>
+
+        <ion-card v-for="signalement in filteredSignalements" :key="signalement.id" class="signalement-card">
+          <ion-card-header>
+            <div class="card-header-content">
+              <ion-card-title>{{ signalement.titre || 'Signalement #' + signalement.id.slice(0, 8) }}</ion-card-title>
+              <ion-badge :color="getStatusColor(signalement.status)">
+                {{ getStatusLabel(signalement.status) }}
+              </ion-badge>
+            </div>
+            <ion-card-subtitle>
+              <ion-icon :icon="calendarOutline"></ion-icon>
+              {{ formatDate(signalement.date) }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="signalement-details">
+              <div class="detail-item" v-if="signalement.priorite">
+                <ion-icon :icon="flagOutline" :class="getPriorityClass(signalement.priorite)"></ion-icon>
+                <span>{{ getPriorityLabel(signalement.priorite) }}</span>
+              </div>
+
+              <div class="detail-item">
+                <ion-icon :icon="locationOutline"></ion-icon>
+                <span>{{ signalement.location.lat.toFixed(5) }}, {{ signalement.location.lng.toFixed(5) }}</span>
+              </div>
+
+              <div class="detail-item" v-if="signalement.entreprise">
+                <ion-icon :icon="businessOutline"></ion-icon>
+                <span>{{ signalement.entreprise }}</span>
+              </div>
+
+              <div class="detail-item">
+                <ion-icon :icon="resizeOutline"></ion-icon>
+                <span>{{ signalement.surface }} m²</span>
+              </div>
+
+              <div class="detail-item">
+                <ion-icon :icon="cashOutline"></ion-icon>
+                <span>{{ formatCurrency(signalement.budget) }}</span>
+              </div>
+
+              <p v-if="signalement.description" class="description">
+                {{ signalement.description }}
+              </p>
+            </div>
+
+            <div class="card-actions">
+              <ion-button fill="outline" size="small" @click="viewOnMap(signalement)">
+                <ion-icon slot="start" :icon="mapOutline"></ion-icon>
+                Voir sur la carte
+              </ion-button>
+              <ion-button fill="outline" size="small" @click="editSignalement(signalement)">
+                <ion-icon slot="start" :icon="createOutline"></ion-icon>
+                Modifier
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import {
+  IonPage, IonContent, IonCard, IonCardHeader, IonCardTitle,
+  IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonBadge,
+  IonSelect, IonSelectOption, IonLabel
+} from '@ionic/vue';
+import {
+  cashOutline, resizeOutline, filterOutline, calendarOutline,
+  flagOutline, locationOutline, businessOutline, mapOutline,
+  createOutline, alertCircleOutline
+} from 'ionicons/icons';
+import AppHeader from '@/components/AppHeader.vue';
+import signalementsService from '@/services/signalements.service';
+import { useUserContext } from '@/services/user-context.service';
+import type { Signalement, SignalementFilters, SignalementStats } from '@/types/signalement';
+
+const router = useRouter();
+const { userContext } = useUserContext();
+
+const signalements = ref<Signalement[]>([]);
+const showFilters = ref(false);
+const filters = ref<SignalementFilters>({
+  status: [],
+  priorite: []
+});
+
+const stats = computed<SignalementStats>(() => {
+  const filtered = signalements.value;
+  return {
+    total: filtered.length,
+    nouveau: filtered.filter(s => s.status === 'nouveau').length,
+    en_cours: filtered.filter(s => s.status === 'en_cours').length,
+    termine: filtered.filter(s => s.status === 'termine').length,
+    annule: filtered.filter(s => s.status === 'annule').length,
+    surfaceTotale: filtered.reduce((sum, s) => sum + s.surface, 0),
+    budgetTotal: filtered.reduce((sum, s) => sum + s.budget, 0)
+  };
+});
+
+const filteredSignalements = computed(() => {
+  let result = signalements.value;
+
+  if (filters.value.status && filters.value.status.length > 0) {
+    result = result.filter(s => filters.value.status?.includes(s.status));
+  }
+
+  if (filters.value.priorite && filters.value.priorite.length > 0) {
+    result = result.filter(s => s.priorite && filters.value.priorite?.includes(s.priorite));
+  }
+
+  return result;
+});
+
+onMounted(() => {
+  loadSignalements();
+});
+
+const loadSignalements = () => {
+  if (userContext.value.userId) {
+    signalements.value = signalementsService.getAll(userContext.value.userId);
+  }
+};
+
+const applyFilters = () => {
+  // Les filtres sont appliqués automatiquement via computed
+};
+
+const resetFilters = () => {
+  filters.value = {
+    status: [],
+    priorite: []
+  };
+};
+
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('fr-FR');
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(amount);
+};
+
+const getStatusColor = (status: string) => {
+  const colors: Record<string, string> = {
+    nouveau: 'primary',
+    en_cours: 'warning',
+    termine: 'success',
+    annule: 'danger'
+  };
+  return colors[status] || 'medium';
+};
+
+const getStatusLabel = (status: string) => {
+  const labels: Record<string, string> = {
+    nouveau: 'Nouveau',
+    en_cours: 'En cours',
+    termine: 'Terminé',
+    annule: 'Annulé'
+  };
+  return labels[status] || status;
+};
+
+const getPriorityClass = (priorite: string) => {
+  const classes: Record<string, string> = {
+    basse: 'text-green-500',
+    moyenne: 'text-orange-500',
+    haute: 'text-red-500'
+  };
+  return classes[priorite] || '';
+};
+
+const getPriorityLabel = (priorite: string) => {
+  const labels: Record<string, string> = {
+    basse: 'Priorité basse',
+    moyenne: 'Priorité moyenne',
+    haute: 'Priorité haute'
+  };
+  return labels[priorite] || priorite;
+};
+
+const viewOnMap = (_signalement: Signalement) => {
+  // TODO: Navigate to map with signalement highlighted
+  console.log('Viewing signalement on map:', _signalement.id);
+  router.push('/tabs/map');
+};
+
+const editSignalement = (signalement: Signalement) => {
+  // TODO: Open edit modal
+  console.log('Edit signalement:', signalement.id);
+};
+</script>
+
+<style scoped>
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding: 1rem;
+  background: white;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.summary-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  margin-top: 0.5rem;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.summary-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.filter-container {
+  padding: 1rem;
+  background: white;
+  margin-top: 0.5rem;
+}
+
+.filters-panel {
+  padding: 1rem;
+  background: #f8f9fa;
+  margin: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.filter-group {
+  margin-bottom: 1rem;
+}
+
+.filter-group ion-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.signalements-list {
+  padding: 1rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+}
+
+.signalement-card {
+  margin-bottom: 1rem;
+}
+
+.card-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-header-content ion-card-title {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.signalement-details {
+  margin-top: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.detail-item ion-icon {
+  font-size: 1.25rem;
+}
+
+.description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  color: #333;
+  font-size: 0.875rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.card-actions ion-button {
+  flex: 1;
+}
+</style>
