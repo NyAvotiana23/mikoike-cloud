@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Classes utilitaires personnalisées pour le projet */
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  }
+  
+  .gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+  }
+}
+
+@layer components {
+  /* Boutons avec styles Ionic + Tailwind */
+  .btn-primary {
+    @apply bg-primary-500 text-white rounded-lg px-6 py-3 font-medium shadow-soft hover:bg-primary-600 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-500 text-white rounded-lg px-6 py-3 font-medium shadow-soft hover:bg-secondary-600 transition-all;
+  }
+  
+  /* Cards */
+  .card-base {
+    @apply bg-white rounded-2xl shadow-medium p-6;
+  }
+  
+  /* Status badges */
+  .badge-nouveau {
+    @apply bg-warning-light text-warning-dark px-3 py-1 rounded-full text-label-sm font-medium;
+  }
+  
+  .badge-en-cours {
+    @apply bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-label-sm font-medium;
+  }
+  
+  .badge-termine {
+    @apply bg-success-light text-success-dark px-3 py-1 rounded-full text-label-sm font-medium;
+  }
+}
