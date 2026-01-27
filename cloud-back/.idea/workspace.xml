@@ -5,53 +5,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/FailureReason.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/ActionDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/CoordinatesDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/CreateSignalementDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/EntrepriseResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/HistoriqueStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/HistoriqueStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/SyncQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/EntrepriseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/EntrepriseRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/FailedLoginTrackingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/FailedLoginTrackingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/HistoriqueStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/HistoriqueStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/LoginAttemptRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/LoginAttemptRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/RoleRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementActionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementActionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementStatusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SignalementStatusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncHistoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncQueueRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SyncQueueRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt$LoginAttemptBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt$LoginAttemptBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction$SignalementActionBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction$SignalementActionBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncHistory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncHistory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncQueue.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncQueue.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/EntrepriseRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/EntrepriseRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/FailedLoginTrackingRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/FailedLoginTrackingRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/HistoriqueStatusRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/HistoriqueStatusRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/LoginAttemptRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/LoginAttemptRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/RoleRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/RoleRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SessionRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SessionRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementActionRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementActionRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementStatusRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementStatusRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncHistoryRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncHistoryRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncQueueRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncQueueRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mg/projetfinal/service/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/ProjetFinalApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/config/FirebaseConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/config/SecurityConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/controller/AuthController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise$EntrepriseBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Entreprise.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/FailedLoginTracking$FailedLoginTrackingBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/FailedLoginTracking.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/HistoriqueStatus.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt$LoginAttemptBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/LoginAttempt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Role$RoleBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Role.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Session$SessionBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Session.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement$SignalementBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/Signalement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction$SignalementActionBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementAction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementStatus$SignalementStatusBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SignalementStatus.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncHistory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/SyncQueue.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/User$UserBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/entity/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/EntrepriseRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/FailedLoginTrackingRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/HistoriqueStatusRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/LoginAttemptRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/RoleRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SessionRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementActionRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SignalementStatusRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncHistoryRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/SyncQueueRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/repository/UserRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/service/AuthService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mg/projetfinal/utils/NetworkUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/mg/projetfinal/ProjetFinalApplicationTests.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +75,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Antonio6905"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/NyAvotiana23/mikoike-cloud.git",
+    "accountId": "f93df715-b08f-49a3-92f2-86a622e3052c"
+  }
+}]]></component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
   </component>
@@ -92,11 +110,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/ProjetFinal/mikoike-cloud/cloud-back",
+    "last_opened_file_path": "C:/Users/mamna/Documents/ITU/S5/Web/mikoike-cloud/cloud-back",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -123,8 +144,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
       </set>
     </attachedChunks>
   </component>
@@ -140,6 +161,7 @@
       <workItem from="1768905319263" duration="5337000" />
       <workItem from="1768915626129" duration="57000" />
       <workItem from="1769492743644" duration="2648000" />
+      <workItem from="1769497948910" duration="997000" />
     </task>
     <servers />
   </component>

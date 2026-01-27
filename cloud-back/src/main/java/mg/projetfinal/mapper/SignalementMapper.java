@@ -1,0 +1,167 @@
+package mg.projetfinal.mapper;
+
+import mg.projetfinal.dto.*;
+import mg.projetfinal.entity.*;
+import org.springframework.stereotype.Component;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class SignalementMapper {
+    
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    
+    public SignalementResponseDTO toResponseDTO(Signalement signalement) {
+        if (signalement == null) {
+            return null;
+        }
+        
+        return SignalementResponseDTO.builder()
+                .id(signalement.getId())
+                .type(determineType(signalement))
+                .icon(determineIcon(signalement))
+                .color(determineColor(signalement))
+                .coordinates(CoordinatesDTO.builder()
+                        .lat(signalement.getLatitude())
+                        .lng(signalement.getLongitude())
+                        .build())
+                .title(generateTitle(signalement))
+                .date(signalement.getDateSignalement().format(DATE_FORMATTER))
+                .status(mapStatus(signalement.getStatus()))
+                .surface(calculateSurface(signalement))
+                .budget(calculateBudget(signalement))
+                .entreprise(getEntrepriseName(signalement))
+                .location(signalement.getAdresse())
+                .description(signalement.getDescription())
+                .actions(mapActions(signalement))
+                .lat(signalement.getLatitude())
+                .lng(signalement.getLongitude())
+                .build();
+    }
+    
+    public List<SignalementResponseDTO> toResponseDTOList(List<Signalement> signalements) {
+        List<SignalementResponseDTO> list = new ArrayList<SignalementResponseDTO>();
+        for (Signalement signalement : signalements) {
+            list.add(toResponseDTO(signalement));
+        }
+        return list;
+    }
+    
+    private String determineType(Signalement signalement) {
+        if (signalement.isTermine()) {
+            return "success";
+        } else if (signalement.isEnCours()) {
+            return "traffic";
+        } else {
+            return "critical";
+        }
+    }
+    
+    private String determineIcon(Signalement signalement) {
+        if (signalement.isTermine()) {
+            return "✓";
+        } else if (signalement.isEnCours()) {
+            return "🚧";
+        } else {
+            return "!";
+        }
+    }
+    
+    private String determineColor(Signalement signalement) {
+        if (signalement.isTermine()) {
+            return "#16A34A"; // Vert
+        } else if (signalement.isEnCours()) {
+            return "#8B5CF6"; // Violet
+        } else {
+            return "#DC2626"; // Rouge
+        }
+    }
+    
+    private String generateTitle(Signalement signalement) {
+        // Vous pouvez personnaliser selon vos besoins
+        return signalement.getDescription().length() > 50 
+                ? signalement.getDescription().substring(0, 50) + "..."
+                : signalement.getDescription();
+    }
+    
+    private String mapStatus(SignalementStatus status) {
+        if (status == null) {
+            return "nouveau";
+        }
+        // Mapper selon votre logique
+        if (status.isTermine()) {
+            return "terminé";
+        } else if (status.isEnCours()) {
+            return "en cours";
+        } else {
+            return "nouveau";
+        }
+    }
+    
+    private Integer calculateSurface(Signalement signalement) {
+        // Récupérer la surface depuis SignalementAction
+        SignalementAction action = signalement.getActiveAction();
+        if (action != null && action.getSurfaceM2() != null) {
+            return action.getSurfaceM2().intValue();
+        }
+        return 0;
+    }
+    
+    private java.math.BigDecimal calculateBudget(Signalement signalement) {
+        // Récupérer le budget depuis SignalementAction
+        SignalementAction action = signalement.getActiveAction();
+        if (action != null && action.getBudget() != null) {
+            return action.getBudget();
+        }
+        return java.math.BigDecimal.ZERO;
+    }
+    
+    private String getEntrepriseName(Signalement signalement) {
+        SignalementAction action = signalement.getActiveAction();
+        if (action != null && action.getEntreprise() != null) {
+            return action.getEntreprise().getNom();
+        }
+        return "En attente attribution";
+    }
+    
+    private List<ActionDTO> mapActions(Signalement signalement) {
+        return signalement.getHistoriquesStatus().stream()
+                .map(historique -> ActionDTO.builder()
+                        .date(historique.getChangedAt().format(DATE_FORMATTER))
+                        .action(historique.getCommentaire() != null ? historique.getCommentaire() : 
+                                "Changement de statut: " + historique.getNouveauStatus().getLibelle())
+                        .user(historique.getModifiedBy().getName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+    
+    public EntrepriseResponseDTO toEntrepriseDTO(Entreprise entreprise) {
+        if (entreprise == null) {
+            return null;
+        }
+        
+        return EntrepriseResponseDTO.builder()
+                .id(entreprise.getId())
+                .nom(entreprise.getNom())
+                .siret(entreprise.getSiret())
+                .telephone(entreprise.getTelephone())
+                .email(entreprise.getEmail())
+                .adresse(entreprise.getAdresse())
+                .specialites(entreprise.getSpecialites())
+                .isActive(entreprise.getIsActive())
+                .noteMoyenne(entreprise.getNoteMoyenne())
+                .nombreInterventions(entreprise.getNombreInterventions())
+                .build();
+    }
+    
+    public List<EntrepriseResponseDTO> toEntrepriseDTOList(List<Entreprise> entreprises) {
+        List<EntrepriseResponseDTO> list = new ArrayList<>();
+        for (Entreprise entreprise : entreprises) {
+            list.add(toEntrepriseDTO(entreprise));
+        }
+        return list;
+    }
+}
