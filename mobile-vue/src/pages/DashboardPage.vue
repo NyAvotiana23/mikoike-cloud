@@ -2,6 +2,9 @@
   <ion-page>
     <app-header title="Récapitulatif"></app-header>
     
+    <!-- Database Status Chip -->
+    <database-status-chip />
+    
     <ion-content class="ion-padding">
       <div class="space-y-4">
         <!-- Carte de statistiques globales -->
@@ -28,6 +31,40 @@
               <p class="text-sm text-gray-600">Budget Total</p>
               <p class="text-2xl font-bold text-orange-600">{{ formatBudget(stats.totalBudget) }}</p>
             </div>
+          </div>
+        </div>
+
+        <!-- Statut de synchronisation -->
+        <div v-if="stats.syncStatus" class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-4 text-gray-800">
+            Synchronisation
+            <ion-icon 
+              :icon="stats.syncStatus.isFirebaseAvailable ? cloudDone : cloudOffline"
+              :color="stats.syncStatus.isFirebaseAvailable ? 'success' : 'warning'"
+              class="ml-2"
+            ></ion-icon>
+          </h2>
+          
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded">
+              <span class="font-semibold">Synchronisés</span>
+              <span class="text-2xl font-bold text-green-600">{{ stats.syncStatus.synced }}</span>
+            </div>
+
+            <div v-if="stats.syncStatus.pending > 0" class="flex items-center justify-between p-3 bg-yellow-50 rounded">
+              <span class="font-semibold">En attente</span>
+              <span class="text-2xl font-bold text-yellow-600">{{ stats.syncStatus.pending }}</span>
+            </div>
+
+            <ion-button 
+              v-if="stats.syncStatus.isFirebaseAvailable && stats.syncStatus.pending > 0"
+              expand="block"
+              @click="syncNow"
+              :disabled="syncing"
+            >
+              <ion-icon slot="start" :icon="syncOutline"></ion-icon>
+              {{ syncing ? 'Synchronisation...' : 'Synchroniser maintenant' }}
+            </ion-button>
           </div>
         </div>
 
@@ -61,13 +98,29 @@
             <div
               v-for="sig in recentSignalements"
               :key="sig.id"
-              class="p-3 border-l-4 bg-gray-50 rounded"
+              class="p-3 border-l-4 bg-gray-50 rounded relative"
               :class="{
                 'border-status-nouveau': sig.status === 'nouveau',
                 'border-status-en_cours': sig.status === 'en_cours',
                 'border-status-termine': sig.status === 'termine'
               }"
             >
+              <!-- Badge de sync -->
+              <div class="absolute top-2 right-2">
+                <ion-icon 
+                  v-if="sig.syncStatus === 'synced'"
+                  :icon="cloudDone"
+                  color="success"
+                  class="text-sm"
+                ></ion-icon>
+                <ion-icon 
+                  v-else-if="sig.syncStatus === 'pending' || sig.syncStatus === 'local'"
+                  :icon="cloudUpload"
+                  color="warning"
+                  class="text-sm"
+                ></ion-icon>
+              </div>
+
               <div class="flex justify-between items-start">
                 <div>
                   <p class="font-semibold">{{ sig.entreprise || 'Non assigné' }}</p>
@@ -94,9 +147,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { IonPage, IonContent } from '@ionic/vue';
+import { IonPage, IonContent, IonButton, IonIcon, toastController } from '@ionic/vue';
+import { cloudDone, cloudOffline, cloudUpload, syncOutline } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
-import signalementsService from '@/services/signalements.service';
+import DatabaseStatusChip from '@/components/DatabaseStatusChip.vue';
+import signalementsService from '@/services/signalements.service.hybrid';
 
 const stats = ref({
   total: 0,
@@ -105,10 +160,16 @@ const stats = ref({
   termine: 0,
   totalSurface: 0,
   totalBudget: 0,
-  avancement: 0
+  avancement: 0,
+  syncStatus: {
+    synced: 0,
+    pending: 0,
+    isFirebaseAvailable: false
+  }
 });
 
 const allSignalements = ref<any[]>([]);
+const syncing = ref(false);
 
 const recentSignalements = computed(() => {
   return allSignalements.value
@@ -123,6 +184,39 @@ onMounted(() => {
 const loadData = () => {
   stats.value = signalementsService.getStats();
   allSignalements.value = signalementsService.getAll();
+};
+
+const syncNow = async () => {
+  syncing.value = true;
+  
+  try {
+    const result = await signalementsService.syncToFirebase();
+    
+    if (result.success) {
+      await signalementsService.syncFromFirebase();
+      
+      const toast = await toastController.create({
+        message: `✅ ${result.count || 0} signalement(s) synchronisé(s)`,
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+      
+      // Recharger les stats
+      loadData();
+    } else {
+      throw new Error(result.error);
+    }
+  } catch (error: any) {
+    const toast = await toastController.create({
+      message: `❌ Erreur: ${error.message}`,
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  } finally {
+    syncing.value = false;
+  }
 };
 
 const formatBudget = (value: number) => {

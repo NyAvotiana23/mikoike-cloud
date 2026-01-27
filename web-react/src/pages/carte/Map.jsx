@@ -6,6 +6,8 @@ import 'leaflet/dist/leaflet.css';
 import { AlertCircle, CheckCircle, Clock, Calendar, TrendingUp, DollarSign, Wrench, MapPin } from 'lucide-react';
 import signalementDataService from '../../services/api/signalementDataService';
 
+const MAP_URL = import.meta.env.MAP_SERVER_URL;
+
 // Fix for default marker icons in Leaflet with React
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -59,7 +61,7 @@ const Map = () => {
     const [loading, setLoading] = useState(true);
 
     // Centre d'Antananarivo
-    const antananarivoCenter = [-18.9100, 47.5255];
+    const antananarivoCenter = [-18.8985,47.5245,  12];
     const defaultZoom = 14;
 
     useEffect(() => {
@@ -119,7 +121,8 @@ const Map = () => {
                     >
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            url="http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png"
+                            // bounds={[47.37, -19.025, 47.679, -18.772]}
                         />
 
                         <MapController
