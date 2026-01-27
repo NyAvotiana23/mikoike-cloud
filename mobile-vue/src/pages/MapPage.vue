@@ -2,6 +2,9 @@
   <ion-page>
     <app-header title="Carte des Travaux"></app-header>
     
+    <!-- Database Status Chip -->
+    <database-status-chip />
+    
     <ion-content>
       <!-- Filtre pour afficher mes signalements uniquement -->
       <div class="p-4 bg-white shadow-md">
@@ -22,15 +25,26 @@
     </ion-content>
   </ion-page>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonToggle, alertController, toastController } from '@ionic/vue';
+import { 
+  IonPage, 
+  IonContent, 
+  IonFab, 
+  IonFabButton, 
+  IonIcon, 
+  IonToggle, 
+  alertController, 
+  toastController 
+} from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
+import DatabaseStatusChip from '@/components/DatabaseStatusChip.vue';
 import mapService from '@/services/map.service';
 import geolocationService from '@/services/geolocation.service';
-import signalementsService from '@/services/signalements.service';
-import { useAuth } from '@/services/auth.service';
+import signalementsService from '@/services/signalements.service.hybrid';
+import { useAuth } from '@/services/auth.service.hybrid';
 
 const { currentUser } = useAuth();
 const showOnlyMine = ref(false);
@@ -38,12 +52,12 @@ const signalements = ref<any[]>([]);
 
 onMounted(async () => {
   mapService.initMap('map');
-  loadSignalements();
+  await loadSignalements();
 });
 
-const loadSignalements = () => {
-  if (showOnlyMine.value && currentUser) {
-    signalements.value = signalementsService.getAll(currentUser.id);
+const loadSignalements = async () => {
+  if (showOnlyMine.value && currentUser.value) {
+    signalements.value = signalementsService.getAll(currentUser.value.id);
   } else {
     signalements.value = signalementsService.getAll();
   }
@@ -85,11 +99,11 @@ const reportIssue = async () => {
 };
 
 const saveSignalement = async (position: { lat: number, lng: number }) => {
-  if (!currentUser) return;
+  if (!currentUser.value) return;
 
   try {
-    signalementsService.create({
-      userId: currentUser.id,
+    await signalementsService.create({
+      userId: currentUser.value.id,
       location: position,
       date: new Date().toISOString(),
       status: 'nouveau',
@@ -99,7 +113,7 @@ const saveSignalement = async (position: { lat: number, lng: number }) => {
       description: ''
     });
 
-    loadSignalements(); // Recharger les signalements
+    await loadSignalements(); // Recharger les signalements
 
     const toast = await toastController.create({
       message: 'Signalement créé avec succès !',
@@ -109,6 +123,13 @@ const saveSignalement = async (position: { lat: number, lng: number }) => {
     await toast.present();
   } catch (error) {
     console.error('Erreur lors de la sauvegarde', error);
+    
+    const toast = await toastController.create({
+      message: 'Erreur lors de la création du signalement',
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
   }
 };
 
