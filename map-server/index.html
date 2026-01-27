@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Carte Offline - Antananarivo</title>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <style>
+                body { margin: 0; padding: 0; }
+                #map { height: 100vh; width: 100vw; }
+                .info {
+                    padding: 6px 8px;
+                    background: white;
+                    border-radius: 5px;
+                    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                }
+                .search-box {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    z-index: 1000;
+                    background: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                }
+            </style>
+        </head>
+        <body>
+            <div class="search-box">
+                <h4 style="margin: 0 0 10px 0;">Antananarivo</h4>
+                <p style="margin: 0; font-size: 12px;">Carte offline complete</p>
+            </div>
+            <div id="map"></div>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <script>
+                const map = L.map('map').setView([-18.8792, 47.5079], 13);
+
+                L.tileLayer('http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    minZoom: 11,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                const bounds = L.latLngBounds(
+                    L.latLng(-18.95, 47.3),
+                    L.latLng(-18.75, 47.7)
+                );
+                map.setMaxBounds(bounds);
+
+                const locations = [
+                    {coords: [-18.8792, 47.5079], name: "Centre-ville", desc: "Analakely"},
+                    {coords: [-18.9087, 47.5365], name: "Ivato", desc: "Aeroport International"},
+                    {coords: [-18.9137, 47.5362], name: "Behoririka", desc: "Marche"},
+                    {coords: [-18.8617, 47.5269], name: "Ambohijatovo", desc: "Palais de la Reine"}
+                ];
+
+                locations.forEach(loc => {
+                    L.marker(loc.coords).addTo(map)
+                        .bindPopup(`<b>${loc.name}</b><br>${loc.desc}`);
+                });
+
+                const info = L.control();
+                info.onAdd = function (map) {
+                    this._div = L.DomUtil.create('div', 'info');
+                    this._div.innerHTML = '<h4>Carte Offline</h4>' +
+                        '<p><b>Antananarivo</b><br>Toutes les rues disponibles</p>';
+                    return this._div;
+                };
+                info.addTo(map);
+            </script>
+        </body>
+    </html>

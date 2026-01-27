@@ -89,9 +89,9 @@ services:
   #     - API_URL=http://backend:8080
   #     - TILESERVER_URL=http://tileserver:8080
 
-# networks:
-#   app-network:
-#     driver: bridge
+networks:
+  app-network:
+    driver: bridge
 
 # volumes:
 #   postgres-data:
