@@ -2,16 +2,13 @@ export const environment = {
   production: false,
 
   firebase: {
-
-    
-    apiKey: "AIzaSyAQhZleZxSbCPlCN7MqbX7LSlWm8aTQ87U",  // Laissez cette valeur pour désactiver Firebase
-    authDomain: "cloudproject-57475.firebaseapp.com",
-    projectId: "cloudproject-57475",
-    storageBucket: "cloudproject-57475.appspot.com",
-    messagingSenderId: "102197049737",
-    appId: "1:102197049737:android:35c7da64d9f483fd4f538"
-    
-
+    apiKey: "AIzaSyAQhZleZxSbCPlCN7MqbX7LSlWm8aTQ87U",
+    authDomain: "cloudproject-57d75.firebaseapp.com",
+    databaseURL: "https://cloudproject-57d75-default-rtdb.firebaseio.com",
+    projectId: "cloudproject-57d75",
+    storageBucket: "cloudproject-57d75.firebasestorage.app",
+    messagingSenderId: "1021976189737",
+    appId: "1:1021976189737:android:35ce1ab84d9b883fd6f538"
   },
   
   // Configuration OpenStreetMap

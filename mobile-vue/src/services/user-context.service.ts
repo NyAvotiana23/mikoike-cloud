@@ -17,13 +17,13 @@ const userContext = ref<UserContext>({
 });
 
 export const useUserContext = () => {
-  const setAuthenticatedUser = (user: { id: string; email: string; nom: string; prenom: string }) => {
+  const setAuthenticatedUser = (user: { id: string; email: string; nom?: string; prenom?: string }) => {
     userContext.value = {
       type: 'authenticated',
       userId: user.id,
       email: user.email,
-      nom: user.nom,
-      prenom: user.prenom
+      nom: user.nom || '',
+      prenom: user.prenom || ''
     };
   };
 

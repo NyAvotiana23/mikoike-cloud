@@ -41,7 +41,7 @@
 
           <div class="text-center">
             <p class="text-sm text-gray-600 mb-4">
-              Pas de compte ? Contactez un manager pour créer un compte.
+              Les comptes sont gérés par le manager web
             </p>
 
             <ion-button fill="clear" size="small" @click="goBack">
