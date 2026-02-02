@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,7 +99,7 @@ public class AuthService {
         String ipAddress = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
 
-        // Vérifier blocage par email
+        // CORRECTION 1: Vérifier d'abord le blocage dans failed_login_tracking
         Optional<FailedLoginTracking> trackingOpt = failedLoginTrackingRepository.findByEmail(email);
         if (trackingOpt.isPresent() && trackingOpt.get().isCurrentlyBlocked()) {
             recordLoginAttempt(email, null, false, FailureReason.ACCOUNT_LOCKED, ipAddress, userAgent);
@@ -115,7 +116,7 @@ public class AuthService {
 
         User user = userOpt.get();
 
-        // Vérifier si le compte est verrouillé
+        // CORRECTION 2: Vérifier le blocage dans la table users aussi
         if (user.isAccountLocked()) {
             recordLoginAttempt(email, user, false, FailureReason.ACCOUNT_LOCKED, ipAddress, userAgent);
             throw new RuntimeException("Compte verrouillé jusqu'à " + user.getLockedUntil());
@@ -126,6 +127,14 @@ public class AuthService {
             recordLoginAttempt(email, user, false, FailureReason.INVALID_PASSWORD, ipAddress, userAgent);
             handleFailedLogin(email, user);
             throw new RuntimeException("Email ou mot de passe incorrect");
+        }
+
+        // NOUVEAU: Vérifier si l'utilisateur a déjà une session active
+        List<Session> activeSessions = sessionRepository.findByUserAndIsActiveTrue(user);
+        for (Session activeSession : activeSessions) {
+            if (activeSession.isValid()) {
+                throw new RuntimeException("Utilisateur déjà connecté. Veuillez vous déconnecter d'abord");
+            }
         }
 
         // Vérifier Firebase si online
@@ -139,9 +148,9 @@ public class AuthService {
             }
         }
 
-        // Connexion réussie
+        // CORRECTION 3: Connexion réussie - reset SEULEMENT si pas bloqué
         recordLoginAttempt(email, user, true, null, ipAddress, userAgent);
-        resetFailedAttempts(email, user);
+        resetFailedAttemptsIfNotBlocked(email, user);
 
         // Créer une session
         return createSession(user, ipAddress, userAgent);
@@ -235,11 +244,21 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String token) {
-        sessionRepository.findByToken(token).ifPresent(session -> {
+    public Session logout(String token) {
+        Optional<Session> sessionOpt = sessionRepository.findByToken(token);
+        if (sessionOpt.isPresent()) {
+            Session session = sessionOpt.get();
+
+            // Vérifier si la session est déjà invalide
+            if (!session.isValid()) {
+                throw new RuntimeException("Session déjà déconnectée ou expirée");
+            }
+
             session.invalidate();
             sessionRepository.save(session);
-        });
+            return session;
+        }
+        throw new RuntimeException("Session introuvable");
     }
 
     @Transactional
@@ -247,6 +266,23 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
         sessionRepository.invalidateAllUserSessions(user);
+    }
+
+    // ==================== UTILITAIRE TEST - LOGOUT ALL ====================
+
+    @Transactional
+    public int logoutAllSessions() {
+        List<Session> allSessions = sessionRepository.findAll();
+        int count = 0;
+        for (Session session : allSessions) {
+            if (session.getIsActive()) {
+                session.invalidate();
+                sessionRepository.save(session);
+                count++;
+            }
+        }
+        log.info("Toutes les sessions déconnectées: {} sessions", count);
+        return count;
     }
 
     // ==================== GESTION TENTATIVES ÉCHOUÉES ====================
@@ -294,6 +330,32 @@ public class AuthService {
         failedLoginTrackingRepository.save(tracking);
     }
 
+    // CORRECTION 4: Nouvelle méthode qui ne reset que si le compte n'est PAS bloqué
+    @Transactional
+    public void resetFailedAttemptsIfNotBlocked(String email, User user) {
+        // Vérifier si le compte est actuellement bloqué
+        Optional<FailedLoginTracking> trackingOpt = failedLoginTrackingRepository.findByEmail(email);
+
+        // Si bloqué, ne rien faire
+        if (trackingOpt.isPresent() && trackingOpt.get().isCurrentlyBlocked()) {
+            log.info("Compte {} toujours bloqué, pas de reset des tentatives", email);
+            return;
+        }
+
+        // Si pas bloqué, reset normal
+        if (trackingOpt.isPresent()) {
+            FailedLoginTracking tracking = trackingOpt.get();
+            tracking.reset();
+            failedLoginTrackingRepository.save(tracking);
+        }
+
+        if (user != null) {
+            user.resetFailedAttempts();
+            userRepository.save(user);
+        }
+    }
+
+    // CORRECTION 5: Méthode de reset complète (ancienne version - gardée pour compatibilité)
     @Transactional
     public void resetFailedAttempts(String email, User user) {
         // Reset tracking
