@@ -1,0 +1,75 @@
+﻿============================================================
+FILE: EntityType.java
+PACKAGE: mg.projetfinal.enums
+============================================================
+
+package mg.projetfinal.enums;
+
+public enum EntityType {
+    USER,
+    SIGNALEMENT
+}
+
+
+
+============================================================
+FILE: FailureReason.java
+PACKAGE: mg.projetfinal.enums
+============================================================
+
+package mg.projetfinal.enums;
+
+public enum FailureReason {
+    USER_NOT_FOUND,
+    INVALID_PASSWORD,
+    ACCOUNT_LOCKED,
+    FIREBASE_ERROR
+}
+
+
+
+============================================================
+FILE: SyncAction.java
+PACKAGE: mg.projetfinal.enums
+============================================================
+
+package mg.projetfinal.enums;
+
+public enum SyncAction {
+    CREATE,
+    UPDATE,
+    DELETE
+}
+
+
+
+============================================================
+FILE: SyncDirection.java
+PACKAGE: mg.projetfinal.enums
+============================================================
+
+package mg.projetfinal.enums;
+
+public enum SyncDirection {
+    TO_FIREBASE,
+    FROM_FIREBASE
+}
+
+
+
+============================================================
+FILE: SyncStatus.java
+PACKAGE: mg.projetfinal.enums
+============================================================
+
+package mg.projetfinal.enums;
+
+public enum SyncStatus {
+    PENDING,
+    PROCESSING,
+    SUCCESS,
+    FAILED
+}
+
+
+

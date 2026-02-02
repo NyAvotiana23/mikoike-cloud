@@ -1,0 +1,345 @@
+﻿============================================================
+FILE: EntrepriseRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.Entreprise;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface EntrepriseRepository extends JpaRepository<Entreprise, Integer> {
+    Optional<Entreprise> findByNom(String nom);
+    Optional<Entreprise> findBySiret(String siret);
+    List<Entreprise> findByIsActiveTrue();
+
+    @Query("SELECT e FROM Entreprise e WHERE e.isActive = true ORDER BY e.noteMoyenne DESC")
+    List<Entreprise> findTopRatedEntreprises();
+}
+
+
+
+============================================================
+FILE: FailedLoginTrackingRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.FailedLoginTracking;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface FailedLoginTrackingRepository extends JpaRepository<FailedLoginTracking, Long> {
+    Optional<FailedLoginTracking> findByEmail(String email);
+
+    @Query("SELECT f FROM FailedLoginTracking f WHERE f.isBlocked = true AND (f.blockedUntil IS NULL OR f.blockedUntil > :now)")
+    List<FailedLoginTracking> findCurrentlyBlocked(LocalDateTime now);
+
+    @Query("SELECT f FROM FailedLoginTracking f WHERE f.isBlocked = true AND f.blockedUntil < :now")
+    List<FailedLoginTracking> findExpiredBlocks(LocalDateTime now);
+}
+
+
+
+============================================================
+FILE: HistoriqueStatusRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.HistoriqueStatus;
+import mg.projetfinal.entity.Signalement;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface HistoriqueStatusRepository extends JpaRepository<HistoriqueStatus, Long> {
+    List<HistoriqueStatus> findBySignalementOrderByChangedAtDesc(Signalement signalement);
+}
+
+
+
+============================================================
+FILE: LoginAttemptRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.LoginAttempt;
+import mg.projetfinal.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long> {
+    List<LoginAttempt> findByEmailOrderByAttemptedAtDesc(String email);
+    List<LoginAttempt> findByUserOrderByAttemptedAtDesc(User user);
+
+    @Query("SELECT la FROM LoginAttempt la WHERE la.email = :email AND la.attemptedAt > :since ORDER BY la.attemptedAt DESC")
+    List<LoginAttempt> findRecentAttemptsByEmail(String email, LocalDateTime since);
+
+    @Query("SELECT la FROM LoginAttempt la WHERE la.email = :email AND la.success = false AND la.attemptedAt > :since")
+    List<LoginAttempt> findFailedAttemptsSince(String email, LocalDateTime since);
+}
+
+
+
+============================================================
+FILE: RoleRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Integer> {
+    Optional<Role> findByCode(String code);
+    boolean existsByCode(String code);
+}
+
+
+
+============================================================
+FILE: SessionRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+
+import mg.projetfinal.entity.Session;
+import mg.projetfinal.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface SessionRepository extends JpaRepository<Session, Long> {
+    Optional<Session> findByToken(String token);
+    List<Session> findByUserAndIsActiveTrue(User user);
+
+    @Query("SELECT s FROM Session s WHERE s.expiresAt < :now")
+    List<Session> findExpiredSessions(LocalDateTime now);
+
+    @Modifying
+    @Query("UPDATE Session s SET s.isActive = false WHERE s.user = :user")
+    void invalidateAllUserSessions(User user);
+
+    @Modifying
+    @Query("DELETE FROM Session s WHERE s.expiresAt < :expirationDate")
+    void deleteExpiredSessions(LocalDateTime expirationDate);
+}
+
+
+
+============================================================
+FILE: SignalementActionRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.SignalementAction;
+import mg.projetfinal.entity.Signalement;
+import mg.projetfinal.entity.Entreprise;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface SignalementActionRepository extends JpaRepository<SignalementAction, Long> {
+    List<SignalementAction> findBySignalement(Signalement signalement);
+    List<SignalementAction> findByEntreprise(Entreprise entreprise);
+
+    @Query("SELECT sa FROM SignalementAction sa WHERE sa.dateDebutTravaux IS NOT NULL AND sa.dateFinReelle IS NULL")
+    List<SignalementAction> findActionsEnCours();
+
+    @Query("SELECT sa FROM SignalementAction sa WHERE sa.dateFinPrevue < CURRENT_TIMESTAMP AND sa.dateFinReelle IS NULL")
+    List<SignalementAction> findActionsEnRetard();
+}
+
+
+
+============================================================
+FILE: SignalementRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.Signalement;
+import mg.projetfinal.entity.SignalementStatus;
+import mg.projetfinal.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface SignalementRepository extends JpaRepository<Signalement, Long> {
+    List<Signalement> findByUser(User user);
+    List<Signalement> findByStatus(SignalementStatus status);
+    List<Signalement> findByFirebaseSyncedFalse();
+
+    @Query("SELECT s FROM Signalement s WHERE s.status.code = :statusCode ORDER BY s.dateSignalement DESC")
+    List<Signalement> findByStatusCode(String statusCode);
+
+    @Query("SELECT s FROM Signalement s ORDER BY s.dateSignalement DESC")
+    List<Signalement> findAllOrderByDateDesc();
+}
+
+
+
+============================================================
+FILE: SignalementStatusRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.SignalementStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface SignalementStatusRepository extends JpaRepository<SignalementStatus, Integer> {
+    Optional<SignalementStatus> findByCode(String code);
+    List<SignalementStatus> findAllByOrderByOrdreAsc();
+    boolean existsByCode(String code);
+}
+
+
+
+============================================================
+FILE: SyncHistoryRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.SyncHistory;
+import mg.projetfinal.enums.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface SyncHistoryRepository extends JpaRepository<SyncHistory, Long> {
+
+    List<SyncHistory> findByEntityTypeAndEntityIdOrderBySyncedAtDesc(EntityType entityType, Long entityId);
+
+    List<SyncHistory> findByStatusOrderBySyncedAtDesc(SyncStatus status);
+
+    @Query("SELECT sh FROM SyncHistory sh WHERE sh.syncedAt < :date")
+    List<SyncHistory> findOlderThan(LocalDateTime date);
+
+    @Query("SELECT COUNT(sh) FROM SyncHistory sh WHERE sh.status = :status AND sh.syncedAt > :since")
+    Long countByStatusSince(SyncStatus status, LocalDateTime since);
+}
+
+
+
+============================================================
+FILE: SyncQueueRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.SyncQueue;
+import mg.projetfinal.enums.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface SyncQueueRepository extends JpaRepository<SyncQueue, Long> {
+
+    @Query("SELECT sq FROM SyncQueue sq WHERE sq.status = 'PENDING' AND sq.scheduledAt <= :now ORDER BY sq.priority ASC, sq.scheduledAt ASC")
+    List<SyncQueue> findPendingSync(LocalDateTime now);
+
+    Optional<SyncQueue> findByEntityTypeAndEntityIdAndStatus(EntityType entityType, Long entityId, SyncStatus status);
+
+    List<SyncQueue> findByStatusAndRetryCountLessThan(SyncStatus status, Integer maxRetries);
+
+    @Query("SELECT sq FROM SyncQueue sq WHERE sq.status = 'PROCESSING' AND sq.processingStartedAt < :timeout")
+    List<SyncQueue> findStuckProcessing(LocalDateTime timeout);
+}
+
+
+
+============================================================
+FILE: UserRepository.java
+PACKAGE: mg.projetfinal.repository
+============================================================
+
+package mg.projetfinal.repository;
+
+import mg.projetfinal.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    Optional<User> findByFirebaseUid(String firebaseUid);
+    boolean existsByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.firebaseSynced = false")
+    List<User> findNotSynced();
+
+    @Query("SELECT u FROM User u WHERE u.isLocked = true")
+    List<User> findLockedUsers();
+}
+
+
+
