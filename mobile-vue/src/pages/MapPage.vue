@@ -4,29 +4,90 @@
     
     <ion-content>
       <!-- Filtre pour utilisateurs connectés -->
-      <div v-if="isAuthenticated" class="p-4 bg-white shadow-md">
-        <ion-toggle v-model="showOnlyMine">
-          Mes signalements uniquement
-        </ion-toggle>
+      <div v-if="isAuthenticated" class="filter-bar">
+        <div class="filter-tabs">
+          <button
+            class="filter-tab"
+            :class="{ active: !showOnlyMine && !filterStatus }"
+            @click="toggleAllReports"
+          >
+            <ion-icon :icon="globeOutline" class="tab-icon"></ion-icon>
+            <span>Tous les signalements</span>
+          </button>
+          <button
+            class="filter-tab"
+            :class="{ active: showOnlyMine }"
+            @click="toggleMyReports"
+          >
+            <ion-icon :icon="personOutline" class="tab-icon"></ion-icon>
+            <span>Mes signalements</span>
+          </button>
+        </div>
+
+        <!-- Filtres de statut (visible uniquement dans "Tous les signalements") -->
+        <div v-if="!showOnlyMine" class="status-filters">
+          <button
+            class="status-filter-btn"
+            :class="{ active: !filterStatus }"
+            @click="setStatusFilter(null)"
+          >
+            Tous
+          </button>
+          <button
+            class="status-filter-btn nouveau"
+            :class="{ active: filterStatus === 'nouveau' }"
+            @click="setStatusFilter('nouveau')"
+          >
+            Nouveau
+          </button>
+          <button
+            class="status-filter-btn en-cours"
+            :class="{ active: filterStatus === 'en_cours' }"
+            @click="setStatusFilter('en_cours')"
+          >
+            En cours
+          </button>
+          <button
+            class="status-filter-btn termine"
+            :class="{ active: filterStatus === 'termine' }"
+            @click="setStatusFilter('termine')"
+          >
+            Terminé
+          </button>
+        </div>
       </div>
 
       <!-- Message pour visiteurs -->
-      <div v-else class="p-4 bg-blue-50 border-b border-blue-200">
-        <div class="flex items-center gap-2 text-blue-700 text-sm">
-          <ion-icon :icon="informationCircle"></ion-icon>
+      <div v-else class="visitor-message">
+        <div class="message-content">
+          <ion-icon :icon="informationCircle" class="message-icon"></ion-icon>
           <span>Mode visiteur : vous pouvez voir les signalements. Connectez-vous pour en ajouter.</span>
         </div>
       </div>
 
       <!-- Container Carte -->
-      <div id="map" class="h-full"></div>
+      <div id="map" class="map-container"></div>
 
-      <!-- FAB pour signaler (uniquement utilisateurs connectés) -->
+      <!-- FAB pour activer/désactiver le mode ajout (uniquement utilisateurs connectés) -->
       <ion-fab v-if="isAuthenticated" vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button color="primary" @click="reportIssue">
-          <ion-icon :icon="add"></ion-icon>
+        <ion-fab-button
+          :color="isAddingReport ? 'success' : 'primary'"
+          @click="toggleAddMode"
+        >
+          <ion-icon :icon="isAddingReport ? checkmark : add"></ion-icon>
         </ion-fab-button>
       </ion-fab>
+
+      <!-- Message instruction pour le mode ajout -->
+      <div v-if="isAddingReport" class="add-mode-banner">
+        <div class="banner-content">
+          <ion-icon :icon="locationOutline" class="banner-icon"></ion-icon>
+          <span>Cliquez sur la carte pour placer votre rapport</span>
+          <ion-button size="small" fill="clear" @click="cancelAddMode">
+            <ion-icon :icon="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
     </ion-content>
 
     <!-- Modal détails signalement -->
@@ -41,48 +102,48 @@
       </ion-header>
       <ion-content class="ion-padding" v-if="selectedSignalement">
         <div class="details-container">
-          <h2 class="text-xl font-bold mb-4">
+          <h2 class="details-title">
             {{ selectedSignalement.titre || 'Signalement #' + selectedSignalement.id.slice(0, 8) }}
           </h2>
 
-          <ion-badge :color="getStatusColor(selectedSignalement.status)" class="mb-4">
+          <ion-badge :color="getStatusColor(selectedSignalement.status)" class="status-badge">
             {{ getStatusLabel(selectedSignalement.status) }}
           </ion-badge>
 
           <div class="detail-section">
             <div class="detail-row">
-              <ion-icon :icon="calendarOutline"></ion-icon>
+              <ion-icon :icon="calendarOutline" class="detail-icon"></ion-icon>
               <span>{{ formatDate(selectedSignalement.date) }}</span>
             </div>
 
             <div class="detail-row" v-if="selectedSignalement.priorite">
-              <ion-icon :icon="flagOutline"></ion-icon>
+              <ion-icon :icon="flagOutline" class="detail-icon"></ion-icon>
               <span>{{ getPriorityLabel(selectedSignalement.priorite) }}</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="locationOutline"></ion-icon>
+              <ion-icon :icon="locationOutline" class="detail-icon"></ion-icon>
               <span>{{ selectedSignalement.location.lat.toFixed(5) }}, {{ selectedSignalement.location.lng.toFixed(5) }}</span>
             </div>
 
             <div class="detail-row" v-if="selectedSignalement.entreprise">
-              <ion-icon :icon="businessOutline"></ion-icon>
+              <ion-icon :icon="businessOutline" class="detail-icon"></ion-icon>
               <span>{{ selectedSignalement.entreprise }}</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="resizeOutline"></ion-icon>
+              <ion-icon :icon="resizeOutline" class="detail-icon"></ion-icon>
               <span>Surface : {{ selectedSignalement.surface }} m²</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="cashOutline"></ion-icon>
+              <ion-icon :icon="cashOutline" class="detail-icon"></ion-icon>
               <span>Budget : {{ formatCurrency(selectedSignalement.budget) }}</span>
             </div>
           </div>
 
           <div v-if="selectedSignalement.description" class="description-section">
-            <h3 class="font-semibold mb-2">Description</h3>
+            <h3 class="description-title">Description</h3>
             <p>{{ selectedSignalement.description }}</p>
           </div>
         </div>
@@ -100,18 +161,18 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <form @submit.prevent="saveSignalement">
-          <ion-item>
+        <form @submit.prevent="saveSignalement" class="add-form">
+          <ion-item class="form-item">
             <ion-label position="floating">Titre</ion-label>
             <ion-input v-model="newSignalement.titre" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Description</ion-label>
-            <ion-textarea v-model="newSignalement.description" rows="3"></ion-textarea>
+            <ion-textarea v-model="newSignalement.description" :rows="3"></ion-textarea>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label>Priorité</ion-label>
             <ion-select v-model="newSignalement.priorite">
               <ion-select-option value="basse">Basse</ion-select-option>
@@ -120,22 +181,22 @@
             </ion-select>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Surface (m²)</ion-label>
-            <ion-input v-model.number="newSignalement.surface" type="number"></ion-input>
+            <ion-input v-model.number="newSignalement.surface" type="number" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Budget (€)</ion-label>
-            <ion-input v-model.number="newSignalement.budget" type="number"></ion-input>
+            <ion-input v-model.number="newSignalement.budget" type="number" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Entreprise</ion-label>
             <ion-input v-model="newSignalement.entreprise"></ion-input>
           </ion-item>
 
-          <ion-button expand="block" type="submit" class="mt-4">
+          <ion-button expand="block" type="submit" class="submit-button">
             Créer le signalement
           </ion-button>
         </form>
@@ -145,30 +206,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import {
-  IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonToggle,
-  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
+  IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonModal,
+  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonItem,
+  IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
   IonBadge, toastController
 } from '@ionic/vue';
 import {
   add, informationCircle, calendarOutline, flagOutline, locationOutline,
-  businessOutline, resizeOutline, cashOutline
+  businessOutline, resizeOutline, cashOutline, checkmark, close,
+  globeOutline, personOutline
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
-import mapService from '@/services/map.service';
-import signalementsService from '@/services/signalements.service';
 import { useUserContext } from '@/services/user-context.service';
-import type { Signalement } from '@/types/signalement';
+import signalementsService from '@/services/signalements.service';
+import mapService from '@/services/map.service';
+import reportsService from '@/services/reports.service';
+import geolocationService from '@/services/geolocation.service';
 
 const { isAuthenticated, userContext } = useUserContext();
+
+const signalements = ref<any[]>([]);
+const allSignalements = ref<any[]>([]); // Tous les signalements chargés
 const showOnlyMine = ref(false);
-const signalements = ref<Signalement[]>([]);
+const filterStatus = ref<string | null>(null);
 const showDetailsModal = ref(false);
 const showAddModal = ref(false);
-const selectedSignalement = ref<Signalement | null>(null);
-const clickedPosition = ref<{ lat: number, lng: number } | null>(null);
+const selectedSignalement = ref<any>(null);
+const clickedPosition = ref<any>(null);
+const isAddingReport = ref(false);
+const userLocation = ref<{ lat: number, lng: number } | null>(null);
 
 const newSignalement = ref({
   titre: '',
@@ -180,37 +248,101 @@ const newSignalement = ref({
 });
 
 onMounted(async () => {
-  await mapService.initMap('map');
-  loadSignalements();
-  setupMapClickHandler();
-});
+  // Demander la permission de géolocalisation et obtenir la position
+  try {
+    const position = await geolocationService.getCurrentPosition();
+    userLocation.value = position;
 
-const setupMapClickHandler = () => {
+    // Initialiser la carte avec la position de l'utilisateur si disponible
+    await mapService.initMap('map', position.lat, position.lng);
+
+    // Ajouter un marqueur pour la position de l'utilisateur
+    mapService.addUserMarker(position.lat, position.lng);
+
+    const toast = await toastController.create({
+      message: 'Position actuelle détectée',
+      duration: 2000,
+      color: 'success',
+      position: 'top'
+    });
+    await toast.present();
+  } catch (error) {
+    console.warn('Géolocalisation non disponible, utilisation de la position par défaut', error);
+    await mapService.initMap('map');
+  }
+
+  await loadSignalements();
+
+  // Gérer les clics sur les marqueurs
+  mapService.onMarkerClick((markerId: string) => {
+    if (!isAddingReport.value) {
+      const sig = signalements.value.find(s => s.id === markerId);
+      if (sig) {
+        selectedSignalement.value = sig;
+        showDetailsModal.value = true;
+      }
+    }
+  });
+
+  // Gérer les clics sur la carte pour ajouter un rapport
   mapService.onMapClick((lat: number, lng: number) => {
-    if (isAuthenticated.value) {
-      // Utilisateur connecté : peut ajouter un signalement
+    if (isAddingReport.value && isAuthenticated.value) {
       clickedPosition.value = { lat, lng };
       showAddModal.value = true;
+      isAddingReport.value = false;
     }
   });
+});
 
-  mapService.onMarkerClick((signalementId: string) => {
-    // Tout le monde peut voir les détails
-    const signalement = signalements.value.find(s => s.id === signalementId);
-    if (signalement) {
-      selectedSignalement.value = signalement;
-      showDetailsModal.value = true;
+const loadSignalements = async () => {
+  try {
+    if (showOnlyMine.value && userContext.value.userId) {
+      // Utiliser le nouveau service reports
+      allSignalements.value = await reportsService.getAllReports(userContext.value.userId);
+    } else {
+      // Charger tous les rapports
+      allSignalements.value = await reportsService.getAllReports();
     }
-  });
+    applyFilters();
+  } catch (error) {
+    console.error('Erreur lors du chargement des signalements:', error);
+    // Fallback vers les données mockées
+    if (showOnlyMine.value && userContext.value.userId) {
+      allSignalements.value = signalementsService.getAll(userContext.value.userId);
+    } else {
+      allSignalements.value = signalementsService.getAll();
+    }
+    applyFilters();
+  }
 };
 
-const loadSignalements = () => {
-  if (showOnlyMine.value && userContext.value.userId) {
-    signalements.value = signalementsService.getAll(userContext.value.userId);
-  } else {
-    signalements.value = signalementsService.getAll();
+const applyFilters = () => {
+  let filtered = [...allSignalements.value];
+
+  // Appliquer le filtre de statut si défini
+  if (filterStatus.value) {
+    filtered = filtered.filter(sig => sig.status === filterStatus.value);
   }
+
+  signalements.value = filtered;
   displayMarkers();
+};
+
+const toggleAllReports = () => {
+  showOnlyMine.value = false;
+  filterStatus.value = null;
+  loadSignalements();
+};
+
+const toggleMyReports = () => {
+  showOnlyMine.value = true;
+  filterStatus.value = null;
+  loadSignalements();
+};
+
+const setStatusFilter = (status: string | null) => {
+  filterStatus.value = status;
+  applyFilters();
 };
 
 const displayMarkers = () => {
@@ -220,24 +352,36 @@ const displayMarkers = () => {
       mapService.addMarker(sig.location.lat, sig.location.lng, {
         id: sig.id,
         status: sig.status,
-        titre: sig.titre
+        titre: sig.titre,
+        date: sig.date,
+        onClickCallback: (id: string) => {
+          if (!isAddingReport.value) {
+            const selectedSig = signalements.value.find(s => s.id === id);
+            if (selectedSig) {
+              selectedSignalement.value = selectedSig;
+              showDetailsModal.value = true;
+            }
+          }
+        }
       });
     }
   });
 };
 
-const reportIssue = () => {
-  // Utiliser la position actuelle de l'utilisateur
-  const center = mapService.getMapCenter();
-  clickedPosition.value = center;
-  showAddModal.value = true;
+const toggleAddMode = () => {
+  isAddingReport.value = !isAddingReport.value;
+};
+
+const cancelAddMode = () => {
+  isAddingReport.value = false;
 };
 
 const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    signalementsService.create({
+    // Utiliser le nouveau service reports
+    await reportsService.addReport({
       userId: userContext.value.userId,
       location: clickedPosition.value,
       date: new Date().toISOString(),
@@ -250,10 +394,10 @@ const saveSignalement = async () => {
       entreprise: newSignalement.value.entreprise
     });
 
-    loadSignalements();
+    await loadSignalements();
 
     const toast = await toastController.create({
-      message: 'Signalement créé avec succès !',
+      message: 'Rapport créé avec succès !',
       duration: 2000,
       color: 'success'
     });
@@ -262,6 +406,13 @@ const saveSignalement = async () => {
     closeAddModal();
   } catch (error) {
     console.error('Erreur lors de la sauvegarde', error);
+
+    const toast = await toastController.create({
+      message: 'Erreur lors de la création du rapport',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
   }
 };
 
@@ -326,16 +477,203 @@ const getPriorityLabel = (priorite: string) => {
 watch(showOnlyMine, () => {
   loadSignalements();
 });
+
+watch(filterStatus, () => {
+  if (!showOnlyMine.value) {
+    applyFilters();
+  }
+});
 </script>
 
 <style scoped>
-#map {
-  width: 100%;
-  height: calc(100vh - 160px);
+/* Filter Bar */
+.filter-bar {
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #e2e8f0;
 }
 
+.filter-tabs {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.filter-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.filter-tab:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border-color: #0ea5e9;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.filter-tab .tab-icon {
+  font-size: 1.25rem;
+}
+
+/* Status Filters */
+.status-filters {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.status-filter-btn {
+  padding: 0.5rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.status-filter-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.status-filter-btn.active {
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-filter-btn.active:not(.nouveau):not(.en-cours):not(.termine) {
+  background: #64748b;
+  border-color: #64748b;
+}
+
+.status-filter-btn.nouveau.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.status-filter-btn.en-cours.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.status-filter-btn.termine.active {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+/* Visitor Message */
+.visitor-message {
+  padding: 1rem;
+  background: #eff6ff;
+  border-bottom: 2px solid #bfdbfe;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1e40af;
+  font-size: 0.875rem;
+}
+
+.message-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Add Mode Banner */
+.add-mode-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.banner-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Map Container */
+.map-container {
+  width: 100%;
+  height: calc(100vh - 200px);
+  position: relative;
+  z-index: 1;
+}
+
+ion-content {
+  --overflow: hidden;
+}
+
+/* Details Modal */
 .details-container {
   padding: 1rem;
+}
+
+.details-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.status-badge {
+  margin-bottom: 1.5rem;
 }
 
 .detail-section {
@@ -347,18 +685,76 @@ watch(showOnlyMine, () => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.detail-row ion-icon {
+.detail-icon {
   font-size: 1.5rem;
-  color: var(--ion-color-primary);
+  color: #0ea5e9;
 }
 
 .description-section {
   margin-top: 1.5rem;
   padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+.description-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.75rem 0;
+}
+
+/* Add Form - Custom CSS (sans Tailwind) */
+.add-form {
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-item {
+  margin-bottom: 1.25rem;
+  --background: #ffffff;
+  --border-radius: 16px;
+  --border-width: 2px;
+  --border-color: #e2e8f0;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.form-item:hover,
+.form-item:focus-within {
+  --border-color: #0ea5e9;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+  transform: translateY(-2px);
+}
+
+.submit-button {
+  --border-radius: 16px;
+  height: 58px;
+  margin-top: 1.5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25);
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
 }
 </style>

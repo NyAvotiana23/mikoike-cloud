@@ -6,54 +6,54 @@
     <database-status-chip />
     
     <ion-content class="ion-padding">
-      <div class="space-y-4">
+      <div class="dashboard-container">
         <!-- Carte de statistiques globales -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">Statistiques Générales</h2>
+        <div class="stats-card">
+          <h2 class="card-title">Statistiques Générales</h2>
           
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Total Signalements</p>
-              <p class="text-3xl font-bold text-blue-600">{{ stats.total }}</p>
+          <div class="stats-grid">
+            <div class="stat-box stat-blue">
+              <p class="stat-label">Total Signalements</p>
+              <p class="stat-value">{{ stats.total }}</p>
             </div>
 
-            <div class="bg-green-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Avancement</p>
-              <p class="text-3xl font-bold text-green-600">{{ stats.avancement }}%</p>
+            <div class="stat-box stat-green">
+              <p class="stat-label">Avancement</p>
+              <p class="stat-value">{{ stats.avancement }}%</p>
             </div>
 
-            <div class="bg-purple-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Surface Totale</p>
-              <p class="text-2xl font-bold text-purple-600">{{ stats.totalSurface }} m²</p>
+            <div class="stat-box stat-purple">
+              <p class="stat-label">Surface Totale</p>
+              <p class="stat-value-sm">{{ stats.totalSurface }} m²</p>
             </div>
 
-            <div class="bg-orange-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Budget Total</p>
-              <p class="text-2xl font-bold text-orange-600">{{ formatBudget(stats.totalBudget) }}</p>
+            <div class="stat-box stat-orange">
+              <p class="stat-label">Budget Total</p>
+              <p class="stat-value-sm">{{ formatBudget(stats.totalBudget) }}</p>
             </div>
           </div>
         </div>
 
         <!-- Statut de synchronisation -->
-        <div v-if="stats.syncStatus" class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-bold mb-4 text-gray-800">
+        <div v-if="stats.syncStatus" class="sync-card">
+          <h2 class="card-title">
             Synchronisation
             <ion-icon 
               :icon="stats.syncStatus.isFirebaseAvailable ? cloudDone : cloudOffline"
               :color="stats.syncStatus.isFirebaseAvailable ? 'success' : 'warning'"
-              class="ml-2"
+              class="sync-icon"
             ></ion-icon>
           </h2>
           
-          <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-green-50 rounded">
-              <span class="font-semibold">Synchronisés</span>
-              <span class="text-2xl font-bold text-green-600">{{ stats.syncStatus.synced }}</span>
+          <div class="sync-content">
+            <div class="sync-item sync-success">
+              <span class="sync-label">Synchronisés</span>
+              <span class="sync-value">{{ stats.syncStatus.synced }}</span>
             </div>
 
-            <div v-if="stats.syncStatus.pending > 0" class="flex items-center justify-between p-3 bg-yellow-50 rounded">
-              <span class="font-semibold">En attente</span>
-              <span class="text-2xl font-bold text-yellow-600">{{ stats.syncStatus.pending }}</span>
+            <div v-if="stats.syncStatus.pending > 0" class="sync-item sync-warning">
+              <span class="sync-label">En attente</span>
+              <span class="sync-value">{{ stats.syncStatus.pending }}</span>
             </div>
 
             <ion-button 
@@ -61,6 +61,7 @@
               expand="block"
               @click="syncNow"
               :disabled="syncing"
+              class="sync-button"
             >
               <ion-icon slot="start" :icon="syncOutline"></ion-icon>
               {{ syncing ? 'Synchronisation...' : 'Synchroniser maintenant' }}
@@ -69,74 +70,74 @@
         </div>
 
         <!-- Répartition par statut -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-bold mb-4 text-gray-800">Répartition par Statut</h2>
+        <div class="status-card">
+          <h2 class="card-title">Répartition par Statut</h2>
           
-          <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-status-nouveau bg-opacity-20 rounded">
-              <span class="font-semibold">Nouveau</span>
-              <span class="text-2xl font-bold">{{ stats.nouveau }}</span>
+          <div class="status-content">
+            <div class="status-item status-nouveau">
+              <span class="status-label">Nouveau</span>
+              <span class="status-value">{{ stats.nouveau }}</span>
             </div>
 
-            <div class="flex items-center justify-between p-3 bg-status-en_cours bg-opacity-20 rounded">
-              <span class="font-semibold">En Cours</span>
-              <span class="text-2xl font-bold">{{ stats.en_cours }}</span>
+            <div class="status-item status-en-cours">
+              <span class="status-label">En Cours</span>
+              <span class="status-value">{{ stats.en_cours }}</span>
             </div>
 
-            <div class="flex items-center justify-between p-3 bg-status-termine bg-opacity-20 rounded">
-              <span class="font-semibold">Terminé</span>
-              <span class="text-2xl font-bold">{{ stats.termine }}</span>
+            <div class="status-item status-termine">
+              <span class="status-label">Terminé</span>
+              <span class="status-value">{{ stats.termine }}</span>
             </div>
           </div>
         </div>
 
         <!-- Liste des derniers signalements -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-bold mb-4 text-gray-800">Derniers Signalements</h2>
+        <div class="recent-card">
+          <h2 class="card-title">Derniers Signalements</h2>
           
-          <div class="space-y-2">
+          <div class="recent-list">
             <div
               v-for="sig in recentSignalements"
               :key="sig.id"
-              class="p-3 border-l-4 bg-gray-50 rounded relative"
+              class="recent-item"
               :class="{
-                'border-status-nouveau': sig.status === 'nouveau',
-                'border-status-en_cours': sig.status === 'en_cours',
-                'border-status-termine': sig.status === 'termine'
+                'border-nouveau': sig.status === 'nouveau',
+                'border-en-cours': sig.status === 'en_cours',
+                'border-termine': sig.status === 'termine'
               }"
             >
               <!-- Badge de sync -->
-              <div class="absolute top-2 right-2">
+              <div class="sync-badge">
                 <ion-icon 
                   v-if="sig.syncStatus === 'synced'"
                   :icon="cloudDone"
                   color="success"
-                  class="text-sm"
+                  class="badge-icon"
                 ></ion-icon>
                 <ion-icon 
                   v-else-if="sig.syncStatus === 'pending' || sig.syncStatus === 'local'"
                   :icon="cloudUpload"
                   color="warning"
-                  class="text-sm"
+                  class="badge-icon"
                 ></ion-icon>
               </div>
 
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="font-semibold">{{ sig.entreprise || 'Non assigné' }}</p>
-                  <p class="text-sm text-gray-600">{{ formatDate(sig.date) }}</p>
+              <div class="recent-content">
+                <div class="recent-header">
+                  <p class="recent-entreprise">{{ sig.entreprise || 'Non assigné' }}</p>
+                  <span class="recent-status"
+                    :class="{
+                      'badge-nouveau': sig.status === 'nouveau',
+                      'badge-en-cours': sig.status === 'en_cours',
+                      'badge-termine': sig.status === 'termine'
+                    }"
+                  >
+                    {{ sig.status.replace('_', ' ').toUpperCase() }}
+                  </span>
                 </div>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold"
-                  :class="{
-                    'bg-status-nouveau text-white': sig.status === 'nouveau',
-                    'bg-status-en_cours text-white': sig.status === 'en_cours',
-                    'bg-status-termine text-white': sig.status === 'termine'
-                  }"
-                >
-                  {{ sig.status.replace('_', ' ').toUpperCase() }}
-                </span>
+                <p class="recent-date">{{ formatDate(sig.date) }}</p>
+                <p class="recent-info">{{ sig.surface }} m² - {{ formatBudget(sig.budget) }}</p>
               </div>
-              <p class="text-sm mt-2">{{ sig.surface }} m² - {{ formatBudget(sig.budget) }}</p>
             </div>
           </div>
         </div>
@@ -202,7 +203,6 @@ const syncNow = async () => {
       });
       await toast.present();
       
-      // Recharger les stats
       loadData();
     } else {
       throw new Error(result.error);
@@ -235,3 +235,285 @@ const formatDate = (dateStr: string) => {
   });
 };
 </script>
+
+<style scoped>
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Cards */
+.stats-card,
+.sync-card,
+.status-card,
+.recent-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sync-icon {
+  font-size: 1.5rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.stat-box {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.stat-blue {
+  background: #dbeafe;
+}
+
+.stat-green {
+  background: #d1fae5;
+}
+
+.stat-purple {
+  background: #e9d5ff;
+}
+
+.stat-orange {
+  background: #fed7aa;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0 0 0.5rem 0;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-blue .stat-value {
+  color: #2563eb;
+}
+
+.stat-green .stat-value {
+  color: #059669;
+}
+
+.stat-purple .stat-value {
+  color: #7c3aed;
+}
+
+.stat-orange .stat-value {
+  color: #ea580c;
+}
+
+.stat-value-sm {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-purple .stat-value-sm {
+  color: #7c3aed;
+}
+
+.stat-orange .stat-value-sm {
+  color: #ea580c;
+}
+
+/* Sync Content */
+.sync-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sync-item {
+  display: flex;
+  align-items: center;
+  justify-between;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.sync-success {
+  background: #d1fae5;
+}
+
+.sync-warning {
+  background: #fef3c7;
+}
+
+.sync-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.sync-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.sync-success .sync-value {
+  color: #059669;
+}
+
+.sync-warning .sync-value {
+  color: #d97706;
+}
+
+.sync-button {
+  --border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+/* Status Content */
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  justify-between;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.status-nouveau {
+  background: rgba(14, 165, 233, 0.1);
+}
+
+.status-en-cours {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.status-termine {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.status-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.status-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Recent List */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recent-item {
+  padding: 0.75rem;
+  border-left: 4px solid;
+  background: #f8f9fa;
+  border-radius: 8px;
+  position: relative;
+}
+
+.border-nouveau {
+  border-left-color: #0ea5e9;
+}
+
+.border-en-cours {
+  border-left-color: #f59e0b;
+}
+
+.border-termine {
+  border-left-color: #10b981;
+}
+
+.sync-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.badge-icon {
+  font-size: 1rem;
+}
+
+.recent-content {
+  padding-right: 2rem;
+}
+
+.recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.recent-entreprise {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.recent-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-nouveau {
+  background: #0ea5e9;
+  color: white;
+}
+
+.badge-en-cours {
+  background: #f59e0b;
+  color: white;
+}
+
+.badge-termine {
+  background: #10b981;
+  color: white;
+}
+
+.recent-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+}
+
+.recent-info {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

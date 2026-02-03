@@ -14,8 +14,8 @@ export const environment = {
     attribution: '&copy; OpenStreetMap contributors'
   },
   defaultLocation: {
-    lat: -18.8792,
-    lng: 47.5079,
+    lat: 48.8566,
+    lng: 2.3522,
     zoom: 13
   }
 };
