@@ -10,33 +10,42 @@ export const AuthProvider = ({ children }) => {
 
     // Charger l'utilisateur depuis le localStorage au démarrage
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
+        const storedUser = localStorage.getItem('userId');
         const storedSessionId = localStorage.getItem('sessionId');
 
+        // Si les deux variables contiennent quelque chose (ne sont pas null, ni undefined, ni vide)
         if (storedUser && storedSessionId) {
-            setUser(JSON.parse(storedUser));
-            setSessionId(storedSessionId);
+            try {
+                setUser(storedUser);
+                setSessionId(storedSessionId);
+                console.log(user);
+            } catch (error) {
+                // Sécurité : Si le JSON dans le storage est corrompu, on évite le crash
+                console.error("Erreur de lecture du storage", error);
+                localStorage.clear(); 
+            }
         }
+        
         setLoading(false);
     }, []);
 
     const login = (userData, session) => {
         setUser(userData);
         setSessionId(session);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('userId', userData);
         localStorage.setItem('sessionId', session);
     };
 
     const logout = () => {
         setUser(null);
         setSessionId(null);
-        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
         localStorage.removeItem('sessionId');
     };
 
     const updateUser = (userData) => {
         setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('userId',userData);
     };
 
     const value = {
