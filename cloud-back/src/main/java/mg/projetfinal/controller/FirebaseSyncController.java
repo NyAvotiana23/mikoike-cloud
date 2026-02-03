@@ -26,7 +26,7 @@ public class FirebaseSyncController {
     // ==================== SYNCHRONISATION COMPLÈTE ====================
 
     @PostMapping("/all")
-//    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @Operation(
             summary = "Synchronisation bidirectionnelle complète",
             description = "Synchronise toutes les données entre PostgreSQL et Firebase dans les deux sens"
