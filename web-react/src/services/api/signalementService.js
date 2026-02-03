@@ -13,6 +13,8 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// src/services/api/signalementService.js
+
 class SignalementService {
     static roadIssues = [
         {
@@ -22,8 +24,11 @@ class SignalementService {
             color: '#DC2626',
             position: { lat: -18.8792, lng: 47.5079 },
             title: 'Nids de poule majeurs',
-            date: '2025-01-15',
+            dateCreation: '2025-01-15',
+            dateDebut: null,
+            dateFin: null,
             status: 'nouveau',
+            avancement: 0,
             surface: 45,
             budget: 2500000,
             entreprise: 'Travaux Publics Tana',
@@ -38,14 +43,17 @@ class SignalementService {
             type: 'water',
             icon: '💧',
             color: '#2563EB',
-            position: { lat: -18.9100, lng: 47.5250 },
-            title: "Fuite d'eau principale",
-            date: '2025-01-10',
+            position: { lat: -18.9134, lng: 47.5361 },
+            title: 'Fuite d\'eau principale',
+            dateCreation: '2025-01-10',
+            dateDebut: '2025-01-14',
+            dateFin: null,
             status: 'en cours',
+            avancement: 50,
             surface: 30,
             budget: 3200000,
             entreprise: 'JIRAMA Réparations',
-            location: "Avenue de l'Indépendance",
+            location: 'Avenue de l\'Indépendance',
             actions: [
                 { date: '2025-01-10', action: 'Signalement créé', user: 'Citoyen' },
                 { date: '2025-01-11', action: 'Validation du signalement', user: 'Superviseur' },
@@ -58,10 +66,13 @@ class SignalementService {
             type: 'success',
             icon: '✓',
             color: '#16A34A',
-            position: { lat: -18.9137, lng: 47.5361 },
+            position: { lat: -18.9104, lng: 47.5238 },
             title: 'Réparation route terminée',
-            date: '2024-12-20',
+            dateCreation: '2024-12-20',
+            dateDebut: '2024-12-28',
+            dateFin: '2025-01-10',
             status: 'terminé',
+            avancement: 100,
             surface: 120,
             budget: 5500000,
             entreprise: 'Routes et Bâtiments',
@@ -79,10 +90,13 @@ class SignalementService {
             type: 'warning',
             icon: '⚠',
             color: '#F59E0B',
-            position: { lat: -18.8650, lng: 47.5390 },
+            position: { lat: -18.8650, lng: 47.5450 },
             title: 'Dégradation chaussée',
-            date: '2025-01-18',
+            dateCreation: '2025-01-18',
+            dateDebut: null,
+            dateFin: null,
             status: 'nouveau',
+            avancement: 0,
             surface: 85,
             budget: 4100000,
             entreprise: 'En attente attribution',
@@ -97,17 +111,20 @@ class SignalementService {
             type: 'traffic',
             icon: '🚧',
             color: '#8B5CF6',
-            position: { lat: -18.9204, lng: 47.5267 },
+            position: { lat: -18.9070, lng: 47.5200 },
             title: 'Travaux en cours',
-            date: '2025-01-05',
+            dateCreation: '2025-01-05',
+            dateDebut: '2025-01-15',
+            dateFin: null,
             status: 'en cours',
+            avancement: 50,
             surface: 200,
             budget: 8500000,
             entreprise: 'Construction Moderne',
             location: 'Pont de Behoririka',
             actions: [
                 { date: '2025-01-05', action: 'Projet planifié', user: 'Mairie' },
-                { date: '2025-01-08', action: "Appel d'offres lancé", user: 'Direction' },
+                { date: '2025-01-08', action: 'Appel d\'offres lancé', user: 'Direction' },
                 { date: '2025-01-12', action: 'Entreprise sélectionnée', user: 'Commission' },
                 { date: '2025-01-15', action: 'Début des travaux', user: 'CM' }
             ]
@@ -117,14 +134,17 @@ class SignalementService {
             type: 'accident',
             icon: '🚗',
             color: '#DC2626',
-            position: { lat: -18.9050, lng: 47.5300 },
+            position: { lat: -18.9200, lng: 47.5300 },
             title: 'Zone accidentogène',
-            date: '2025-01-12',
+            dateCreation: '2025-01-12',
+            dateDebut: '2025-01-17',
+            dateFin: null,
             status: 'en cours',
+            avancement: 50,
             surface: 60,
             budget: 3800000,
             entreprise: 'Sécurité Routière SA',
-            location: "Boulevard de l'Europe",
+            location: 'Boulevard de l\'Europe',
             actions: [
                 { date: '2025-01-12', action: 'Signalement multiple accidents', user: 'Police' },
                 { date: '2025-01-13', action: 'Étude de sécurité demandée', user: 'Préfecture' },
@@ -136,10 +156,13 @@ class SignalementService {
             type: 'repair',
             icon: '🔧',
             color: '#EA580C',
-            position: { lat: -18.9147, lng: 47.5220 },
+            position: { lat: -18.9250, lng: 47.5150 },
             title: 'Réparation trottoir',
-            date: '2025-01-14',
+            dateCreation: '2025-01-14',
+            dateDebut: null,
+            dateFin: null,
             status: 'nouveau',
+            avancement: 0,
             surface: 25,
             budget: 1200000,
             entreprise: 'Pavage Express',
@@ -156,8 +179,11 @@ class SignalementService {
             color: '#EF4444',
             position: { lat: -18.9160, lng: 47.5240 },
             title: 'Effondrement partiel',
-            date: '2025-01-19',
+            dateCreation: '2025-01-19',
+            dateDebut: null,
+            dateFin: null,
             status: 'nouveau',
+            avancement: 0,
             surface: 50,
             budget: 6500000,
             entreprise: 'Urgence TP',
@@ -185,7 +211,24 @@ class SignalementService {
         const nouveau = this.roadIssues.filter(i => i.status === 'nouveau').length;
         const enCours = this.roadIssues.filter(i => i.status === 'en cours').length;
         const termine = this.roadIssues.filter(i => i.status === 'terminé').length;
-        const avancement = ((termine / total) * 100).toFixed(1);
+        
+        // Calcul de l'avancement global
+        const avancementTotal = this.roadIssues.reduce((sum, issue) => sum + issue.avancement, 0);
+        const avancement = (avancementTotal / total).toFixed(1);
+
+        // Calcul du délai moyen de traitement (en jours)
+        const travauxTermines = this.roadIssues.filter(i => i.status === 'terminé');
+        let delaiMoyen = 0;
+        
+        if (travauxTermines.length > 0) {
+            const totalJours = travauxTermines.reduce((sum, issue) => {
+                const debut = new Date(issue.dateCreation);
+                const fin = new Date(issue.dateFin);
+                const jours = Math.floor((fin - debut) / (1000 * 60 * 60 * 24));
+                return sum + jours;
+            }, 0);
+            delaiMoyen = (totalJours / travauxTermines.length).toFixed(1);
+        }
 
         return {
             total,
@@ -194,7 +237,57 @@ class SignalementService {
             nouveau,
             enCours,
             termine,
-            avancement
+            avancement,
+            delaiMoyen
+        };
+    }
+
+    static getTraitementStatistics() {
+        const travauxTermines = this.roadIssues.filter(i => i.status === 'terminé');
+        const travauxEnCours = this.roadIssues.filter(i => i.status === 'en cours');
+        
+        const statsTermines = travauxTermines.map(issue => {
+            const debut = new Date(issue.dateCreation);
+            const fin = new Date(issue.dateFin);
+            const duree = Math.floor((fin - debut) / (1000 * 60 * 60 * 24));
+            
+            return {
+                id: issue.id,
+                title: issue.title,
+                dateCreation: issue.dateCreation,
+                dateDebut: issue.dateDebut,
+                dateFin: issue.dateFin,
+                duree,
+                surface: issue.surface,
+                budget: issue.budget,
+                status: issue.status
+            };
+        });
+
+        const statsEnCours = travauxEnCours.map(issue => {
+            const debut = new Date(issue.dateCreation);
+            const aujourdhui = new Date();
+            const dureeActuelle = Math.floor((aujourdhui - debut) / (1000 * 60 * 60 * 24));
+            
+            return {
+                id: issue.id,
+                title: issue.title,
+                dateCreation: issue.dateCreation,
+                dateDebut: issue.dateDebut,
+                dateFin: null,
+                dureeActuelle,
+                avancement: issue.avancement,
+                surface: issue.surface,
+                budget: issue.budget,
+                status: issue.status
+            };
+        });
+
+        return {
+            termine: statsTermines,
+            enCours: statsEnCours
         };
     }
 }
+
+export default SignalementService;
