@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
+    <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/data.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/java-combined.ps1" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/FirebaseSyncController.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebaseSyncService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mobile-vue/IMPLEMENTATION_SUMMARY.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mobile-vue/REPORTS_SERVICE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mobile-vue/USAGE_GUIDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mobile-vue/src/services/reports.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" afterDir="false" />
@@ -20,133 +20,34 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.prod.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/AccountPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/AccountPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/DashboardPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/DashboardPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/LoginPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/LoginPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/MapPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/MapPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/UserSignalementsPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/UserSignalementsPage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/services/map.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/services/map.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../~$ojet Cloud S5.docx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Interface" />
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Antonio6905&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/NyAvotiana23/mikoike-cloud.git&quot;,
-    &quot;accountId&quot;: &quot;f93df715-b08f-49a3-92f2-86a622e3052c&quot;
-  }
-}</component>
-  <component name="JpbToolWindowState">
-    <option name="isToolWindowVisible" value="false" />
-  </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 3
-}</component>
-  <component name="ProjectId" id="38VtDTIvhENXCumhpeE1JRnEutC" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "syncFeature",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mamna/Documents/ITU/S5/Web/mikoike-cloud/cloud-back/src/main/resources",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
-    "vue.rearranger.settings.migration": "true"
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
-    ]
+    "git-widget-placeholder": "Merging main",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back" />
-      <recent name="C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\resources" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="ProjetFinalApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="ProjetFinal" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="mg.projetfinal.ProjetFinalApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+}]]></component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="" />
-      <created>1768896457174</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1768896457174</updated>
-      <workItem from="1768896458764" duration="8310000" />
-      <workItem from="1768905319263" duration="5337000" />
-      <workItem from="1768915626129" duration="57000" />
-      <workItem from="1769492743644" duration="2648000" />
-      <workItem from="1769497948910" duration="997000" />
-      <workItem from="1769532242354" duration="7000" />
-      <workItem from="1769749030981" duration="420000" />
-      <workItem from="1770050869904" duration="1688000" />
-      <workItem from="1770052578213" duration="753000" />
-      <workItem from="1770094670395" duration="2308000" />
-    </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>
