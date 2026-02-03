@@ -8,6 +8,7 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\config\SessionAuthenticationFilter.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementActionRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\SignalementActionService.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\PhotoSignalementDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\HistoriqueStatusController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\SignalementStatusController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\ErrorResponse.java
@@ -35,14 +36,17 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\FirebaseSyncService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementStatusRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\config\WebConfig.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\PhotoSignalementService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SessionRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\Role.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\ManagerDashboardController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\SignalementController.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\PhotoSignalement.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\enums\SyncAction.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\EntrepriseResponseDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\Session.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\SignalementAction.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\PhotoSignalementRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\mapper\SignalementMapper.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\CoordinatesDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SyncHistoryRepository.java
@@ -65,5 +69,6 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\enums\SyncDirection.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\HistoriqueStatusRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\EntrepriseRepository.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\PhotoSignalementController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\LoginRequest.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\EntrepriseService.java

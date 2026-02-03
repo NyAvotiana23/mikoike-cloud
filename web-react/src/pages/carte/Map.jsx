@@ -311,6 +311,19 @@ const Map = () => {
 
             {/* Content */}
             <div className="p-6 space-y-4">
+                {/* NOUVELLE SECTION IMAGE AJOUTÉE ICI */}
+              <div className="w-full h-48 rounded-lg overflow-hidden shadow-sm border border-gray-100 relative group">
+                <img
+                  src={`https://picsum.photos/seed/road${selectedPoint.id}/600/400`}
+                  alt={`Signalement ${selectedPoint.title}`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                  <p className="text-white text-xs font-medium">Photo sur site</p>
+                </div>
+              </div>
+              {/* FIN DE LA SECTION IMAGE */}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-gray-500">Statut</label>

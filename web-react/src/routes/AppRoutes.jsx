@@ -14,6 +14,7 @@ import Map from '../pages/carte/Map.jsx';
 import SignalementList from '../pages/signalement/SignalementList.jsx';
 import SignalementDetail from '../pages/signalement/SignalementDetail.jsx';
 import SignalementStatistics from '../pages/signalement/SignalementStatistics.jsx';
+import ManagerDashboard from '../pages/dashboard/ManagerDashboard.jsx';
 
 const router = createBrowserRouter([
   {
@@ -83,9 +84,10 @@ const router = createBrowserRouter([
         element: <div>Stats Page</div>,
       },
       {
-        path: 'team',
-        element: <div>Team Page</div>,
+        path: 'dashboard/manager',
+        element: <ManagerDashboard/>,
       },
+
       {
         path: 'settings',
         element: <div>Settings Page</div>,

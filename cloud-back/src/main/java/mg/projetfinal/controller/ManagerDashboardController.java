@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/manager/dashboard")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class ManagerDashboardController {
 
     private final SignalementService signalementService;
