@@ -22,6 +22,7 @@ mg\projetfinal\controller\SignalementController.class
 mg\projetfinal\dto\ActionDTO$ActionDTOBuilder.class
 mg\projetfinal\entity\LoginAttempt.class
 mg\projetfinal\service\AuthService.class
+mg\projetfinal\controller\FirebaseSyncController.class
 mg\projetfinal\dto\LoginResponse$LoginResponseBuilder.class
 mg\projetfinal\dto\LoginResponse.class
 mg\projetfinal\enums\EntityType.class
@@ -31,6 +32,7 @@ mg\projetfinal\dto\SignalementResponseDTO$SignalementResponseDTOBuilder.class
 mg\projetfinal\repository\SignalementActionRepository.class
 mg\projetfinal\dto\CoordinatesDTO.class
 mg\projetfinal\entity\Role.class
+mg\projetfinal\service\FirebaseSyncService$SyncResult.class
 mg\projetfinal\controller\EntrepriseController.class
 mg\projetfinal\dto\UpdateUserRequest.class
 mg\projetfinal\enums\SyncDirection.class
@@ -57,6 +59,7 @@ mg\projetfinal\entity\Session$SessionBuilder.class
 mg\projetfinal\repository\SyncHistoryRepository.class
 mg\projetfinal\repository\SignalementRepository.class
 mg\projetfinal\repository\FailedLoginTrackingRepository.class
+mg\projetfinal\service\FirebaseSyncService.class
 mg\projetfinal\dto\CoordinatesDTO$CoordinatesDTOBuilder.class
 mg\projetfinal\entity\SignalementAction.class
 mg\projetfinal\entity\SyncQueue$SyncQueueBuilder.class

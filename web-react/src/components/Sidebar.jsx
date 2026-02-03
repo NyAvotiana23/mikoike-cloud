@@ -13,7 +13,9 @@ import {
     ChevronRightIcon,
     ListBulletIcon,
     UserPlusIcon,
+    ArrowPathIcon,
 } from '@heroicons/react/24/outline';
+import { Button } from '@headlessui/react';
 
 const navigation = [
     { name: 'Accueil', href: '/', icon: HomeIcon },
@@ -26,6 +28,10 @@ const navigation = [
 const secondaryNavigation = [
     { name: 'Paramètres', href: '/settings', icon: Cog6ToothIcon },
 ];
+
+const handleSynchroniser = ()=>{
+    alert("Synchronisation des databases local et firebase");
+};
 
 const Sidebar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(true);
@@ -170,6 +176,18 @@ const Sidebar = () => {
                                     )}
                                 </NavLink>
                             ))}
+                            {/* Bouton Synchroniser */}
+                            <Button 
+                                className="w-full group flex items-center back px-3 py-2 text-body-sm font-medium rounded-lg transition-all text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 mt-1"
+                                onClick={() => {
+                                    handleSynchroniser();
+                                }}
+                            >
+                                <ArrowPathIcon 
+                                    className="mr-3 flex-shrink-0 h-6 w-6 text-neutral-400 group-hover:text-neutral-500" 
+                                />
+                                Synchroniser
+                            </Button>
                         </div>
                     </nav>
                 </div>
