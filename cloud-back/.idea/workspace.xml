@@ -4,59 +4,49 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cf0a968b-7536-4594-ba25-fe3a8c5fff7c" name="Changes" comment="" />
+    <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/PhotoSignalementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/PhotoSignalementDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/PhotoSignalement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/PhotoSignalementRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/PhotoSignalementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/mg.projetfinal.enums.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/mg.projetfinal.enums.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="CopilotPersistence">
-    <persistenceIdMap>
-      <entry key="_D:/S5/Mr Rojo/mikoike-cloud/cloud-back" value="399C4jYXsPMARwn3t37RJ7ZBJPb" />
-    </persistenceIdMap>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
-  <component name="ProjectId" id="399C4jYXsPMARwn3t37RJ7ZBJPb" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/S5/Mr Rojo/mikoike-cloud/cloud-back",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+    "git-widget-placeholder": "main",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="cf0a968b-7536-4594-ba25-fe3a8c5fff7c" name="Changes" comment="" />
-      <created>1770098710752</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1770098710752</updated>
-      <workItem from="1770098712465" duration="1000" />
-    </task>
     <servers />
-  </component>
-  <component name="github-copilot-workspace">
-    <instructionFileLocations>
-      <option value=".github/instructions" />
-    </instructionFileLocations>
-    <promptFileLocations>
-      <option value=".github/prompts" />
-    </promptFileLocations>
   </component>
 </project>
