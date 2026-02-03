@@ -91,12 +91,16 @@ public class AuthController {
     public ResponseEntity<AuthResponse> logout(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = extractToken(authHeader);
-            authService.logout(token);
+            Session session = authService.logout(token);
 
             return ResponseEntity.ok(
                     AuthResponse.builder()
                             .success(true)
                             .message("Déconnexion réussie")
+                            .userId(session.getUser().getId())
+                            .email(session.getUser().getEmail())
+                            .name(session.getUser().getName())
+                            .role(session.getUser().getRole().getCode())
                             .build()
             );
         } catch (Exception e) {
@@ -239,6 +243,28 @@ public class AuthController {
                     AuthResponse.builder()
                             .success(true)
                             .message("Toutes les sessions ont été fermées")
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    AuthResponse.builder()
+                            .success(false)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
+    }
+
+    @PostMapping("/test/logout-all-sessions")
+    @Operation(summary = "UTILITAIRE TEST - Déconnecter TOUTES les sessions")
+    public ResponseEntity<AuthResponse> logoutAllSessionsTest() {
+        try {
+            int count = authService.logoutAllSessions();
+
+            return ResponseEntity.ok(
+                    AuthResponse.builder()
+                            .success(true)
+                            .message(count + " sessions déconnectées")
                             .build()
             );
         } catch (Exception e) {
@@ -899,8 +925,7 @@ import java.util.List;
 @RequestMapping("/api/signalements")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
-@CrossOrigin(origins = "*")
+//@Validated
 public class SignalementController {
 
     private final SignalementService signalementService;

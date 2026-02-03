@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -103,37 +104,76 @@ public class AuthService {
         String ipAddress = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
 
-        // Vérifier blocage par email
+        // Étape 1: Vérifier blocage dans failed_login_tracking
         Optional<FailedLoginTracking> trackingOpt = failedLoginTrackingRepository.findByEmail(email);
-        if (trackingOpt.isPresent() && trackingOpt.get().isCurrentlyBlocked()) {
-            recordLoginAttempt(email, null, false, FailureReason.ACCOUNT_LOCKED, ipAddress, userAgent);
-            throw new RuntimeException("Compte bloqué jusqu'à " + trackingOpt.get().getBlockedUntil());
+        if (trackingOpt.isPresent()) {
+            FailedLoginTracking tracking = trackingOpt.get();
+            if (tracking.isCurrentlyBlocked()) {
+                recordLoginAttempt(email, null, false, FailureReason.ACCOUNT_LOCKED, ipAddress, userAgent);
+                throw new RuntimeException("Compte bloqué jusqu'à " + tracking.getBlockedUntil());
+            }
         }
 
-        // Chercher l'utilisateur
+        // Étape 2: Chercher l'utilisateur
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
             recordLoginAttempt(email, null, false, FailureReason.USER_NOT_FOUND, ipAddress, userAgent);
-            handleFailedLogin(email, null);
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
         User user = userOpt.get();
 
-        // Vérifier si le compte est verrouillé
+        // Étape 3: Vérifier blocage dans users
         if (user.isAccountLocked()) {
             recordLoginAttempt(email, user, false, FailureReason.ACCOUNT_LOCKED, ipAddress, userAgent);
             throw new RuntimeException("Compte verrouillé jusqu'à " + user.getLockedUntil());
         }
 
-        // Vérifier le mot de passe
+        // Étape 4: Vérifier le mot de passe
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             recordLoginAttempt(email, user, false, FailureReason.INVALID_PASSWORD, ipAddress, userAgent);
-            handleFailedLogin(email, user);
-            throw new RuntimeException("Email ou mot de passe incorrect");
+
+            // Récupérer le tracking pour connaître le nombre de tentatives
+            FailedLoginTracking tracking = trackingOpt.orElse(
+                    FailedLoginTracking.builder()
+                            .email(email)
+                            .failedCount(0)
+                            .isBlocked(false)
+                            .build()
+            );
+
+            // Incrémenter et sauvegarder AVANT de vérifier
+            tracking.recordFailedAttempt();
+            failedLoginTrackingRepository.save(tracking);
+
+            int remainingAttempts = maxAttempts - tracking.getFailedCount();
+
+            // Bloquer si limite atteinte
+            if (tracking.getFailedCount() >= maxAttempts) {
+                tracking.blockAccount(lockoutDurationMinutes,
+                        "Trop de tentatives de connexion échouées (" + maxAttempts + ")");
+                failedLoginTrackingRepository.save(tracking);
+
+                user.lockAccount(lockoutDurationMinutes);
+                userRepository.save(user);
+
+                log.warn("Compte bloqué pour {}: {} tentatives échouées", email, tracking.getFailedCount());
+                throw new RuntimeException("Compte bloqué pour " + lockoutDurationMinutes + " minutes suite à trop de tentatives échouées");
+            }
+
+            // Sinon informer du nombre de tentatives restantes
+            throw new RuntimeException("Email ou mot de passe incorrect. Tentatives restantes: " + remainingAttempts);
         }
 
-        // Vérifier Firebase si online
+        // Étape 5: Vérifier si déjà connecté
+        List<Session> activeSessions = sessionRepository.findByUserAndIsActiveTrue(user);
+        for (Session activeSession : activeSessions) {
+            if (activeSession.isValid()) {
+                throw new RuntimeException("Utilisateur déjà connecté. Veuillez vous déconnecter d'abord ou utiliser /logout-all");
+            }
+        }
+
+        // Étape 6: Vérifier Firebase si online
         if (isOnline()) {
             try {
                 FirebaseAuth.getInstance().getUserByEmail(email);
@@ -144,9 +184,19 @@ public class AuthService {
             }
         }
 
-        // Connexion réussie
+        // Étape 7: Connexion réussie - Reset des tentatives échouées
         recordLoginAttempt(email, user, true, null, ipAddress, userAgent);
-        resetFailedAttempts(email, user);
+
+        // Reset tracking
+        if (trackingOpt.isPresent()) {
+            FailedLoginTracking tracking = trackingOpt.get();
+            tracking.reset();
+            failedLoginTrackingRepository.save(tracking);
+        }
+
+        // Reset user
+        user.resetFailedAttempts();
+        userRepository.save(user);
 
         // Créer une session
         return createSession(user, ipAddress, userAgent);
@@ -240,11 +290,21 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String token) {
-        sessionRepository.findByToken(token).ifPresent(session -> {
+    public Session logout(String token) {
+        Optional<Session> sessionOpt = sessionRepository.findByToken(token);
+        if (sessionOpt.isPresent()) {
+            Session session = sessionOpt.get();
+
+            // Vérifier si la session est déjà invalide
+            if (!session.isValid()) {
+                throw new RuntimeException("Session déjà déconnectée ou expirée");
+            }
+
             session.invalidate();
             sessionRepository.save(session);
-        });
+            return session;
+        }
+        throw new RuntimeException("Session introuvable");
     }
 
     @Transactional
@@ -252,6 +312,23 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
         sessionRepository.invalidateAllUserSessions(user);
+    }
+
+    // ==================== UTILITAIRE TEST - LOGOUT ALL ====================
+
+    @Transactional
+    public int logoutAllSessions() {
+        List<Session> allSessions = sessionRepository.findAll();
+        int count = 0;
+        for (Session session : allSessions) {
+            if (session.getIsActive()) {
+                session.invalidate();
+                sessionRepository.save(session);
+                count++;
+            }
+        }
+        log.info("Toutes les sessions déconnectées: {} sessions", count);
+        return count;
     }
 
     // ==================== GESTION TENTATIVES ÉCHOUÉES ====================
@@ -270,34 +347,7 @@ public class AuthService {
         loginAttemptRepository.save(attempt);
     }
 
-    @Transactional
-    public void handleFailedLogin(String email, User user) {
-        // Récupérer ou créer le tracking
-        FailedLoginTracking tracking = failedLoginTrackingRepository.findByEmail(email)
-                .orElse(FailedLoginTracking.builder()
-                        .email(email)
-                        .failedCount(0)
-                        .isBlocked(false)
-                        .build());
-
-        tracking.recordFailedAttempt();
-
-        // Bloquer si nombre max d'essais atteint
-        if (tracking.getFailedCount() >= maxAttempts) {
-            tracking.blockAccount(lockoutDurationMinutes,
-                    "Trop de tentatives de connexion échouées (" + maxAttempts + ")");
-
-            // Bloquer aussi l'utilisateur dans la table users si il existe
-            if (user != null) {
-                user.lockAccount(lockoutDurationMinutes);
-                userRepository.save(user);
-            }
-
-            log.warn("Compte bloqué pour {}: {} tentatives échouées", email, tracking.getFailedCount());
-        }
-
-        failedLoginTrackingRepository.save(tracking);
-    }
+    // ==================== RESET TENTATIVES ====================
 
     @Transactional
     public void resetFailedAttempts(String email, User user) {

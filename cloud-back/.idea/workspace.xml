@@ -5,8 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SessionAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/AdminController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/LoginManagerRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/RegisterAdminRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FailedLoginTrackingService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/SessionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/struct.txt" beforeDir="false" afterPath="$PROJECT_DIR$/struct.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
@@ -121,6 +133,8 @@
       <workItem from="1769497948910" duration="997000" />
       <workItem from="1769540085854" duration="32000" />
       <workItem from="1769749829391" duration="9000" />
+      <workItem from="1770058224503" duration="5161000" />
+      <workItem from="1770095044797" duration="5899000" />
     </task>
     <servers />
   </component>

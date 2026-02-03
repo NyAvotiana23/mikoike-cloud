@@ -22,8 +22,7 @@ import java.util.List;
 @RequestMapping("/api/signalements")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
-@CrossOrigin(origins = "*")
+//@Validated
 public class SignalementController {
 
     private final SignalementService signalementService;
