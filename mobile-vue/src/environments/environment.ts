@@ -17,10 +17,10 @@ export const environment = {
     attribution: '&copy; OpenStreetMap contributors'
   },
   
-  // Position par défaut (Paris, France)
+  // Position par défaut (Antananarivo, Madagascar)
   defaultLocation: {
-    lat: 48.8566,
-    lng: 2.3522,
+    lat: -18.8792,
+    lng: 47.5079,
     zoom: 13
   }
 }
