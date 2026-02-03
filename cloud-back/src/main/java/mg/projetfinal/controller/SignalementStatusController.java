@@ -20,10 +20,9 @@ import java.util.List;
  * Contrôleur pour la gestion des statuts de signalements
  */
 @RestController
-@RequestMapping("/api/signalements")
+@RequestMapping("/api/signalements/status")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class SignalementStatusController {
 
     private final SignalementService signalementService;

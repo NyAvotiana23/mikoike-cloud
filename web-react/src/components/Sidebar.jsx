@@ -22,7 +22,6 @@ const navigation = [
   { name: 'Accueil', href: '/', icon: HomeIcon },
   { name: 'Carte', href: '/carte', icon: MapIcon },
   { name: 'Dashboard Manager', href: '/dashboard/manager', icon: ChartBarIcon },
-  { name: 'Statistiques', href: '/stats', icon: ChartBarIcon },
   { name: 'Équipe', href: '/team', icon: UserGroupIcon }
 ];
 
@@ -48,28 +47,28 @@ const Sidebar = () => {
         return;
       }
 
-      // Récupérer tous les signalements non synchronisés
-      const response = await fetch(`${API_BASE_URL}/signalements`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+    //   // Récupérer tous les signalements non synchronisés
+    //   const response = await fetch(`${API_BASE_URL}/signalements`, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       'Content-Type': 'application/json'
+    //     }
+    //   });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des signalements');
-      }
+    //   if (!response.ok) {
+    //     throw new Error('Erreur lors de la récupération des signalements');
+    //   }
 
-      const signalements = await response.json();
+    //   const signalements = await response.json();
 
-      // Synchroniser chaque signalement
-      let syncCount = 0;
-      let errorCount = 0;
+    //   // Synchroniser chaque signalement
+    //   let syncCount = 0;
+    //   let errorCount = 0;
 
-      for (const signalement of signalements) {
-        try {
+    //   for (const signalement of signalements) {
+    //     try {
           const syncResponse = await fetch(
-            `${API_BASE_URL}/signalements/${signalement.id}/synchroniser`,
+            `${API_BASE_URL}/sync/all`,
             {
               method: 'POST',
               headers: {
@@ -79,27 +78,27 @@ const Sidebar = () => {
             }
           );
 
-          if (syncResponse.ok) {
-            syncCount++;
-          } else {
-            errorCount++;
-          }
-        } catch (err) {
-          console.error(`Erreur sync signalement ${signalement.id}:`, err);
-          errorCount++;
-        }
-      }
+    //       if (syncResponse.ok) {
+    //         syncCount++;
+    //       } else {
+    //         errorCount++;
+    //       }
+    //     } catch (err) {
+    //       console.error(`Erreur sync signalement ${signalement.id}:`, err);
+    //       errorCount++;
+    //     }
+    //   }
 
       // Afficher le résultat
-      if (errorCount === 0) {
-        alert(
-          `✅ Synchronisation réussie!\n\n${syncCount} signalements synchronisés avec Firebase.`
-        );
-      } else {
-        alert(
-          `⚠️ Synchronisation partielle\n\n✓ ${syncCount} synchronisés\n✗ ${errorCount} erreurs`
-        );
-      }
+    //   if (errorCount === 0) {
+    //     alert(
+    //       `✅ Synchronisation réussie!\n\n${syncCount} signalements synchronisés avec Firebase.`
+    //     );
+    //   } else {
+    //     alert(
+    //       `⚠️ Synchronisation partielle\n\n✓ ${syncCount} synchronisés\n✗ ${errorCount} erreurs`
+    //     );
+    //   }
     } catch (error) {
       console.error('Erreur de synchronisation:', error);
       alert('❌ Erreur lors de la synchronisation:\n' + error.message);

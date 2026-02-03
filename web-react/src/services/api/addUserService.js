@@ -79,39 +79,39 @@ class AddUserService {
             // MOCK - Pour test uniquement
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            const mockUsers = [
-                {
-                    id: '1',
-                    email: 'jean.dupont@example.com',
-                    nom: 'Dupont',
-                    prenom: 'Jean',
-                    age: 28,
-                    location: 'Paris, France',
-                    role: 'user',
-                    createdAt: '2024-01-15T10:30:00Z',
-                },
-                {
-                    id: '2',
-                    email: 'marie.martin@example.com',
-                    nom: 'Martin',
-                    prenom: 'Marie',
-                    age: 32,
-                    location: 'Lyon, France',
-                    role: 'user',
-                    createdAt: '2024-01-20T14:45:00Z',
-                },
-            ];
+            // const mockUsers = [
+            //     {
+            //         id: '1',
+            //         email: 'jean.dupont@example.com',
+            //         nom: 'Dupont',
+            //         prenom: 'Jean',
+            //         age: 28,
+            //         location: 'Paris, France',
+            //         role: 'user',
+            //         createdAt: '2024-01-15T10:30:00Z',
+            //     },
+            //     {
+            //         id: '2',
+            //         email: 'marie.martin@example.com',
+            //         nom: 'Martin',
+            //         prenom: 'Marie',
+            //         age: 32,
+            //         location: 'Lyon, France',
+            //         role: 'user',
+            //         createdAt: '2024-01-20T14:45:00Z',
+            //     },
+            // ];
 
-            return mockUsers;
+            // return mockUsers;
 
             // MODE PRODUCTION
-            // const response = await api.get('/users', {
-            //     headers: {
-            //         'Authorization': `Bearer ${sessionStorage.getItem('sessionId')}`,
-            //     }
-            // });
-            //
-            // return response.data.users;
+            const response = await api.get('/users', {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('sessionId')}`,
+                }
+            });
+            
+            return response.data.users;
 
         } catch (error) {
             throw this.handleError(error);

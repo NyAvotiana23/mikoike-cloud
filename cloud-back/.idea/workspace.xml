@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/WebConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web-react/src/services/api/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/services/api/authService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/HistoriqueStatusController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/HistoriqueStatusController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementStatusController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementStatusController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
