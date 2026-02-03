@@ -10,15 +10,15 @@
           <div class="stat-label">Total</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value text-blue-600">{{ stats.nouveau }}</div>
+          <div class="stat-value stat-primary">{{ stats.nouveau }}</div>
           <div class="stat-label">Nouveau</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value text-orange-600">{{ stats.en_cours }}</div>
+          <div class="stat-value stat-warning">{{ stats.en_cours }}</div>
           <div class="stat-label">En cours</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value text-green-600">{{ stats.termine }}</div>
+          <div class="stat-value stat-success">{{ stats.termine }}</div>
           <div class="stat-label">Terminé</div>
         </div>
       </div>
@@ -26,14 +26,14 @@
       <!-- Budget et Surface -->
       <div class="summary-container">
         <div class="summary-item">
-          <ion-icon :icon="cashOutline" class="text-2xl text-primary"></ion-icon>
+          <ion-icon :icon="cashOutline" class="summary-icon"></ion-icon>
           <div>
             <div class="summary-value">{{ formatCurrency(stats.budgetTotal) }}</div>
             <div class="summary-label">Budget total</div>
           </div>
         </div>
         <div class="summary-item">
-          <ion-icon :icon="resizeOutline" class="text-2xl text-primary"></ion-icon>
+          <ion-icon :icon="resizeOutline" class="summary-icon"></ion-icon>
           <div>
             <div class="summary-value">{{ stats.surfaceTotale }} m²</div>
             <div class="summary-label">Surface totale</div>
@@ -51,7 +51,7 @@
 
       <div v-if="showFilters" class="filters-panel">
         <div class="filter-group">
-          <ion-label>Statut</ion-label>
+          <ion-label class="filter-label">Statut</ion-label>
           <ion-select
             v-model="filters.status"
             multiple
@@ -66,7 +66,7 @@
         </div>
 
         <div class="filter-group">
-          <ion-label>Priorité</ion-label>
+          <ion-label class="filter-label">Priorité</ion-label>
           <ion-select
             v-model="filters.priorite"
             multiple
@@ -87,7 +87,7 @@
       <!-- Liste des signalements -->
       <div class="signalements-list">
         <div v-if="filteredSignalements.length === 0" class="empty-state">
-          <ion-icon :icon="alertCircleOutline" class="text-5xl text-gray-400 mb-2"></ion-icon>
+          <ion-icon :icon="alertCircleOutline" class="empty-icon"></ion-icon>
           <p>Aucun signalement trouvé</p>
         </div>
 
@@ -99,7 +99,7 @@
                 {{ getStatusLabel(signalement.status) }}
               </ion-badge>
             </div>
-            <ion-card-subtitle>
+            <ion-card-subtitle class="card-subtitle">
               <ion-icon :icon="calendarOutline"></ion-icon>
               {{ formatDate(signalement.date) }}
             </ion-card-subtitle>
@@ -264,9 +264,9 @@ const getStatusLabel = (status: string) => {
 
 const getPriorityClass = (priorite: string) => {
   const classes: Record<string, string> = {
-    basse: 'text-green-500',
-    moyenne: 'text-orange-500',
-    haute: 'text-red-500'
+    basse: 'priority-low',
+    moyenne: 'priority-medium',
+    haute: 'priority-high'
   };
   return classes[priorite] || '';
 };
@@ -281,18 +281,17 @@ const getPriorityLabel = (priorite: string) => {
 };
 
 const viewOnMap = (_signalement: Signalement) => {
-  // TODO: Navigate to map with signalement highlighted
   console.log('Viewing signalement on map:', _signalement.id);
   router.push('/tabs/map');
 };
 
 const editSignalement = (signalement: Signalement) => {
-  // TODO: Open edit modal
   console.log('Edit signalement:', signalement.id);
 };
 </script>
 
 <style scoped>
+/* Stats Container */
 .stats-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -305,21 +304,35 @@ const editSignalement = (signalement: Signalement) => {
   text-align: center;
   padding: 1rem 0.5rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .stat-value {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.stat-primary {
+  color: #0ea5e9;
+}
+
+.stat-warning {
+  color: #f59e0b;
+}
+
+.stat-success {
+  color: #10b981;
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: #666;
-  margin-top: 0.25rem;
+  color: #6b7280;
 }
 
+/* Summary Container */
 .summary-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -335,43 +348,57 @@ const editSignalement = (signalement: Signalement) => {
   gap: 1rem;
   padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-icon {
+  font-size: 2rem;
+  color: #0ea5e9;
 }
 
 .summary-value {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #333;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .summary-label {
   font-size: 0.875rem;
-  color: #666;
+  color: #6b7280;
 }
 
+/* Filters */
 .filter-container {
   padding: 1rem;
   background: white;
   margin-top: 0.5rem;
+  color: #1f2937;
 }
 
 .filters-panel {
   padding: 1rem;
   background: #f8f9fa;
   margin: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
+  color: #1f2937;
+
 }
 
 .filter-group {
   margin-bottom: 1rem;
+  color: #1f2937;
+
 }
 
-.filter-group ion-label {
+.filter-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: #1f2937;
 }
 
+/* Signalements List */
 .signalements-list {
   padding: 1rem;
 }
@@ -379,25 +406,43 @@ const editSignalement = (signalement: Signalement) => {
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: #666;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
 }
 
 .signalement-card {
   margin-bottom: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-header-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
 }
 
 .card-header-content ion-card-title {
   flex: 1;
   font-size: 1rem;
+  font-weight: 600;
 }
 
+.card-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Signalement Details */
 .signalement-details {
   margin-top: 0.5rem;
 }
@@ -408,21 +453,36 @@ const editSignalement = (signalement: Signalement) => {
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: #666;
+  color: #6b7280;
 }
 
 .detail-item ion-icon {
   font-size: 1.25rem;
+  color: #0ea5e9;
+}
+
+.priority-low {
+  color: #10b981 !important;
+}
+
+.priority-medium {
+  color: #f59e0b !important;
+}
+
+.priority-high {
+  color: #ef4444 !important;
 }
 
 .description {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
-  color: #333;
+  border-top: 1px solid #e5e7eb;
+  color: #4b5563;
   font-size: 0.875rem;
+  line-height: 1.5;
 }
 
+/* Card Actions */
 .card-actions {
   display: flex;
   gap: 0.5rem;
@@ -431,5 +491,16 @@ const editSignalement = (signalement: Signalement) => {
 
 .card-actions ion-button {
   flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-container {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

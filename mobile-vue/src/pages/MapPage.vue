@@ -4,22 +4,22 @@
     
     <ion-content>
       <!-- Filtre pour utilisateurs connectés -->
-      <div v-if="isAuthenticated" class="p-4 bg-white shadow-md">
+      <div v-if="isAuthenticated" class="filter-bar">
         <ion-toggle v-model="showOnlyMine">
           Mes signalements uniquement
         </ion-toggle>
       </div>
 
       <!-- Message pour visiteurs -->
-      <div v-else class="p-4 bg-blue-50 border-b border-blue-200">
-        <div class="flex items-center gap-2 text-blue-700 text-sm">
-          <ion-icon :icon="informationCircle"></ion-icon>
+      <div v-else class="visitor-message">
+        <div class="message-content">
+          <ion-icon :icon="informationCircle" class="message-icon"></ion-icon>
           <span>Mode visiteur : vous pouvez voir les signalements. Connectez-vous pour en ajouter.</span>
         </div>
       </div>
 
       <!-- Container Carte -->
-      <div id="map" class="h-full"></div>
+      <div id="map" class="map-container"></div>
 
       <!-- FAB pour signaler (uniquement utilisateurs connectés) -->
       <ion-fab v-if="isAuthenticated" vertical="bottom" horizontal="end" slot="fixed">
@@ -41,48 +41,48 @@
       </ion-header>
       <ion-content class="ion-padding" v-if="selectedSignalement">
         <div class="details-container">
-          <h2 class="text-xl font-bold mb-4">
+          <h2 class="details-title">
             {{ selectedSignalement.titre || 'Signalement #' + selectedSignalement.id.slice(0, 8) }}
           </h2>
 
-          <ion-badge :color="getStatusColor(selectedSignalement.status)" class="mb-4">
+          <ion-badge :color="getStatusColor(selectedSignalement.status)" class="status-badge">
             {{ getStatusLabel(selectedSignalement.status) }}
           </ion-badge>
 
           <div class="detail-section">
             <div class="detail-row">
-              <ion-icon :icon="calendarOutline"></ion-icon>
+              <ion-icon :icon="calendarOutline" class="detail-icon"></ion-icon>
               <span>{{ formatDate(selectedSignalement.date) }}</span>
             </div>
 
             <div class="detail-row" v-if="selectedSignalement.priorite">
-              <ion-icon :icon="flagOutline"></ion-icon>
+              <ion-icon :icon="flagOutline" class="detail-icon"></ion-icon>
               <span>{{ getPriorityLabel(selectedSignalement.priorite) }}</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="locationOutline"></ion-icon>
+              <ion-icon :icon="locationOutline" class="detail-icon"></ion-icon>
               <span>{{ selectedSignalement.location.lat.toFixed(5) }}, {{ selectedSignalement.location.lng.toFixed(5) }}</span>
             </div>
 
             <div class="detail-row" v-if="selectedSignalement.entreprise">
-              <ion-icon :icon="businessOutline"></ion-icon>
+              <ion-icon :icon="businessOutline" class="detail-icon"></ion-icon>
               <span>{{ selectedSignalement.entreprise }}</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="resizeOutline"></ion-icon>
+              <ion-icon :icon="resizeOutline" class="detail-icon"></ion-icon>
               <span>Surface : {{ selectedSignalement.surface }} m²</span>
             </div>
 
             <div class="detail-row">
-              <ion-icon :icon="cashOutline"></ion-icon>
+              <ion-icon :icon="cashOutline" class="detail-icon"></ion-icon>
               <span>Budget : {{ formatCurrency(selectedSignalement.budget) }}</span>
             </div>
           </div>
 
           <div v-if="selectedSignalement.description" class="description-section">
-            <h3 class="font-semibold mb-2">Description</h3>
+            <h3 class="description-title">Description</h3>
             <p>{{ selectedSignalement.description }}</p>
           </div>
         </div>
@@ -100,18 +100,18 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <form @submit.prevent="saveSignalement">
-          <ion-item>
+        <form @submit.prevent="saveSignalement" class="add-form">
+          <ion-item class="form-item">
             <ion-label position="floating">Titre</ion-label>
             <ion-input v-model="newSignalement.titre" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Description</ion-label>
             <ion-textarea v-model="newSignalement.description" rows="3"></ion-textarea>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label>Priorité</ion-label>
             <ion-select v-model="newSignalement.priorite">
               <ion-select-option value="basse">Basse</ion-select-option>
@@ -120,22 +120,22 @@
             </ion-select>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Surface (m²)</ion-label>
-            <ion-input v-model.number="newSignalement.surface" type="number"></ion-input>
+            <ion-input v-model.number="newSignalement.surface" type="number" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Budget (€)</ion-label>
-            <ion-input v-model.number="newSignalement.budget" type="number"></ion-input>
+            <ion-input v-model.number="newSignalement.budget" type="number" required></ion-input>
           </ion-item>
 
-          <ion-item>
+          <ion-item class="form-item">
             <ion-label position="floating">Entreprise</ion-label>
             <ion-input v-model="newSignalement.entreprise"></ion-input>
           </ion-item>
 
-          <ion-button expand="block" type="submit" class="mt-4">
+          <ion-button expand="block" type="submit" class="submit-button">
             Créer le signalement
           </ion-button>
         </form>
@@ -145,30 +145,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import {
-  IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonToggle,
-  IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonItem, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
-  IonBadge, toastController
+  IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonModal,
+  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonItem,
+  IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
+  IonBadge, IonToggle, toastController
 } from '@ionic/vue';
 import {
   add, informationCircle, calendarOutline, flagOutline, locationOutline,
   businessOutline, resizeOutline, cashOutline
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
-import mapService from '@/services/map.service';
-import signalementsService from '@/services/signalements.service';
 import { useUserContext } from '@/services/user-context.service';
-import type { Signalement } from '@/types/signalement';
+import signalementsService from '@/services/signalements.service';
+import mapService from '@/services/map.service';
 
 const { isAuthenticated, userContext } = useUserContext();
+
+const signalements = ref<any[]>([]);
 const showOnlyMine = ref(false);
-const signalements = ref<Signalement[]>([]);
 const showDetailsModal = ref(false);
 const showAddModal = ref(false);
-const selectedSignalement = ref<Signalement | null>(null);
-const clickedPosition = ref<{ lat: number, lng: number } | null>(null);
+const selectedSignalement = ref<any>(null);
+const clickedPosition = ref<any>(null);
 
 const newSignalement = ref({
   titre: '',
@@ -182,27 +182,15 @@ const newSignalement = ref({
 onMounted(async () => {
   await mapService.initMap('map');
   loadSignalements();
-  setupMapClickHandler();
-});
-
-const setupMapClickHandler = () => {
-  mapService.onMapClick((lat: number, lng: number) => {
-    if (isAuthenticated.value) {
-      // Utilisateur connecté : peut ajouter un signalement
-      clickedPosition.value = { lat, lng };
-      showAddModal.value = true;
-    }
-  });
-
-  mapService.onMarkerClick((signalementId: string) => {
-    // Tout le monde peut voir les détails
-    const signalement = signalements.value.find(s => s.id === signalementId);
-    if (signalement) {
-      selectedSignalement.value = signalement;
+  
+  mapService.onMarkerClick((markerId: string) => {
+    const sig = signalements.value.find(s => s.id === markerId);
+    if (sig) {
+      selectedSignalement.value = sig;
       showDetailsModal.value = true;
     }
   });
-};
+});
 
 const loadSignalements = () => {
   if (showOnlyMine.value && userContext.value.userId) {
@@ -227,7 +215,6 @@ const displayMarkers = () => {
 };
 
 const reportIssue = () => {
-  // Utiliser la position actuelle de l'utilisateur
   const center = mapService.getMapCenter();
   clickedPosition.value = center;
   showAddModal.value = true;
@@ -329,13 +316,54 @@ watch(showOnlyMine, () => {
 </script>
 
 <style scoped>
-#map {
+/* Filter Bar */
+.filter-bar {
+  padding: 1rem;
+  background: white;
+  color: #1f2937;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Visitor Message */
+.visitor-message {
+  padding: 1rem;
+  background: #eff6ff;
+  border-bottom: 2px solid #bfdbfe;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1e40af;
+  font-size: 0.875rem;
+}
+
+.message-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Map Container */
+.map-container {
   width: 100%;
   height: calc(100vh - 160px);
 }
 
+/* Details Modal */
 .details-container {
   padding: 1rem;
+}
+
+.details-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.status-badge {
+  margin-bottom: 1.5rem;
 }
 
 .detail-section {
@@ -347,18 +375,43 @@ watch(showOnlyMine, () => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.detail-row ion-icon {
+.detail-icon {
   font-size: 1.5rem;
-  color: var(--ion-color-primary);
+  color: #0ea5e9;
 }
 
 .description-section {
   margin-top: 1.5rem;
   padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+.description-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.75rem 0;
+}
+
+/* Add Form */
+.add-form {
+  padding: 1rem 0;
+}
+
+.form-item {
+  margin-bottom: 1rem;
+  --background: #f8f9fa;
+  --border-radius: 12px;
+}
+
+.submit-button {
+  --border-radius: 12px;
+  height: 56px;
+  margin-top: 1rem;
+  font-weight: 600;
 }
 </style>
