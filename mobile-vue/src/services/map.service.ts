@@ -14,12 +14,24 @@ class MapService {
 
     const { lat, lng, zoom } = environment.defaultLocation;
     
-    this.map = L.map(containerId).setView([lat, lng], zoom);
+    this.map = L.map(containerId, {
+      center: [lat, lng],
+      zoom: zoom,
+      zoomControl: true
+    });
 
     L.tileLayer(environment.osm.tileUrl, {
       attribution: environment.osm.attribution,
       maxZoom: 19
     }).addTo(this.map);
+
+    // Force la carte à se redimensionner et se centrer correctement après le chargement
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+        this.map.setView([lat, lng], zoom);
+      }
+    }, 100);
 
     return this.map;
   }
@@ -37,6 +49,15 @@ class MapService {
     // Stocker l'ID du signalement
     if (options.id) {
       this.markerData.set(marker, options.id);
+    }
+
+    // Ajouter le listener de clic si une callback existe
+    if (options.onClickCallback) {
+      marker.on('click', () => {
+        if (options.id) {
+          options.onClickCallback(options.id);
+        }
+      });
     }
 
     return marker;

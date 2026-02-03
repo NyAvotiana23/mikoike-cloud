@@ -21,12 +21,26 @@
       <!-- Container Carte -->
       <div id="map" class="map-container"></div>
 
-      <!-- FAB pour signaler (uniquement utilisateurs connectés) -->
+      <!-- FAB pour activer/désactiver le mode ajout (uniquement utilisateurs connectés) -->
       <ion-fab v-if="isAuthenticated" vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button color="primary" @click="reportIssue">
-          <ion-icon :icon="add"></ion-icon>
+        <ion-fab-button
+          :color="isAddingReport ? 'success' : 'primary'"
+          @click="toggleAddMode"
+        >
+          <ion-icon :icon="isAddingReport ? checkmark : add"></ion-icon>
         </ion-fab-button>
       </ion-fab>
+
+      <!-- Message instruction pour le mode ajout -->
+      <div v-if="isAddingReport" class="add-mode-banner">
+        <div class="banner-content">
+          <ion-icon :icon="locationOutline" class="banner-icon"></ion-icon>
+          <span>Cliquez sur la carte pour placer votre rapport</span>
+          <ion-button size="small" fill="clear" @click="cancelAddMode">
+            <ion-icon :icon="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
     </ion-content>
 
     <!-- Modal détails signalement -->
@@ -154,12 +168,13 @@ import {
 } from '@ionic/vue';
 import {
   add, informationCircle, calendarOutline, flagOutline, locationOutline,
-  businessOutline, resizeOutline, cashOutline
+  businessOutline, resizeOutline, cashOutline, checkmark, close
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
 import { useUserContext } from '@/services/user-context.service';
 import signalementsService from '@/services/signalements.service';
 import mapService from '@/services/map.service';
+import reportsService from '@/services/reports.service';
 
 const { isAuthenticated, userContext } = useUserContext();
 
@@ -169,6 +184,7 @@ const showDetailsModal = ref(false);
 const showAddModal = ref(false);
 const selectedSignalement = ref<any>(null);
 const clickedPosition = ref<any>(null);
+const isAddingReport = ref(false);
 
 const newSignalement = ref({
   titre: '',
@@ -181,24 +197,49 @@ const newSignalement = ref({
 
 onMounted(async () => {
   await mapService.initMap('map');
-  loadSignalements();
-  
+  await loadSignalements();
+
+  // Gérer les clics sur les marqueurs
   mapService.onMarkerClick((markerId: string) => {
-    const sig = signalements.value.find(s => s.id === markerId);
-    if (sig) {
-      selectedSignalement.value = sig;
-      showDetailsModal.value = true;
+    if (!isAddingReport.value) {
+      const sig = signalements.value.find(s => s.id === markerId);
+      if (sig) {
+        selectedSignalement.value = sig;
+        showDetailsModal.value = true;
+      }
+    }
+  });
+
+  // Gérer les clics sur la carte pour ajouter un rapport
+  mapService.onMapClick((lat: number, lng: number) => {
+    if (isAddingReport.value && isAuthenticated.value) {
+      clickedPosition.value = { lat, lng };
+      showAddModal.value = true;
+      isAddingReport.value = false;
     }
   });
 });
 
-const loadSignalements = () => {
-  if (showOnlyMine.value && userContext.value.userId) {
-    signalements.value = signalementsService.getAll(userContext.value.userId);
-  } else {
-    signalements.value = signalementsService.getAll();
+const loadSignalements = async () => {
+  try {
+    if (showOnlyMine.value && userContext.value.userId) {
+      // Utiliser le nouveau service reports
+      signalements.value = await reportsService.getAllReports(userContext.value.userId);
+    } else {
+      // Charger tous les rapports
+      signalements.value = await reportsService.getAllReports();
+    }
+    displayMarkers();
+  } catch (error) {
+    console.error('Erreur lors du chargement des signalements:', error);
+    // Fallback vers les données mockées
+    if (showOnlyMine.value && userContext.value.userId) {
+      signalements.value = signalementsService.getAll(userContext.value.userId);
+    } else {
+      signalements.value = signalementsService.getAll();
+    }
+    displayMarkers();
   }
-  displayMarkers();
 };
 
 const displayMarkers = () => {
@@ -208,23 +249,36 @@ const displayMarkers = () => {
       mapService.addMarker(sig.location.lat, sig.location.lng, {
         id: sig.id,
         status: sig.status,
-        titre: sig.titre
+        titre: sig.titre,
+        date: sig.date,
+        onClickCallback: (id: string) => {
+          if (!isAddingReport.value) {
+            const selectedSig = signalements.value.find(s => s.id === id);
+            if (selectedSig) {
+              selectedSignalement.value = selectedSig;
+              showDetailsModal.value = true;
+            }
+          }
+        }
       });
     }
   });
 };
 
-const reportIssue = () => {
-  const center = mapService.getMapCenter();
-  clickedPosition.value = center;
-  showAddModal.value = true;
+const toggleAddMode = () => {
+  isAddingReport.value = !isAddingReport.value;
+};
+
+const cancelAddMode = () => {
+  isAddingReport.value = false;
 };
 
 const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    signalementsService.create({
+    // Utiliser le nouveau service reports
+    await reportsService.addReport({
       userId: userContext.value.userId,
       location: clickedPosition.value,
       date: new Date().toISOString(),
@@ -237,10 +291,10 @@ const saveSignalement = async () => {
       entreprise: newSignalement.value.entreprise
     });
 
-    loadSignalements();
+    await loadSignalements();
 
     const toast = await toastController.create({
-      message: 'Signalement créé avec succès !',
+      message: 'Rapport créé avec succès !',
       duration: 2000,
       color: 'success'
     });
@@ -249,6 +303,13 @@ const saveSignalement = async () => {
     closeAddModal();
   } catch (error) {
     console.error('Erreur lors de la sauvegarde', error);
+
+    const toast = await toastController.create({
+      message: 'Erreur lors de la création du rapport',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
   }
 };
 
@@ -341,6 +402,44 @@ watch(showOnlyMine, () => {
 
 .message-icon {
   font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Add Mode Banner */
+.add-mode-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.banner-icon {
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
