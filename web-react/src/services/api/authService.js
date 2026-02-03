@@ -19,60 +19,60 @@ class AuthService {
     async login(email, password) {
         try {
             // MOCK - Pour test uniquement
-            if (email === 'test@gmail.com' && password === 'test') {
-                // Simuler un délai réseau
-                await new Promise(resolve => setTimeout(resolve, 800));
+            // if (email === 'test@gmail.com' && password === 'test') {
+            //     // Simuler un délai réseau
+            //     await new Promise(resolve => setTimeout(resolve, 800));
 
-                const mockUser = {
-                    id: '12345',
-                    email: 'test@gmail.com',
-                    name: 'Test User',
-                    role: 'user',
-                    createdAt: new Date().toISOString(),
-                };
+            //     const mockUser = {
+            //         id: '12345',
+            //         email: 'test@gmail.com',
+            //         name: 'Test User',
+            //         role: 'user',
+            //         createdAt: new Date().toISOString(),
+            //     };
 
-                const mockSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            //     const mockSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-                return {
-                    user: mockUser,
-                    sessionId: mockSessionId,
-                };
-            }
+            //     return {
+            //         user: mockUser,
+            //         sessionId: mockSessionId,
+            //     };
+            // }
 
             // Cas où les identifiants sont incorrects
-            throw new Error('Email ou mot de passe incorrect');
+            // throw new Error('Email ou mot de passe incorrect');
 
             // MODE LOCAL - PostgreSQL
-            // if (AUTH_MODE === 'local') {
-            //   const response = await api.post('/auth/login', {
-            //     email,
-            //     password,
-            //   });
-            //
-            //   return {
-            //     user: response.data.user,
-            //     sessionId: response.data.sessionId,
-            //   };
-            // }
+            if (AUTH_MODE === 'local') {
+              const response = await api.post('/auth/login', {
+                email,
+                password,
+              });
+            
+              return {
+                user: response.data.user,
+                sessionId: response.data.sessionId,
+              };
+            }
 
             // MODE FIREBASE
-            // if (AUTH_MODE.startsWith('firebase')) {
-            //   const auth = getAuth(app);
-            //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            //   const user = userCredential.user;
-            //
-            //   const token = await user.getIdToken();
-            //
-            //   return {
-            //     user: {
-            //       id: user.uid,
-            //       email: user.email,
-            //       name: user.displayName || user.email.split('@')[0],
-            //       emailVerified: user.emailVerified,
-            //     },
-            //     sessionId: token,
-            //   };
-            // }
+        //     if (AUTH_MODE.startsWith('firebase')) {
+        //       const auth = getAuth(app);
+        //       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        //       const user = userCredential.user;
+            
+        //       const token = await user.getIdToken();
+            
+        //       return {
+        //         user: {
+        //           id: user.uid,
+        //           email: user.email,
+        //           name: user.displayName || user.email.split('@')[0],
+        //           emailVerified: user.emailVerified,
+        //         },
+        //         sessionId: token,
+        //       };
+        //     }
 
         } catch (error) {
             throw this.handleError(error);
