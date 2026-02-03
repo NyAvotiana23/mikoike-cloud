@@ -193,7 +193,7 @@ const Map = () => {
             {roadIssues.map((issue) => (
               <Marker
                 key={issue.id}
-                position={[issue.lat, issue.lng]}
+                position={[issue.coordinates.lat, issue.coordinates.lng]}
                 icon={createCustomIcon(issue.color, issue.icon)}
                 eventHandlers={{
                   click: () => setSelectedPoint(issue)

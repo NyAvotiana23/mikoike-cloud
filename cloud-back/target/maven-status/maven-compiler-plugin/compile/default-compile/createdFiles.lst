@@ -1,6 +1,7 @@
 mg\projetfinal\utils\NetworkUtils.class
 mg\projetfinal\dto\ActionDTO.class
 mg\projetfinal\entity\SyncHistory$SyncHistoryBuilder.class
+mg\projetfinal\config\WebConfig.class
 mg\projetfinal\service\EntrepriseService.class
 mg\projetfinal\dto\LoginRequest.class
 mg\projetfinal\repository\EntrepriseRepository.class

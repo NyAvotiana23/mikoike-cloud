@@ -50,8 +50,8 @@ class AuthService {
               });
             
               return {
-                user: response.data.user,
-                sessionId: response.data.sessionId,
+                userId: response.userId,
+                sessionId: response.token,
               };
             }
 
@@ -89,18 +89,18 @@ class AuthService {
     async register(email, password, name) {
         try {
             // MODE LOCAL - PostgreSQL
-            // if (AUTH_MODE === 'local') {
-            //   const response = await api.post('/auth/register', {
-            //     email,
-            //     password,
-            //     name,
-            //   });
-            //
-            //   return {
-            //     user: response.data.user,
-            //     sessionId: response.data.sessionId,
-            //   };
-            // }
+            if (AUTH_MODE === 'local') {
+              const response = await api.post('/auth/register', {
+                email,
+                password,
+                name,
+              });
+            
+              return {
+                user: response.data.userId,
+                sessionId: response.data.sessionId,
+              };
+            }
 
             // MODE FIREBASE
             // if (AUTH_MODE.startsWith('firebase')) {
@@ -135,9 +135,9 @@ class AuthService {
     async logout() {
         try {
             // MODE LOCAL - PostgreSQL
-            // if (AUTH_MODE === 'local') {
-            //   await api.post('/auth/logout');
-            // }
+            if (AUTH_MODE === 'local') {
+              await api.post('/auth/logout');
+            }
 
             // MODE FIREBASE
             // if (AUTH_MODE.startsWith('firebase')) {
