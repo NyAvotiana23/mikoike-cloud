@@ -1,6 +1,5 @@
 package mg.projetfinal.repository;
 
-
 import mg.projetfinal.entity.Session;
 import mg.projetfinal.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +13,10 @@ import java.util.Optional;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Long> {
+
+    @Query("SELECT s FROM Session s JOIN FETCH s.user u JOIN FETCH u.role WHERE s.token = :token")
     Optional<Session> findByToken(String token);
+
     List<Session> findByUserAndIsActiveTrue(User user);
 
     @Query("SELECT s FROM Session s WHERE s.expiresAt < :now")
