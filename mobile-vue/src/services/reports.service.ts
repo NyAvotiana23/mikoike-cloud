@@ -1,4 +1,5 @@
-import firebaseService from './firebase.service';
+// import firebaseService from './firebase.service';
+// Décommentez la ligne ci-dessus lorsque vous activerez Firestore
 // import { collection, addDoc, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import type { Signalement } from '@/types/signalement';
 
@@ -8,6 +9,8 @@ import type { Signalement } from '@/types/signalement';
  * Décommentez les imports et méthodes Firestore pour activer la persistance
  */
 class ReportsService {
+  // Nom de la collection Firestore (pour quand Firestore sera activé)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private collectionName = 'signalements';
 
   // Données statiques pour le développement

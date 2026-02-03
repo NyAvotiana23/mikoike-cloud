@@ -5,9 +5,24 @@
     <ion-content>
       <!-- Filtre pour utilisateurs connectés -->
       <div v-if="isAuthenticated" class="filter-bar">
-        <ion-toggle v-model="showOnlyMine">
-          Mes signalements uniquement
-        </ion-toggle>
+        <div class="filter-tabs">
+          <button
+            class="filter-tab"
+            :class="{ active: !showOnlyMine }"
+            @click="showOnlyMine = false"
+          >
+            <ion-icon :icon="globeOutline" class="tab-icon"></ion-icon>
+            <span>Tous les signalements</span>
+          </button>
+          <button
+            class="filter-tab"
+            :class="{ active: showOnlyMine }"
+            @click="showOnlyMine = true"
+          >
+            <ion-icon :icon="personOutline" class="tab-icon"></ion-icon>
+            <span>Mes signalements</span>
+          </button>
+        </div>
       </div>
 
       <!-- Message pour visiteurs -->
@@ -168,13 +183,15 @@ import {
 } from '@ionic/vue';
 import {
   add, informationCircle, calendarOutline, flagOutline, locationOutline,
-  businessOutline, resizeOutline, cashOutline, checkmark, close
+  businessOutline, resizeOutline, cashOutline, checkmark, close,
+  globeOutline, personOutline
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
 import { useUserContext } from '@/services/user-context.service';
 import signalementsService from '@/services/signalements.service';
 import mapService from '@/services/map.service';
 import reportsService from '@/services/reports.service';
+import geolocationService from '@/services/geolocation.service';
 
 const { isAuthenticated, userContext } = useUserContext();
 
@@ -185,6 +202,7 @@ const showAddModal = ref(false);
 const selectedSignalement = ref<any>(null);
 const clickedPosition = ref<any>(null);
 const isAddingReport = ref(false);
+const userLocation = ref<{ lat: number, lng: number } | null>(null);
 
 const newSignalement = ref({
   titre: '',
@@ -196,7 +214,29 @@ const newSignalement = ref({
 });
 
 onMounted(async () => {
-  await mapService.initMap('map');
+  // Demander la permission de géolocalisation et obtenir la position
+  try {
+    const position = await geolocationService.getCurrentPosition();
+    userLocation.value = position;
+
+    // Initialiser la carte avec la position de l'utilisateur si disponible
+    await mapService.initMap('map', position.lat, position.lng);
+
+    // Ajouter un marqueur pour la position de l'utilisateur
+    mapService.addUserMarker(position.lat, position.lng);
+
+    const toast = await toastController.create({
+      message: 'Position actuelle détectée',
+      duration: 2000,
+      color: 'success',
+      position: 'top'
+    });
+    await toast.present();
+  } catch (error) {
+    console.warn('Géolocalisation non disponible, utilisation de la position par défaut', error);
+    await mapService.initMap('map');
+  }
+
   await loadSignalements();
 
   // Gérer les clics sur les marqueurs
@@ -379,10 +419,51 @@ watch(showOnlyMine, () => {
 <style scoped>
 /* Filter Bar */
 .filter-bar {
-  padding: 1rem;
-  background: white;
-  color: #1f2937;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.filter-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.filter-tab:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border-color: #0ea5e9;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.filter-tab .tab-icon {
+  font-size: 1.25rem;
 }
 
 /* Visitor Message */
@@ -496,21 +577,54 @@ watch(showOnlyMine, () => {
   margin: 0 0 0.75rem 0;
 }
 
-/* Add Form */
+/* Add Form - Custom CSS (sans Tailwind) */
 .add-form {
-  padding: 1rem 0;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .form-item {
-  margin-bottom: 1rem;
-  --background: #f8f9fa;
-  --border-radius: 12px;
+  margin-bottom: 1.25rem;
+  --background: #ffffff;
+  --border-radius: 16px;
+  --border-width: 2px;
+  --border-color: #e2e8f0;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.form-item:hover,
+.form-item:focus-within {
+  --border-color: #0ea5e9;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+  transform: translateY(-2px);
 }
 
 .submit-button {
-  --border-radius: 12px;
-  height: 56px;
-  margin-top: 1rem;
-  font-weight: 600;
+  --border-radius: 16px;
+  height: 58px;
+  margin-top: 1.5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25);
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
 }
 </style>
