@@ -8,8 +8,8 @@
         <div class="filter-tabs">
           <button
             class="filter-tab"
-            :class="{ active: !showOnlyMine }"
-            @click="showOnlyMine = false"
+            :class="{ active: !showOnlyMine && !filterStatus }"
+            @click="toggleAllReports"
           >
             <ion-icon :icon="globeOutline" class="tab-icon"></ion-icon>
             <span>Tous les signalements</span>
@@ -17,10 +17,42 @@
           <button
             class="filter-tab"
             :class="{ active: showOnlyMine }"
-            @click="showOnlyMine = true"
+            @click="toggleMyReports"
           >
             <ion-icon :icon="personOutline" class="tab-icon"></ion-icon>
             <span>Mes signalements</span>
+          </button>
+        </div>
+
+        <!-- Filtres de statut (visible uniquement dans "Tous les signalements") -->
+        <div v-if="!showOnlyMine" class="status-filters">
+          <button
+            class="status-filter-btn"
+            :class="{ active: !filterStatus }"
+            @click="setStatusFilter(null)"
+          >
+            Tous
+          </button>
+          <button
+            class="status-filter-btn nouveau"
+            :class="{ active: filterStatus === 'nouveau' }"
+            @click="setStatusFilter('nouveau')"
+          >
+            Nouveau
+          </button>
+          <button
+            class="status-filter-btn en-cours"
+            :class="{ active: filterStatus === 'en_cours' }"
+            @click="setStatusFilter('en_cours')"
+          >
+            En cours
+          </button>
+          <button
+            class="status-filter-btn termine"
+            :class="{ active: filterStatus === 'termine' }"
+            @click="setStatusFilter('termine')"
+          >
+            Terminé
           </button>
         </div>
       </div>
@@ -137,7 +169,7 @@
 
           <ion-item class="form-item">
             <ion-label position="floating">Description</ion-label>
-            <ion-textarea v-model="newSignalement.description" rows="3"></ion-textarea>
+            <ion-textarea v-model="newSignalement.description" :rows="3"></ion-textarea>
           </ion-item>
 
           <ion-item class="form-item">
@@ -179,7 +211,7 @@ import {
   IonPage, IonContent, IonFab, IonFabButton, IonIcon, IonModal,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonItem,
   IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption,
-  IonBadge, IonToggle, toastController
+  IonBadge, toastController
 } from '@ionic/vue';
 import {
   add, informationCircle, calendarOutline, flagOutline, locationOutline,
@@ -196,7 +228,9 @@ import geolocationService from '@/services/geolocation.service';
 const { isAuthenticated, userContext } = useUserContext();
 
 const signalements = ref<any[]>([]);
+const allSignalements = ref<any[]>([]); // Tous les signalements chargés
 const showOnlyMine = ref(false);
+const filterStatus = ref<string | null>(null);
 const showDetailsModal = ref(false);
 const showAddModal = ref(false);
 const selectedSignalement = ref<any>(null);
@@ -264,22 +298,51 @@ const loadSignalements = async () => {
   try {
     if (showOnlyMine.value && userContext.value.userId) {
       // Utiliser le nouveau service reports
-      signalements.value = await reportsService.getAllReports(userContext.value.userId);
+      allSignalements.value = await reportsService.getAllReports(userContext.value.userId);
     } else {
       // Charger tous les rapports
-      signalements.value = await reportsService.getAllReports();
+      allSignalements.value = await reportsService.getAllReports();
     }
-    displayMarkers();
+    applyFilters();
   } catch (error) {
     console.error('Erreur lors du chargement des signalements:', error);
     // Fallback vers les données mockées
     if (showOnlyMine.value && userContext.value.userId) {
-      signalements.value = signalementsService.getAll(userContext.value.userId);
+      allSignalements.value = signalementsService.getAll(userContext.value.userId);
     } else {
-      signalements.value = signalementsService.getAll();
+      allSignalements.value = signalementsService.getAll();
     }
-    displayMarkers();
+    applyFilters();
   }
+};
+
+const applyFilters = () => {
+  let filtered = [...allSignalements.value];
+
+  // Appliquer le filtre de statut si défini
+  if (filterStatus.value) {
+    filtered = filtered.filter(sig => sig.status === filterStatus.value);
+  }
+
+  signalements.value = filtered;
+  displayMarkers();
+};
+
+const toggleAllReports = () => {
+  showOnlyMine.value = false;
+  filterStatus.value = null;
+  loadSignalements();
+};
+
+const toggleMyReports = () => {
+  showOnlyMine.value = true;
+  filterStatus.value = null;
+  loadSignalements();
+};
+
+const setStatusFilter = (status: string | null) => {
+  filterStatus.value = status;
+  applyFilters();
 };
 
 const displayMarkers = () => {
@@ -414,6 +477,12 @@ const getPriorityLabel = (priorite: string) => {
 watch(showOnlyMine, () => {
   loadSignalements();
 });
+
+watch(filterStatus, () => {
+  if (!showOnlyMine.value) {
+    applyFilters();
+  }
+});
 </script>
 
 <style scoped>
@@ -429,6 +498,7 @@ watch(showOnlyMine, () => {
   display: flex;
   gap: 0.75rem;
   width: 100%;
+  margin-bottom: 0.75rem;
 }
 
 .filter-tab {
@@ -464,6 +534,60 @@ watch(showOnlyMine, () => {
 
 .filter-tab .tab-icon {
   font-size: 1.25rem;
+}
+
+/* Status Filters */
+.status-filters {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.status-filter-btn {
+  padding: 0.5rem 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.status-filter-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.status-filter-btn.active {
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-filter-btn.active:not(.nouveau):not(.en-cours):not(.termine) {
+  background: #64748b;
+  border-color: #64748b;
+}
+
+.status-filter-btn.nouveau.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.status-filter-btn.en-cours.active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.status-filter-btn.termine.active {
+  background: #10b981;
+  border-color: #10b981;
 }
 
 /* Visitor Message */
@@ -527,7 +651,13 @@ watch(showOnlyMine, () => {
 /* Map Container */
 .map-container {
   width: 100%;
-  height: calc(100vh - 160px);
+  height: calc(100vh - 200px);
+  position: relative;
+  z-index: 1;
+}
+
+ion-content {
+  --overflow: hidden;
 }
 
 /* Details Modal */
