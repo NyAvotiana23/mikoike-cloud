@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="" />
+    <list default="true" id="ddc7a477-80db-42e3-9d10-373422658eca" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java-combined.ps1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/FirebaseSyncController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebaseSyncService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +80,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "syncFeature",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/mamna/Documents/ITU/S5/Web/mikoike-cloud/cloud-back/src/main/resources",
@@ -80,6 +100,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back" />
       <recent name="C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\resources" />
     </key>
   </component>
@@ -113,6 +134,11 @@
       <workItem from="1768915626129" duration="57000" />
       <workItem from="1769492743644" duration="2648000" />
       <workItem from="1769497948910" duration="997000" />
+      <workItem from="1769532242354" duration="7000" />
+      <workItem from="1769749030981" duration="420000" />
+      <workItem from="1770050869904" duration="1688000" />
+      <workItem from="1770052578213" duration="753000" />
+      <workItem from="1770094670395" duration="2308000" />
     </task>
     <servers />
   </component>

@@ -12,6 +12,7 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\SignalementResponseDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\utils\NetworkUtils.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\FirebaseSyncController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\HistoriqueStatusService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\User.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\SignalementStatus.java
@@ -26,6 +27,7 @@ C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\pr
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\dto\StatisticsDTO.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\controller\EntrepriseController.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\config\FirebaseConfig.java
+C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\service\FirebaseSyncService.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SignalementStatusRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\repository\SessionRepository.java
 C:\Users\mamna\Documents\ITU\S5\Web\mikoike-cloud\cloud-back\src\main\java\mg\projetfinal\entity\Role.java

@@ -20,6 +20,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**").permitAll()  // Endpoints auth ouverts
                 .requestMatchers("/api/manager/**").hasRole("MANAGER")
+                .requestMatchers("/api/sync/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().maximumSessions(1);  // Limite sessions (customisez pour durée)

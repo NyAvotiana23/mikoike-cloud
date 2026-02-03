@@ -1,0 +1,341 @@
+﻿============================================================
+FILE: ActionDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ActionDTO {
+    private String date;
+    private String action;
+    private String user;
+}
+
+
+
+============================================================
+FILE: AuthResponse.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class AuthResponse {
+    private Boolean success;
+    private String message;
+    private Long userId;
+    private String email;
+    private String name;
+    private String role;
+}
+
+
+
+============================================================
+FILE: CoordinatesDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CoordinatesDTO {
+    private BigDecimal lat;
+    private BigDecimal lng;
+}
+
+
+
+============================================================
+FILE: CreateSignalementDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateSignalementDTO {
+    @NotNull(message = "La latitude est obligatoire")
+    private BigDecimal latitude;
+
+    @NotNull(message = "La longitude est obligatoire")
+    private BigDecimal longitude;
+
+    @NotBlank(message = "La description est obligatoire")
+    private String description;
+
+    private String adresse;
+    private String photoUrl;
+
+    @NotNull(message = "Le statut est obligatoire")
+    private Long statusId;
+}
+
+
+
+============================================================
+FILE: EntrepriseResponseDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EntrepriseResponseDTO {
+    private Integer id;
+    private String nom;
+    private String siret;
+    private String telephone;
+    private String email;
+    private String adresse;
+    private String[] specialites;
+    private Boolean isActive;
+    private BigDecimal noteMoyenne;
+    private Integer nombreInterventions;
+}
+
+
+
+============================================================
+FILE: ErrorResponse.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class ErrorResponse {
+    private Boolean success;
+    private String message;
+}
+
+
+
+============================================================
+FILE: LoginRequest.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Data;
+
+@Data
+public class LoginRequest {
+    private String email;
+    private String password;
+}
+
+
+
+============================================================
+FILE: LoginResponse.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+public class LoginResponse {
+    private Boolean success;
+    private String message;
+    private String token;
+    private Long userId;
+    private String email;
+    private String name;
+    private String role;
+    private LocalDateTime expiresAt;
+}
+
+
+
+============================================================
+FILE: RegisterRequest.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Data;
+
+@Data
+public class RegisterRequest {
+    private String email;
+    private String password;
+    private String name;
+}
+
+
+
+============================================================
+FILE: SessionResponse.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+public class SessionResponse {
+    private Boolean success;
+    private Boolean valid;
+    private String message;
+    private Long userId;
+    private String email;
+    private String name;
+    private String role;
+    private LocalDateTime expiresAt;
+}
+
+
+
+============================================================
+FILE: SignalementResponseDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class SignalementResponseDTO {
+    private Long id;
+    private String type;
+    private String icon;
+    private String color;
+    private CoordinatesDTO coordinates;
+    private String title;
+    private String date;
+    private String status;
+    private Integer surface;
+    private BigDecimal budget;
+    private String entreprise;
+    private String location;
+    private String description;
+    private List<ActionDTO> actions;
+    
+    // Pour la carte
+    private BigDecimal lat;
+    private BigDecimal lng;
+}
+
+
+
+============================================================
+FILE: StatisticsDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class StatisticsDTO {
+    private Integer total;
+    private Integer totalSurface;
+    private BigDecimal totalBudget;
+    private Integer nouveau;
+    private Integer enCours;
+    private Integer termine;
+    private Double avancement;
+}
+
+
+
+============================================================
+FILE: UpdateUserRequest.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+package mg.projetfinal.dto;
+
+import lombok.Data;
+
+@Data
+public class UpdateUserRequest {
+    private String name;
+    private String password;
+}
+
+
+

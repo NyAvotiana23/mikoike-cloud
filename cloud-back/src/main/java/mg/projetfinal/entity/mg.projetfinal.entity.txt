@@ -1,0 +1,1221 @@
+﻿============================================================
+FILE: Entreprise.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Type;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "entreprises")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Entreprise {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "nom", unique = true, nullable = false, length = 150)
+    private String nom;
+
+    @Column(name = "siret", unique = true, length = 14)
+    private String siret;
+
+    @Column(name = "telephone", length = 20)
+    private String telephone;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "adresse", columnDefinition = "TEXT")
+    private String adresse;
+
+    @Type(StringArrayType.class)
+    @Column(name = "specialites", columnDefinition = "text[]")
+    private String[] specialites;
+
+    @Column(name = "is_active")
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Column(name = "note_moyenne", precision = 3, scale = 2)
+    private BigDecimal noteMoyenne;
+
+    @Column(name = "nombre_interventions")
+    @Builder.Default
+    private Integer nombreInterventions = 0;
+
+    // Relations
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
+    @OneToMany(mappedBy = "entreprise", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<SignalementAction> actions = new HashSet<>();
+
+    // Audit
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Méthodes utilitaires
+    public void incrementInterventions() {
+        this.nombreInterventions = (this.nombreInterventions == null ? 0 : this.nombreInterventions) + 1;
+    }
+
+    public void updateNoteMoyenne(BigDecimal nouvelleNote) {
+        if (this.noteMoyenne == null) {
+            this.noteMoyenne = nouvelleNote;
+        } else {
+            // Calcul simple de moyenne (peut être amélioré avec historique)
+            this.noteMoyenne = this.noteMoyenne
+                    .add(nouvelleNote)
+                    .divide(BigDecimal.valueOf(2), 2, BigDecimal.ROUND_HALF_UP);
+        }
+    }
+}
+
+
+
+============================================================
+FILE: FailedLoginTracking.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "failed_login_tracking", indexes = {
+        @Index(name = "idx_failed_login_email", columnList = "email", unique = true),
+        @Index(name = "idx_failed_login_blocked", columnList = "is_blocked, blocked_until")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class FailedLoginTracking {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "failed_count")
+    @Builder.Default
+    private Integer failedCount = 0;
+
+    @Column(name = "first_failed_at")
+    private LocalDateTime firstFailedAt;
+
+    @Column(name = "last_failed_at")
+    private LocalDateTime lastFailedAt;
+
+    @Column(name = "is_blocked")
+    @Builder.Default
+    private Boolean isBlocked = false;
+
+    @Column(name = "blocked_until")
+    private LocalDateTime blockedUntil;
+
+    @Column(name = "blocked_reason", length = 100)
+    private String blockedReason;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unblocked_by")
+    private User unblockedBy;
+
+    @Column(name = "unblocked_at")
+    private LocalDateTime unblockedAt;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Méthodes utilitaires
+    public void recordFailedAttempt() {
+        this.failedCount = (this.failedCount == null ? 0 : this.failedCount) + 1;
+        this.lastFailedAt = LocalDateTime.now();
+        if (this.firstFailedAt == null) {
+            this.firstFailedAt = LocalDateTime.now();
+        }
+    }
+
+    public void blockAccount(int minutes, String reason) {
+        this.isBlocked = true;
+        this.blockedUntil = LocalDateTime.now().plusMinutes(minutes);
+        this.blockedReason = reason;
+    }
+
+    public void unblock(User unblockedBy) {
+        this.isBlocked = false;
+        this.blockedUntil = null;
+        this.unblockedBy = unblockedBy;
+        this.unblockedAt = LocalDateTime.now();
+    }
+
+    public void reset() {
+        this.failedCount = 0;
+        this.firstFailedAt = null;
+        this.lastFailedAt = null;
+        this.isBlocked = false;
+        this.blockedUntil = null;
+        this.blockedReason = null;
+    }
+
+    public boolean isCurrentlyBlocked() {
+        if (!Boolean.TRUE.equals(this.isBlocked)) {
+            return false;
+        }
+        if (this.blockedUntil == null) {
+            return true;
+        }
+        return LocalDateTime.now().isBefore(this.blockedUntil);
+    }
+}
+
+
+
+============================================================
+FILE: HistoriqueStatus.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+@Entity
+@Table(name = "historique_status", indexes = {
+        @Index(name = "idx_historique_signalement", columnList = "signalement_id, changed_at DESC"),
+        @Index(name = "idx_historique_modified_by", columnList = "modified_by"),
+        @Index(name = "idx_historique_ancien_status", columnList = "ancien_status_id"),
+        @Index(name = "idx_historique_nouveau_status", columnList = "nouveau_status_id")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class HistoriqueStatus {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "signalement_id", nullable = false)
+    private Signalement signalement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ancien_status_id", nullable = false)
+    private SignalementStatus ancienStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nouveau_status_id", nullable = false)
+    private SignalementStatus nouveauStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by", nullable = false)
+    private User modifiedBy;
+
+    @Column(name = "commentaire", columnDefinition = "TEXT")
+    private String commentaire;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private Map<String, Object> metadata;
+
+    @CreationTimestamp
+    @Column(name = "changed_at", updatable = false)
+    private LocalDateTime changedAt;
+}
+
+
+
+============================================================
+FILE: LoginAttempt.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import mg.projetfinal.enums.FailureReason;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "login_attempts", indexes = {
+        @Index(name = "idx_login_attempts_email", columnList = "email"),
+        @Index(name = "idx_login_attempts_user_id", columnList = "user_id"),
+        @Index(name = "idx_login_attempts_attempted_at", columnList = "attempted_at DESC"),
+        @Index(name = "idx_login_attempts_email_time", columnList = "email, attempted_at DESC"),
+        @Index(name = "idx_login_attempts_success", columnList = "success, attempted_at DESC")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class LoginAttempt {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "success", nullable = false)
+    private Boolean success;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "failure_reason", length = 50)
+    private FailureReason failureReason;
+
+    @Column(name = "ip_address", length = 50)
+    private String ipAddress;
+
+    @Column(name = "user_agent")
+    private String userAgent;
+
+    @CreationTimestamp
+    @Column(name = "attempted_at", updatable = false)
+    private LocalDateTime attemptedAt;
+
+    // Méthodes utilitaires
+    public static LoginAttempt createSuccess(String email, User user, String ipAddress, String userAgent) {
+        return LoginAttempt.builder()
+                .email(email)
+                .user(user)
+                .success(true)
+                .ipAddress(ipAddress)
+                .userAgent(userAgent)
+                .build();
+    }
+
+    public static LoginAttempt createFailure(String email, User user, FailureReason reason,
+                                             String ipAddress, String userAgent) {
+        return LoginAttempt.builder()
+                .email(email)
+                .user(user)
+                .success(false)
+                .failureReason(reason)
+                .ipAddress(ipAddress)
+                .userAgent(userAgent)
+                .build();
+    }
+}
+
+
+
+============================================================
+FILE: Role.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "roles")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "code", unique = true, nullable = false, length = 20)
+    private String code;
+
+    @Column(name = "libelle", nullable = false, length = 50)
+    private String libelle;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "niveau_acces", nullable = false)
+    @Builder.Default
+    private Integer niveauAcces = 1;
+
+    // Relations
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<User> users = new HashSet<>();
+
+    // Audit
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Méthodes utilitaires
+    public boolean isManager() {
+        return "MANAGER".equals(this.code);
+    }
+
+    public boolean isUtilisateur() {
+        return "UTILISATEUR".equals(this.code);
+    }
+
+    public boolean isVisiteur() {
+        return "VISITEUR".equals(this.code);
+    }
+}
+
+
+
+============================================================
+FILE: Session.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "sessions", indexes = {
+        @Index(name = "idx_session_user_id", columnList = "user_id"),
+        @Index(name = "idx_session_token", columnList = "token"),
+        @Index(name = "idx_session_expires_at", columnList = "expires_at"),
+        @Index(name = "idx_session_is_active", columnList = "is_active")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Session {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "token", unique = true, nullable = false, length = 500)
+    private String token;
+
+    @Column(name = "device_info")
+    private String deviceInfo;
+
+    @Column(name = "ip_address", length = 50)
+    private String ipAddress;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "expires_at", nullable = false)
+    private LocalDateTime expiresAt;
+
+    @Column(name = "is_active")
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Column(name = "last_activity_at")
+    @Builder.Default
+    private LocalDateTime lastActivityAt = LocalDateTime.now();
+
+    // Méthodes utilitaires
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(this.expiresAt);
+    }
+
+    public boolean isValid() {
+        return Boolean.TRUE.equals(this.isActive) && !isExpired();
+    }
+
+    public void updateActivity() {
+        this.lastActivityAt = LocalDateTime.now();
+    }
+
+    public void invalidate() {
+        this.isActive = false;
+    }
+}
+
+
+
+============================================================
+FILE: Signalement.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "signalements", indexes = {
+        @Index(name = "idx_signalement_user_id", columnList = "user_id"),
+        @Index(name = "idx_signalement_status_id", columnList = "status_id"),
+        @Index(name = "idx_signalement_date", columnList = "date_signalement"),
+        @Index(name = "idx_signalement_location", columnList = "latitude, longitude"),
+        @Index(name = "idx_signalement_firebase_id", columnList = "firebase_id"),
+        @Index(name = "idx_signalement_firebase_synced", columnList = "firebase_synced")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Signalement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    // Synchronisation Firebase
+    @Column(name = "firebase_id", unique = true, length = 128)
+    private String firebaseId;
+
+    @Column(name = "firebase_synced")
+    @Builder.Default
+    private Boolean firebaseSynced = false;
+
+    @Column(name = "last_sync_at")
+    private LocalDateTime lastSyncAt;
+
+    // Localisation
+    @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
+    private BigDecimal latitude;
+
+    @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
+    private BigDecimal longitude;
+
+    @Column(name = "adresse")
+    private String adresse;
+
+    // Détails du problème
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "photo_url", length = 500)
+    private String photoUrl;
+
+    // Statut
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id", nullable = false)
+    private SignalementStatus status;
+
+    // Dates
+    @CreationTimestamp
+    @Column(name = "date_signalement", updatable = false)
+    private LocalDateTime dateSignalement;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Relations
+    @OneToMany(mappedBy = "signalement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<SignalementAction> actions = new HashSet<>();
+
+    @OneToMany(mappedBy = "signalement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<HistoriqueStatus> historiquesStatus = new HashSet<>();
+
+    // Méthodes utilitaires
+    public boolean isNouveau() {
+        return this.status != null && this.status.isNouveau();
+    }
+
+    public boolean isEnCours() {
+        return this.status != null && this.status.isEnCours();
+    }
+
+    public boolean isTermine() {
+        return this.status != null && this.status.isTermine();
+    }
+
+    public SignalementAction getActiveAction() {
+        return this.actions.stream()
+                .filter(action -> action.getDateFinReelle() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addAction(SignalementAction action) {
+        this.actions.add(action);
+        action.setSignalement(this);
+    }
+
+    public void addHistorique(HistoriqueStatus historique) {
+        this.historiquesStatus.add(historique);
+        historique.setSignalement(this);
+    }
+}
+
+
+
+============================================================
+FILE: SignalementAction.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Type;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "signalement_actions", indexes = {
+        @Index(name = "idx_signalement_action_signalement", columnList = "signalement_id"),
+        @Index(name = "idx_signalement_action_entreprise", columnList = "entreprise_id"),
+        @Index(name = "idx_signalement_action_dates", columnList = "date_debut_travaux, date_fin_reelle")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SignalementAction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "signalement_id", nullable = false)
+    private Signalement signalement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entreprise_id")
+    private Entreprise entreprise;
+
+    // Informations travaux
+    @Column(name = "surface_m2", precision = 10, scale = 2)
+    private BigDecimal surfaceM2;
+
+    @Column(name = "budget", precision = 15, scale = 2)
+    private BigDecimal budget;
+
+    // Planning
+    @Column(name = "date_debut_travaux")
+    private LocalDateTime dateDebutTravaux;
+
+    @Column(name = "date_fin_prevue")
+    private LocalDateTime dateFinPrevue;
+
+    @Column(name = "date_fin_reelle")
+    private LocalDateTime dateFinReelle;
+
+    // Description
+    @Column(name = "description_travaux", columnDefinition = "TEXT")
+    private String descriptionTravaux;
+
+    @Column(name = "materiel_utilise", columnDefinition = "TEXT")
+    private String materielUtilise;
+
+    // Résultat
+    @Column(name = "travaux_conformes")
+    private Boolean travauxConformes;
+
+    @Column(name = "commentaire_fin", columnDefinition = "TEXT")
+    private String commentaireFin;
+
+    // Photos
+    @Type(StringArrayType.class)
+    @Column(name = "photos_avant", columnDefinition = "text[]")
+    private String[] photosAvant;
+
+    @Type(StringArrayType.class)
+    @Column(name = "photos_apres", columnDefinition = "text[]")
+    private String[] photosApres;
+
+    // Audit
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by")
+    private User modifiedBy;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Méthodes utilitaires
+    public boolean isEnCours() {
+        return this.dateDebutTravaux != null && this.dateFinReelle == null;
+    }
+
+    public boolean isTermine() {
+        return this.dateFinReelle != null;
+    }
+
+    public boolean isEnRetard() {
+        return this.dateFinPrevue != null
+                && this.dateFinReelle == null
+                && LocalDateTime.now().isAfter(this.dateFinPrevue);
+    }
+
+    public void terminerTravaux(boolean conformes, String commentaire) {
+        this.dateFinReelle = LocalDateTime.now();
+        this.travauxConformes = conformes;
+        this.commentaireFin = commentaire;
+    }
+}
+
+
+
+============================================================
+FILE: SignalementStatus.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "signalement_status")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SignalementStatus {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "code", unique = true, nullable = false, length = 20)
+    private String code;
+
+    @Column(name = "libelle", nullable = false, length = 50)
+    private String libelle;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "couleur", length = 7)
+    private String couleur; // Format: #FF0000
+
+    @Column(name = "ordre", nullable = false)
+    @Builder.Default
+    private Integer ordre = 1;
+
+    // Relations
+    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Signalement> signalements = new HashSet<>();
+
+    @OneToMany(mappedBy = "ancienStatus", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<HistoriqueStatus> historiquesAncien = new HashSet<>();
+
+    @OneToMany(mappedBy = "nouveauStatus", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<HistoriqueStatus> historiquesNouveau = new HashSet<>();
+
+    // Audit
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Méthodes utilitaires
+    public boolean isNouveau() {
+        return "NOUVEAU".equals(this.code);
+    }
+
+    public boolean isEnCours() {
+        return "EN_COURS".equals(this.code);
+    }
+
+    public boolean isTermine() {
+        return "TERMINE".equals(this.code);
+    }
+}
+
+
+
+============================================================
+FILE: SyncHistory.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import mg.projetfinal.enums.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+@Entity
+@Table(name = "sync_history", indexes = {
+        @Index(name = "idx_sync_history_entity", columnList = "entity_type, entity_id, synced_at DESC"),
+        @Index(name = "idx_sync_history_status", columnList = "status, synced_at DESC"),
+        @Index(name = "idx_sync_history_date", columnList = "synced_at DESC")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SyncHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "sync_queue_id")
+    private Long syncQueueId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entity_type", nullable = false, length = 50)
+    private EntityType entityType;
+
+    @Column(name = "entity_id", nullable = false)
+    private Long entityId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action", nullable = false, length = 20)
+    private SyncAction action;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "direction", nullable = false, length = 20)
+    private SyncDirection direction;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private SyncStatus status;
+
+    @Column(name = "error_message", columnDefinition = "TEXT")
+    private String errorMessage;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "firebase_response", columnDefinition = "jsonb")
+    private Map<String, Object> firebaseResponse;
+
+    @Column(name = "duration_ms")
+    private Integer durationMs;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "synced_by")
+    private User syncedBy;
+
+    @Column(name = "synced_at")
+    @Builder.Default
+    private LocalDateTime syncedAt = LocalDateTime.now();
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    public static SyncHistory fromSyncQueue(SyncQueue queue, SyncStatus finalStatus,
+                                            Map<String, Object> response, Integer duration) {
+        return SyncHistory.builder()
+                .syncQueueId(queue.getId())
+                .entityType(queue.getEntityType())
+                .entityId(queue.getEntityId())
+                .action(queue.getAction())
+                .direction(queue.getDirection())
+                .status(finalStatus)
+                .errorMessage(queue.getErrorMessage())
+                .firebaseResponse(response)
+                .durationMs(duration)
+                .syncedBy(queue.getSyncedBy())
+                .build();
+    }
+}
+
+
+
+============================================================
+FILE: SyncQueue.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import mg.projetfinal.enums.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+@Entity
+@Table(name = "sync_queue", indexes = {
+        @Index(name = "idx_sync_queue_status", columnList = "status, priority, scheduled_at"),
+        @Index(name = "idx_sync_queue_entity", columnList = "entity_type, entity_id"),
+        @Index(name = "idx_sync_queue_created_at", columnList = "created_at"),
+        @Index(name = "idx_sync_queue_retry", columnList = "retry_count, status")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SyncQueue {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entity_type", nullable = false, length = 50)
+    private EntityType entityType;
+
+    @Column(name = "entity_id", nullable = false)
+    private Long entityId;
+
+    @Column(name = "firebase_id", length = 128)
+    private String firebaseId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action", nullable = false, length = 20)
+    private SyncAction action;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "direction", nullable = false, length = 20)
+    private SyncDirection direction;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
+    private SyncStatus status = SyncStatus.PENDING;
+
+    @Column(name = "error_message", columnDefinition = "TEXT")
+    private String errorMessage;
+
+    @Column(name = "retry_count")
+    @Builder.Default
+    private Integer retryCount = 0;
+
+    @Column(name = "max_retries")
+    @Builder.Default
+    private Integer maxRetries = 3;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "data_snapshot", columnDefinition = "jsonb")
+    private Map<String, Object> dataSnapshot;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "synced_by")
+    private User syncedBy;
+
+    @Column(name = "priority")
+    @Builder.Default
+    private Integer priority = 5;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "scheduled_at")
+    @Builder.Default
+    private LocalDateTime scheduledAt = LocalDateTime.now();
+
+    @Column(name = "processing_started_at")
+    private LocalDateTime processingStartedAt;
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
+
+    public boolean canRetry() {
+        return this.retryCount < this.maxRetries;
+    }
+
+    public void incrementRetry() {
+        this.retryCount++;
+        this.status = SyncStatus.PENDING;
+        this.scheduledAt = LocalDateTime.now().plusMinutes(this.retryCount * 5);
+    }
+
+    public void startProcessing() {
+        this.status = SyncStatus.PROCESSING;
+        this.processingStartedAt = LocalDateTime.now();
+    }
+
+    public void markSuccess() {
+        this.status = SyncStatus.SUCCESS;
+        this.processedAt = LocalDateTime.now();
+        this.errorMessage = null;
+    }
+
+    public void markFailed(String error) {
+        this.status = SyncStatus.FAILED;
+        this.processedAt = LocalDateTime.now();
+        this.errorMessage = error;
+    }
+}
+
+
+
+============================================================
+FILE: User.java
+PACKAGE: mg.projetfinal.entity
+============================================================
+
+package mg.projetfinal.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "users", indexes = {
+        @Index(name = "idx_user_email", columnList = "email"),
+        @Index(name = "idx_user_firebase_uid", columnList = "firebase_uid"),
+        @Index(name = "idx_user_role_id", columnList = "role_id"),
+        @Index(name = "idx_user_is_locked", columnList = "is_locked"),
+        @Index(name = "idx_user_firebase_synced", columnList = "firebase_synced")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    // Synchronisation Firebase
+    @Column(name = "firebase_uid", unique = true, length = 128)
+    private String firebaseUid;
+
+    @Column(name = "firebase_synced")
+    @Builder.Default
+    private Boolean firebaseSynced = false;
+
+    @Column(name = "firebase_sync_error", columnDefinition = "TEXT")
+    private String firebaseSyncError;
+
+    @Column(name = "synced_at")
+    private LocalDateTime syncedAt;
+
+    // Rôle
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
+    // Sécurité et blocage
+    @Column(name = "is_locked")
+    @Builder.Default
+    private Boolean isLocked = false;
+
+    @Column(name = "locked_until")
+    private LocalDateTime lockedUntil;
+
+    @Column(name = "failed_attempts")
+    @Builder.Default
+    private Integer failedAttempts = 0;
+
+    @Column(name = "last_failed_attempt_at")
+    private LocalDateTime lastFailedAttemptAt;
+
+    // Audit
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Relations
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Session> sessions = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Signalement> signalements = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<LoginAttempt> loginAttempts = new HashSet<>();
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<User> usersCreated = new HashSet<>();
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<SignalementAction> actionsCreated = new HashSet<>();
+
+    @OneToMany(mappedBy = "modifiedBy", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<SignalementAction> actionsModified = new HashSet<>();
+
+    // Méthodes utilitaires
+    public boolean isManager() {
+        return this.role != null && this.role.isManager();
+    }
+
+    public boolean isAccountLocked() {
+        if (!Boolean.TRUE.equals(this.isLocked)) {
+            return false;
+        }
+        if (this.lockedUntil == null) {
+            return true;
+        }
+        return LocalDateTime.now().isBefore(this.lockedUntil);
+    }
+
+    public void incrementFailedAttempts() {
+        this.failedAttempts = (this.failedAttempts == null ? 0 : this.failedAttempts) + 1;
+        this.lastFailedAttemptAt = LocalDateTime.now();
+    }
+
+    public void resetFailedAttempts() {
+        this.failedAttempts = 0;
+        this.lastFailedAttemptAt = null;
+    }
+
+    public void lockAccount(int minutes) {
+        this.isLocked = true;
+        this.lockedUntil = LocalDateTime.now().plusMinutes(minutes);
+    }
+
+    public void unlockAccount() {
+        this.isLocked = false;
+        this.lockedUntil = null;
+        this.failedAttempts = 0;
+    }
+}
+
+
+
