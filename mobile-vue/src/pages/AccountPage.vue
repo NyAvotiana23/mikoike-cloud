@@ -7,7 +7,7 @@
         <!-- Profil utilisateur -->
         <div class="profile-section">
           <div class="avatar">
-            <ion-icon :icon="personCircle" class="text-6xl text-primary"></ion-icon>
+            <ion-icon :icon="personCircle" class="avatar-icon"></ion-icon>
           </div>
           <h2 class="user-name">{{ userContext.prenom }} {{ userContext.nom }}</h2>
           <p class="user-email">{{ userContext.email }}</p>
@@ -17,7 +17,7 @@
         <div class="quick-stats">
           <div class="stat-item">
             <div class="stat-icon">
-              <ion-icon :icon="documentText" class="text-primary"></ion-icon>
+              <ion-icon :icon="documentText" class="icon-primary"></ion-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ userStats.total }}</div>
@@ -27,7 +27,7 @@
 
           <div class="stat-item">
             <div class="stat-icon">
-              <ion-icon :icon="checkmarkCircle" class="text-success"></ion-icon>
+              <ion-icon :icon="checkmarkCircle" class="icon-success"></ion-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ userStats.termine }}</div>
@@ -37,7 +37,7 @@
 
           <div class="stat-item">
             <div class="stat-icon">
-              <ion-icon :icon="time" class="text-warning"></ion-icon>
+              <ion-icon :icon="time" class="icon-warning"></ion-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ userStats.en_cours }}</div>
@@ -49,22 +49,22 @@
         <!-- Options du compte -->
         <ion-list class="account-options">
           <ion-list-header>
-            <ion-label>Paramètres</ion-label>
+            <ion-label class="section-header">Paramètres</ion-label>
           </ion-list-header>
 
-          <ion-item button @click="goToSignalements">
+          <ion-item button @click="goToSignalements" class="option-item">
             <ion-icon slot="start" :icon="list"></ion-icon>
             <ion-label>Mes signalements</ion-label>
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
 
-          <ion-item button>
+          <ion-item button class="option-item">
             <ion-icon slot="start" :icon="notifications"></ion-icon>
             <ion-label>Notifications</ion-label>
             <ion-toggle :checked="notificationsEnabled" @ionChange="toggleNotifications"></ion-toggle>
           </ion-item>
 
-          <ion-item button>
+          <ion-item button class="option-item">
             <ion-icon slot="start" :icon="language"></ion-icon>
             <ion-label>Langue</ion-label>
             <ion-note slot="end">Français</ion-note>
@@ -74,22 +74,22 @@
         <!-- Informations de l'application -->
         <ion-list class="app-info">
           <ion-list-header>
-            <ion-label>À propos</ion-label>
+            <ion-label class="section-header">À propos</ion-label>
           </ion-list-header>
 
-          <ion-item>
+          <ion-item class="option-item">
             <ion-icon slot="start" :icon="informationCircle"></ion-icon>
             <ion-label>Version</ion-label>
             <ion-note slot="end">1.0.0</ion-note>
           </ion-item>
 
-          <ion-item button>
+          <ion-item button class="option-item">
             <ion-icon slot="start" :icon="help"></ion-icon>
             <ion-label>Aide & Support</ion-label>
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
 
-          <ion-item button>
+          <ion-item button class="option-item">
             <ion-icon slot="start" :icon="document"></ion-icon>
             <ion-label>Conditions d'utilisation</ion-label>
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
@@ -103,6 +103,7 @@
             color="danger"
             fill="outline"
             @click="confirmLogout"
+            class="logout-button"
           >
             <ion-icon slot="start" :icon="logOut"></ion-icon>
             Se déconnecter
@@ -163,7 +164,6 @@ const goToSignalements = () => {
 
 const toggleNotifications = (event: any) => {
   notificationsEnabled.value = event.detail.checked;
-  // TODO: Implémenter la logique de notifications
 };
 
 const confirmLogout = async () => {
@@ -176,10 +176,21 @@ const confirmLogout = async () => {
         role: 'cancel'
       },
       {
-        text: 'Déconnexion',
-        role: 'confirm',
+        text: 'Se déconnecter',
+        role: 'destructive',
         handler: async () => {
-          await handleLogout();
+          await logout();
+          setVisitor();
+          
+          const toast = await toastController.create({
+            message: 'Déconnexion réussie',
+            duration: 2000,
+            color: 'success',
+            position: 'top'
+          });
+          await toast.present();
+          
+          router.push('/');
         }
       }
     ]
@@ -187,93 +198,146 @@ const confirmLogout = async () => {
 
   await alert.present();
 };
-
-const handleLogout = async () => {
-  await logout();
-  setVisitor();
-
-  const toast = await toastController.create({
-    message: 'Vous êtes déconnecté',
-    duration: 2000,
-    color: 'success'
-  });
-  await toast.present();
-
-  router.push('/');
-};
 </script>
 
 <style scoped>
 .account-container {
   padding: 1rem;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
+/* Profile Section */
 .profile-section {
   text-align: center;
   padding: 2rem 1rem;
   background: white;
-  border-radius: 12px;
-  margin-bottom: 1rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
   margin-bottom: 1rem;
 }
 
+.avatar-icon {
+  font-size: 5rem;
+  color: #0ea5e9;
+}
+
 .user-name {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
 }
 
 .user-email {
-  color: #666;
   font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
 }
 
+/* Quick Stats */
 .quick-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .stat-item {
   background: white;
-  padding: 1rem;
   border-radius: 12px;
+  padding: 1rem;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
-  font-size: 2rem;
   margin-bottom: 0.5rem;
 }
 
+.icon-primary {
+  font-size: 2rem;
+  color: #0ea5e9;
+}
+
+.icon-success {
+  font-size: 2rem;
+  color: #10b981;
+}
+
+.icon-warning {
+  font-size: 2rem;
+  color: #f59e0b;
+}
+
 .stat-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
 }
 
 .stat-label {
-  font-size: 0.75rem;
-  color: #666;
-  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
+/* Lists */
 .account-options,
 .app-info {
-  margin-bottom: 1rem;
-  border-radius: 12px;
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
+.section-header {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.option-item {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --min-height: 56px;
+}
+
+/* Logout Section */
 .logout-section {
   margin-top: 2rem;
-  padding: 1rem 0;
+  padding: 1rem 0 2rem;
+}
+
+.logout-button {
+  --border-radius: 12px;
+  --border-width: 2px;
+  height: 56px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .quick-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-item {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
 }
 </style>
