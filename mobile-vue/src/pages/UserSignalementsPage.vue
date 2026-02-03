@@ -102,6 +102,10 @@
             <ion-card-subtitle class="card-subtitle">
               <ion-icon :icon="calendarOutline"></ion-icon>
               {{ formatDate(signalement.date) }}
+              <span v-if="signalement.photos && signalement.photos.length > 0" class="photo-badge">
+                <ion-icon :icon="imagesOutline"></ion-icon>
+                {{ signalement.photos.length }}
+              </span>
             </ion-card-subtitle>
           </ion-card-header>
 
@@ -132,6 +136,23 @@
                 <span>{{ formatCurrency(signalement.budget) }}</span>
               </div>
 
+              <!-- Photos Preview -->
+              <div v-if="signalement.photos && signalement.photos.length > 0" class="photos-preview">
+                <div class="photos-preview-grid">
+                  <div
+                    v-for="(photo, index) in signalement.photos.slice(0, 4)"
+                    :key="index"
+                    class="photo-preview-item"
+                    @click="viewDetails(signalement)"
+                  >
+                    <img :src="photo" :alt="`Photo ${index + 1}`" />
+                    <div v-if="index === 3 && signalement.photos.length > 4" class="more-photos-overlay">
+                      +{{ signalement.photos.length - 4 }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <p v-if="signalement.description" class="description">
                 {{ signalement.description }}
               </p>
@@ -142,15 +163,26 @@
                 <ion-icon slot="start" :icon="mapOutline"></ion-icon>
                 Voir sur la carte
               </ion-button>
-              <ion-button fill="outline" size="small" @click="editSignalement(signalement)">
-                <ion-icon slot="start" :icon="createOutline"></ion-icon>
-                Modifier
+              <ion-button fill="outline" size="small" @click="viewDetails(signalement)">
+                <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
+                Détails
               </ion-button>
             </div>
           </ion-card-content>
         </ion-card>
       </div>
     </ion-content>
+
+    <!-- Modal détails signalement -->
+    <SignalementDetailModal
+      :is-open="showDetailsModal"
+      :signalement="selectedSignalement"
+      :show-actions="true"
+      :show-edit-button="true"
+      @close="closeDetailsModal"
+      @viewOnMap="viewOnMap"
+      @edit="editSignalement"
+    />
   </ion-page>
 </template>
 
@@ -165,9 +197,10 @@ import {
 import {
   cashOutline, resizeOutline, filterOutline, calendarOutline,
   flagOutline, locationOutline, businessOutline, mapOutline,
-  createOutline, alertCircleOutline
+  alertCircleOutline, imagesOutline, eyeOutline
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
+import SignalementDetailModal from '@/components/SignalementDetailModal.vue';
 import signalementsService from '@/services/signalements.service';
 import { useUserContext } from '@/services/user-context.service';
 import type { Signalement, SignalementFilters, SignalementStats } from '@/types/signalement';
@@ -181,6 +214,11 @@ const filters = ref<SignalementFilters>({
   status: [],
   priorite: []
 });
+
+// Details modal
+const showDetailsModal = ref(false);
+const selectedSignalement = ref<Signalement | null>(null);
+
 
 const stats = computed<SignalementStats>(() => {
   const filtered = signalements.value;
@@ -280,13 +318,32 @@ const getPriorityLabel = (priorite: string) => {
   return labels[priorite] || priorite;
 };
 
-const viewOnMap = (_signalement: Signalement) => {
-  console.log('Viewing signalement on map:', _signalement.id);
-  router.push('/tabs/map');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const viewOnMap = (signalement: Signalement) => {
+  closeDetailsModal();
+  router.push({
+    path: '/tabs/map',
+    query: {
+      lat: signalement.location.lat.toString(),
+      lng: signalement.location.lng.toString(),
+      id: signalement.id
+    }
+  });
+};
+
+const viewDetails = (signalement: Signalement) => {
+  selectedSignalement.value = signalement;
+  showDetailsModal.value = true;
+};
+
+const closeDetailsModal = () => {
+  showDetailsModal.value = false;
+  selectedSignalement.value = null;
 };
 
 const editSignalement = (signalement: Signalement) => {
   console.log('Edit signalement:', signalement.id);
+  closeDetailsModal();
 };
 </script>
 
@@ -382,13 +439,11 @@ const editSignalement = (signalement: Signalement) => {
   margin: 0.5rem 1rem;
   border-radius: 12px;
   color: #1f2937;
-
 }
 
 .filter-group {
   margin-bottom: 1rem;
   color: #1f2937;
-
 }
 
 .filter-label {
@@ -442,6 +497,19 @@ const editSignalement = (signalement: Signalement) => {
   margin-top: 0.5rem;
 }
 
+.photo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #0ea5e9;
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
 /* Signalement Details */
 .signalement-details {
   margin-top: 0.5rem;
@@ -473,6 +541,50 @@ const editSignalement = (signalement: Signalement) => {
   color: #ef4444 !important;
 }
 
+/* Photos Preview in Card */
+.photos-preview {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.photos-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.photo-preview-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.photo-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.photo-preview-item:hover img {
+  transform: scale(1.05);
+}
+
+.more-photos-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
 .description {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -493,6 +605,7 @@ const editSignalement = (signalement: Signalement) => {
   flex: 1;
 }
 
+
 /* Responsive */
 @media (max-width: 640px) {
   .stats-container {
@@ -502,5 +615,10 @@ const editSignalement = (signalement: Signalement) => {
   .summary-container {
     grid-template-columns: 1fr;
   }
+
+  .photos-preview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 </style>
+

@@ -58,10 +58,13 @@
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
 
-          <ion-item button class="option-item">
+          <ion-item button @click="goToNotifications" class="option-item">
             <ion-icon slot="start" :icon="notifications"></ion-icon>
             <ion-label>Notifications</ion-label>
-            <ion-toggle :checked="notificationsEnabled" @ionChange="toggleNotifications"></ion-toggle>
+            <ion-badge v-if="unreadNotificationsCount > 0" color="danger" slot="end" class="notif-badge">
+              {{ unreadNotificationsCount }}
+            </ion-badge>
+            <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
 
           <ion-item button class="option-item">
@@ -119,7 +122,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   IonPage, IonContent, IonList, IonListHeader, IonItem, IonLabel,
-  IonIcon, IonButton, IonToggle, IonNote, alertController, toastController
+  IonIcon, IonButton, IonBadge, IonNote, alertController, toastController
 } from '@ionic/vue';
 import {
   personCircle, documentText, checkmarkCircle, time, list, notifications,
@@ -129,12 +132,14 @@ import AppHeader from '@/components/AppHeader.vue';
 import { useUserContext } from '@/services/user-context.service';
 import { useAuth } from '@/services/auth.service';
 import signalementsService from '@/services/signalements.service';
+import notificationsService from '@/services/notifications.service';
 
 const router = useRouter();
 const { userContext, setVisitor } = useUserContext();
 const { logout } = useAuth();
 
-const notificationsEnabled = ref(true);
+const unreadNotificationsCount = ref(0);
+
 const userStats = ref({
   total: 0,
   termine: 0,
@@ -144,6 +149,7 @@ const userStats = ref({
 
 onMounted(() => {
   loadUserStats();
+  loadUnreadNotificationsCount();
 });
 
 const loadUserStats = () => {
@@ -158,12 +164,20 @@ const loadUserStats = () => {
   }
 };
 
+const loadUnreadNotificationsCount = () => {
+  if (userContext.value.userId) {
+    unreadNotificationsCount.value = notificationsService.getUnreadCount(userContext.value.userId);
+  } else {
+    unreadNotificationsCount.value = 0;
+  }
+};
+
 const goToSignalements = () => {
   router.push('/tabs/signalements');
 };
 
-const toggleNotifications = (event: any) => {
-  notificationsEnabled.value = event.detail.checked;
+const goToNotifications = () => {
+  router.push('/tabs/notifications');
 };
 
 const confirmLogout = async () => {

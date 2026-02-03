@@ -9,6 +9,12 @@
           <ion-label>Carte</ion-label>
         </ion-tab-button>
 
+        <!-- Tab Tous les signalements - Toujours visible -->
+        <ion-tab-button tab="all-signalements" href="/tabs/all-signalements">
+          <ion-icon :icon="listCircle"></ion-icon>
+          <ion-label>Tous</ion-label>
+        </ion-tab-button>
+
         <!-- Tabs pour utilisateurs connectés -->
         <template v-if="isAuthenticated">
           <ion-tab-button tab="signalements" href="/tabs/signalements">
@@ -34,7 +40,7 @@
 
 <script setup lang="ts">
 import { IonPage, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/vue';
-import { map, list, person, logIn } from 'ionicons/icons';
+import { map, list, person, logIn, listCircle } from 'ionicons/icons';
 import { useUserContext } from '@/services/user-context.service';
 
 const { isAuthenticated } = useUserContext();

@@ -3,6 +3,27 @@
 // import { collection, addDoc, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import type { Signalement } from '@/types/signalement';
 
+
+// Photos de test (utilisant picsum.photos pour des images placeholder)
+const TEST_PHOTOS_SET_1 = [
+  'https://picsum.photos/seed/road1/400/400',
+  'https://picsum.photos/seed/road2/400/400',
+  'https://picsum.photos/seed/road3/400/400',
+];
+
+const TEST_PHOTOS_SET_2 = [
+  'https://picsum.photos/seed/pothole1/400/400',
+  'https://picsum.photos/seed/pothole2/400/400',
+];
+
+const TEST_PHOTOS_SET_3 = [
+  'https://picsum.photos/seed/repair1/400/400',
+  'https://picsum.photos/seed/repair2/400/400',
+  'https://picsum.photos/seed/repair3/400/400',
+  'https://picsum.photos/seed/repair4/400/400',
+  'https://picsum.photos/seed/repair5/400/400',
+];
+
 /**
  * Service pour gérer les rapports/signalements avec Firestore
  * Pour l'instant, utilise des données statiques
@@ -11,6 +32,8 @@ import type { Signalement } from '@/types/signalement';
 class ReportsService {
   // Nom de la collection Firestore (pour quand Firestore sera activé)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+
   private collectionName = 'signalements';
 
   // Données statiques pour le développement
@@ -27,7 +50,8 @@ class ReportsService {
       description: 'Nid de poule avenue de l\'Indépendance',
       titre: 'Réparation avenue Indépendance',
       priorite: 'haute',
-      dateDebut: new Date('2026-01-20').toISOString()
+      dateDebut: new Date('2026-01-20').toISOString(),
+      photos: TEST_PHOTOS_SET_1
     },
     {
       id: '2',
@@ -42,7 +66,8 @@ class ReportsService {
       titre: 'Réfection Route Digue',
       priorite: 'moyenne',
       dateDebut: new Date('2026-01-12').toISOString(),
-      dateFin: new Date('2026-02-15').toISOString()
+      dateFin: new Date('2026-02-15').toISOString(),
+      photos: TEST_PHOTOS_SET_3
     },
     {
       id: '3',
@@ -57,7 +82,8 @@ class ReportsService {
       titre: 'Réparation post-inondation',
       priorite: 'haute',
       dateDebut: new Date('2026-01-06').toISOString(),
-      dateFin: new Date('2026-01-25').toISOString()
+      dateFin: new Date('2026-01-25').toISOString(),
+      photos: TEST_PHOTOS_SET_2
     }
   ];
 
