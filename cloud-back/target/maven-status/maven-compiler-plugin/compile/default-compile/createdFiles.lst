@@ -6,6 +6,7 @@ mg\projetfinal\service\EntrepriseService.class
 mg\projetfinal\service\SignalementService.class
 mg\projetfinal\dto\LoginRequest.class
 mg\projetfinal\repository\EntrepriseRepository.class
+mg\projetfinal\controller\ManagerDashboardController$SignalementParStatus$SignalementParStatusBuilder.class
 mg\projetfinal\dto\CreateSignalementDTO$CreateSignalementDTOBuilder.class
 mg\projetfinal\dto\StatisticsDTO$StatisticsDTOBuilder.class
 mg\projetfinal\entity\HistoriqueStatus$HistoriqueStatusBuilder.class
@@ -13,6 +14,7 @@ mg\projetfinal\entity\Entreprise$EntrepriseBuilder.class
 mg\projetfinal\dto\RegisterRequest.class
 mg\projetfinal\repository\SyncQueueRepository.class
 mg\projetfinal\entity\SignalementStatus.class
+mg\projetfinal\controller\SignalementStatusController.class
 mg\projetfinal\entity\Session.class
 mg\projetfinal\controller\AuthController.class
 mg\projetfinal\dto\SessionResponse$SessionResponseBuilder.class
@@ -26,10 +28,13 @@ mg\projetfinal\controller\FirebaseSyncController.class
 mg\projetfinal\dto\LoginResponse$LoginResponseBuilder.class
 mg\projetfinal\dto\LoginResponse.class
 mg\projetfinal\enums\EntityType.class
+mg\projetfinal\controller\ManagerDashboardController$BudgetParEntreprise.class
 mg\projetfinal\enums\SyncAction.class
 mg\projetfinal\mapper\SignalementMapper.class
+mg\projetfinal\controller\ManagerDashboardController$DashboardResponse.class
 mg\projetfinal\dto\SignalementResponseDTO$SignalementResponseDTOBuilder.class
 mg\projetfinal\repository\SignalementActionRepository.class
+mg\projetfinal\controller\ManagerDashboardController$SignalementParStatus.class
 mg\projetfinal\dto\CoordinatesDTO.class
 mg\projetfinal\entity\Role.class
 mg\projetfinal\service\FirebaseSyncService$SyncResult.class
@@ -46,8 +51,10 @@ mg\projetfinal\entity\SignalementStatus$SignalementStatusBuilder.class
 mg\projetfinal\dto\AuthResponse$AuthResponseBuilder.class
 mg\projetfinal\dto\EntrepriseResponseDTO$EntrepriseResponseDTOBuilder.class
 mg\projetfinal\entity\User.class
+mg\projetfinal\controller\ManagerDashboardController.class
 mg\projetfinal\entity\FailedLoginTracking.class
 mg\projetfinal\service\HistoriqueStatusService.class
+mg\projetfinal\controller\ManagerDashboardController$BudgetParEntreprise$BudgetParEntrepriseBuilder.class
 mg\projetfinal\entity\User$UserBuilder.class
 mg\projetfinal\repository\RoleRepository.class
 mg\projetfinal\dto\SignalementResponseDTO.class
@@ -71,10 +78,13 @@ mg\projetfinal\service\SignalementActionService.class
 mg\projetfinal\entity\FailedLoginTracking$FailedLoginTrackingBuilder.class
 mg\projetfinal\entity\HistoriqueStatus.class
 mg\projetfinal\repository\HistoriqueStatusRepository.class
+mg\projetfinal\service\UserService.class
 mg\projetfinal\entity\LoginAttempt$LoginAttemptBuilder.class
 mg\projetfinal\entity\Role$RoleBuilder.class
 mg\projetfinal\dto\AuthResponse.class
 mg\projetfinal\repository\LoginAttemptRepository.class
+mg\projetfinal\controller\ManagerDashboardController$DashboardResponse$DashboardResponseBuilder.class
+mg\projetfinal\service\SignalementStatusService.class
 mg\projetfinal\dto\CreateSignalementDTO.class
 mg\projetfinal\entity\SyncHistory.class
 mg\projetfinal\entity\Signalement$SignalementBuilder.class

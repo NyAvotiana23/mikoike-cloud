@@ -5,9 +5,17 @@ PACKAGE: mg.projetfinal.enums
 
 package mg.projetfinal.enums;
 
+/**
+ * Type d'entité synchronisée
+ */
 public enum EntityType {
     USER,
-    SIGNALEMENT
+    SIGNALEMENT,
+    ENTREPRISE,
+    SIGNALEMENT_STATUS,
+    SIGNALEMENT_ACTION,
+    HISTORIQUE_STATUS,
+    SESSION
 }
 
 
@@ -35,10 +43,13 @@ PACKAGE: mg.projetfinal.enums
 
 package mg.projetfinal.enums;
 
+/**
+ * Type d'action de synchronisation
+ */
 public enum SyncAction {
-    CREATE,
-    UPDATE,
-    DELETE
+    CREATE,   // Création d'une nouvelle entité
+    UPDATE,   // Mise à jour d'une entité existante
+    DELETE    // Suppression d'une entité
 }
 
 
@@ -50,9 +61,13 @@ PACKAGE: mg.projetfinal.enums
 
 package mg.projetfinal.enums;
 
+/**
+ * Direction de la synchronisation
+ */
 public enum SyncDirection {
-    TO_FIREBASE,
-    FROM_FIREBASE
+    POSTGRES_TO_FIREBASE,   // PostgreSQL → Firebase
+    FIREBASE_TO_POSTGRES,   // Firebase → PostgreSQL
+    BIDIRECTIONAL           // Les deux sens
 }
 
 
@@ -64,11 +79,15 @@ PACKAGE: mg.projetfinal.enums
 
 package mg.projetfinal.enums;
 
+/**
+ * Statut de la synchronisation
+ */
 public enum SyncStatus {
-    PENDING,
-    PROCESSING,
-    SUCCESS,
-    FAILED
+    PENDING,      // En attente de traitement
+    PROCESSING,   // En cours de traitement
+    SUCCESS,      // Synchronisation réussie
+    FAILED,       // Synchronisation échouée
+    CANCELLED     // Synchronisation annulée
 }
 
 
