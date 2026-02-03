@@ -5,45 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/data.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/FirebaseSyncController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebaseSyncService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mobile-vue/IMPLEMENTATION_SUMMARY.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mobile-vue/REPORTS_SERVICE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mobile-vue/USAGE_GUIDE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../mobile-vue/src/services/reports.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/PhotoSignalementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/PhotoSignalementDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/PhotoSignalement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/PhotoSignalementRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/PhotoSignalementService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/EntityType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncAction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncDirection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/SyncStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/mg.projetfinal.enums.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/enums/mg.projetfinal.enums.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.prod.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/environments/environment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/AccountPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/AccountPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/DashboardPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/DashboardPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/LoginPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/LoginPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/MapPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/MapPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/pages/UserSignalementsPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/pages/UserSignalementsPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile-vue/src/services/map.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile-vue/src/services/map.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../~$ojet Cloud S5.docx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
