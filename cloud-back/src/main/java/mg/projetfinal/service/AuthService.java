@@ -195,15 +195,15 @@ public class AuthService {
         }
 
         // Étape 6: Vérifier Firebase si online
-        if (isOnline()) {
-            try {
-                FirebaseAuth.getInstance().getUserByEmail(email);
-            } catch (FirebaseAuthException e) {
-                recordLoginAttempt(email, user, false, FailureReason.FIREBASE_ERROR, ipAddress, userAgent);
-                log.error("Erreur Firebase lors du login: {}", e.getMessage());
-                throw new RuntimeException("Erreur de synchronisation Firebase");
-            }
-        }
+//        if (isOnline()) {
+//            try {
+//                FirebaseAuth.getInstance().getUserByEmail(email);
+//            } catch (FirebaseAuthException e) {
+//                recordLoginAttempt(email, user, false, FailureReason.FIREBASE_ERROR, ipAddress, userAgent);
+//                log.error("Erreur Firebase lors du login: {}", e.getMessage());
+//                throw new RuntimeException("Erreur de synchronisation Firebase");
+//            }
+//        }
 
         // Étape 7: Connexion réussie - Reset des tentatives échouées
         recordLoginAttempt(email, user, true, null, ipAddress, userAgent);

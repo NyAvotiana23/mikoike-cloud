@@ -1,15 +1,12 @@
-// src/pages/UserForm.jsx
+// Updated file: src/pages/user/UserForm.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    UserPlusIcon,
     EnvelopeIcon,
     LockClosedIcon,
     UserIcon,
-    CalendarIcon,
-    MapPinIcon,
 } from '@heroicons/react/24/outline';
-import addUserService from '../../services/api/addUserService';
+import addUserService from '../../services/api/authService';
 
 const UserForm = () => {
     const navigate = useNavigate();
@@ -20,10 +17,7 @@ const UserForm = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        nom: '',
-        prenom: '',
-        date_naissance: '',
-        location: '',
+        name: '',
     });
 
     const handleChange = (e) => {
@@ -38,8 +32,8 @@ const UserForm = () => {
     };
 
     const validateForm = () => {
-        if (!formData.email || !formData.password || !formData.nom || !formData.prenom) {
-            setError('Les champs Email, Mot de passe, Nom et Prénom sont obligatoires');
+        if (!formData.email || !formData.password || !formData.name) {
+            setError('Les champs Email, Mot de passe et Nom sont obligatoires');
             return false;
         }
 
@@ -50,11 +44,6 @@ const UserForm = () => {
 
         if (formData.password.length < 6) {
             setError('Le mot de passe doit contenir au moins 6 caractères');
-            return false;
-        }
-
-        if (formData.age && (isNaN(formData.age) || formData.age < 18 || formData.age > 100)) {
-            setError('L\'âge doit être un nombre entre 18 et 100');
             return false;
         }
 
@@ -73,27 +62,15 @@ const UserForm = () => {
         setSuccess('');
 
         try {
-            const userData = {
-                email: formData.email,
-                password: formData.password,
-                nom: formData.nom,
-                prenom: formData.prenom,
-                date_naissance: formData.date_naissance || null,
-                location: formData.location || null,
-            };
+            const result = await addUserService.register(formData.email, formData.password, formData.name);
 
-            const result = await addUserService.createUser(userData);
-
-            setSuccess(`Utilisateur ${result.user.prenom} ${result.user.nom} créé avec succès !`);
+            setSuccess(`Utilisateur ${result.user.name} créé avec succès !`);
 
             // Reset form
             setFormData({
                 email: '',
                 password: '',
-                nom: '',
-                prenom: '',
-                date_naissance: '',
-                location: '',
+                name: '',
             });
 
             // Redirect after 2 seconds
@@ -191,88 +168,24 @@ const UserForm = () => {
                         </div>
                     </div>
 
-                    {/* Nom & Prénom */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label htmlFor="nom" className="block text-body-sm font-medium text-neutral-700 mb-2">
-                                Nom <span className="text-error-600">*</span>
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <UserIcon className="h-5 w-5 text-neutral-400" />
-                                </div>
-                                <input
-                                    type="text"
-                                    id="nom"
-                                    name="nom"
-                                    value={formData.nom}
-                                    onChange={handleChange}
-                                    className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-body-md"
-                                    placeholder="Dupont"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label htmlFor="prenom" className="block text-body-sm font-medium text-neutral-700 mb-2">
-                                Prénom <span className="text-error-600">*</span>
-                            </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <UserIcon className="h-5 w-5 text-neutral-400" />
-                                </div>
-                                <input
-                                    type="text"
-                                    id="prenom"
-                                    name="prenom"
-                                    value={formData.prenom}
-                                    onChange={handleChange}
-                                    className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-body-md"
-                                    placeholder="Jean"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Date de naissance */}
+                    {/* Name */}
                     <div>
-                        <label htmlFor="date_naissance" className="block text-body-sm font-medium text-neutral-700 mb-2">
-                            Date de naissance
+                        <label htmlFor="name" className="block text-body-sm font-medium text-neutral-700 mb-2">
+                            Nom <span className="text-error-600">*</span>
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <CalendarIcon className="h-5 w-5 text-neutral-400" />
-                            </div>
-                            <input
-                                type="date"
-                                id="date_naissance"
-                                name="date_naissance"
-                                value={formData.date_naissance}
-                                onChange={handleChange}
-                                className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-body-md"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Location */}
-                    <div>
-                        <label htmlFor="location" className="block text-body-sm font-medium text-neutral-700 mb-2">
-                            Localisation
-                        </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <MapPinIcon className="h-5 w-5 text-neutral-400" />
+                                <UserIcon className="h-5 w-5 text-neutral-400" />
                             </div>
                             <input
                                 type="text"
-                                id="location"
-                                name="location"
-                                value={formData.location}
+                                id="name"
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-body-md"
-                                placeholder="Paris, France"
+                                placeholder="Jean Dupont"
+                                required
                             />
                         </div>
                     </div>
@@ -301,7 +214,7 @@ const UserForm = () => {
                                 </>
                             ) : (
                                 <>
-                                    <UserPlusIcon className="h-4 w-4 mr-2" />
+                                    <UserIcon className="h-4 w-4 mr-2" />
                                     Créer l'utilisateur
                                 </>
                             )}

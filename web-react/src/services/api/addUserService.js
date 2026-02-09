@@ -111,7 +111,7 @@ class AddUserService {
                 }
             });
             
-            return response.data.users;
+            return response.data;
 
         } catch (error) {
             throw this.handleError(error);

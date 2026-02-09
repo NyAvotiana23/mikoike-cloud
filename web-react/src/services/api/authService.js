@@ -1,9 +1,9 @@
+// Updated file: src/services/api/authService.js
 // src/services/api/authService.js
 import api from '../httpClient';
 // import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 // import app from './firebase';
 
-const AUTH_MODE = import.meta.env.VITE_AUTH_MODE || 'local'; // 'local', 'firebase-dev', 'firebase-prod'
 
 /**
  * Service d'authentification
@@ -43,17 +43,21 @@ class AuthService {
             // throw new Error('Email ou mot de passe incorrect');
 
             // MODE LOCAL - PostgreSQL
-            if (AUTH_MODE === 'local') {
               const response = await api.post('/auth/login', {
                 email,
                 password,
               });
             
               return {
-                userId: response.userId,
-                sessionId: response.token,
+                user: {
+                  id: response.data.userId,
+                  email: response.data.email,
+                  name: response.data.name,
+                  role: response.data.role,
+                },
+                sessionId: response.data.token,
               };
-            }
+            
 
             // MODE FIREBASE
         //     if (AUTH_MODE.startsWith('firebase')) {
@@ -84,12 +88,11 @@ class AuthService {
      * @param {string} email - Email de l'utilisateur
      * @param {string} password - Mot de passe
      * @param {string} name - Nom de l'utilisateur
-     * @returns {Promise<{user: object, sessionId: string}>}
+     * @returns {Promise<{user: object, message: string}>}
      */
     async register(email, password, name) {
         try {
             // MODE LOCAL - PostgreSQL
-            if (AUTH_MODE === 'local') {
               const response = await api.post('/auth/register', {
                 email,
                 password,
@@ -97,10 +100,15 @@ class AuthService {
               });
             
               return {
-                user: response.data.userId,
-                sessionId: response.data.sessionId,
+                user: {
+                  id: response.data.userId,
+                  email: response.data.email,
+                  name: response.data.name,
+                  role: response.data.role,
+                },
+                message: response.data.message,
               };
-            }
+            
 
             // MODE FIREBASE
             // if (AUTH_MODE.startsWith('firebase')) {
@@ -135,9 +143,8 @@ class AuthService {
     async logout() {
         try {
             // MODE LOCAL - PostgreSQL
-            if (AUTH_MODE === 'local') {
               await api.post('/auth/logout');
-            }
+            
 
             // MODE FIREBASE
             // if (AUTH_MODE.startsWith('firebase')) {

@@ -136,12 +136,7 @@ const UserList = () => {
                                 <th className="px-6 py-3 text-left text-caption font-semibold text-neutral-700 uppercase tracking-wider">
                                     Email
                                 </th>
-                                <th className="px-6 py-3 text-left text-caption font-semibold text-neutral-700 uppercase tracking-wider">
-                                    Âge
-                                </th>
-                                <th className="px-6 py-3 text-left text-caption font-semibold text-neutral-700 uppercase tracking-wider">
-                                    Localisation
-                                </th>
+                                
                                 <th className="px-6 py-3 text-left text-caption font-semibold text-neutral-700 uppercase tracking-wider">
                                     Date création
                                 </th>
@@ -175,16 +170,7 @@ const UserList = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-body-sm text-neutral-900">{user.email}</div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-body-sm text-neutral-900">
-                                            {user.age ? `${user.age} ans` : '-'}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-body-sm text-neutral-900">
-                                            {user.location || '-'}
-                                        </div>
-                                    </td>
+                                    
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-body-sm text-neutral-900">
                                             {formatDate(user.createdAt)}

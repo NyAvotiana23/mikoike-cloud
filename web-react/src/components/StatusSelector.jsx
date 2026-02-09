@@ -1,4 +1,4 @@
-// src/components/StatusSelector.jsx
+// Updated file: src/components/StatusSelector.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Check, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -43,9 +43,9 @@ const StatusSelector = ({
       
       const token = sessionStorage.getItem('sessionId');
       const response = await fetch(
-        `${API_BASE_URL}/signalements/${signalementId}/on-hover`,
+        `${API_BASE_URL}/signalements/status-options`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
