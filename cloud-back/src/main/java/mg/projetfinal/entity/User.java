@@ -71,6 +71,10 @@ public class User {
     @Column(name = "last_failed_attempt_at")
     private LocalDateTime lastFailedAttemptAt;
 
+    // Firebase Cloud Messaging Token
+    @Column(name = "fcm_token", length = 500)
+    private String fcmToken;
+
     // Audit
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")

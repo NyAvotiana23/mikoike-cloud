@@ -23,6 +23,7 @@ public class SignalementActionService {
 
     private final SignalementActionRepository signalementActionRepository;
     private final EntrepriseService entrepriseService;
+    private final FirebasePushNotificationService pushNotificationService;
 
     public SignalementAction create(SignalementAction action, User createdBy) {
         log.info("Création d'une nouvelle action pour le signalement ID: {}", action.getSignalement().getId());
@@ -44,6 +45,13 @@ public class SignalementActionService {
             entrepriseService.incrementInterventions(action.getEntreprise().getId());
         }
         
+        // Envoyer une notification push au créateur du signalement
+        try {
+            pushNotificationService.notifyNewAction(savedAction);
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
         return savedAction;
     }
 
@@ -134,7 +142,16 @@ public class SignalementActionService {
         
         entrepriseService.incrementInterventions(entreprise.getId());
         
-        return signalementActionRepository.save(action);
+        SignalementAction savedAction = signalementActionRepository.save(action);
+
+        // Envoyer une notification push au créateur du signalement
+        try {
+            pushNotificationService.notifyEntrepriseAssigned(savedAction);
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
+        return savedAction;
     }
 
     public SignalementAction demarrerTravaux(Long actionId, LocalDateTime dateDebut, User modifiedBy) {
@@ -154,7 +171,16 @@ public class SignalementActionService {
         action.setDateDebutTravaux(dateDebut != null ? dateDebut : LocalDateTime.now());
         action.setModifiedBy(modifiedBy);
         
-        return signalementActionRepository.save(action);
+        SignalementAction savedAction = signalementActionRepository.save(action);
+
+        // Envoyer une notification push au créateur du signalement
+        try {
+            pushNotificationService.notifyTravauxStarted(savedAction);
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
+        return savedAction;
     }
 
     public SignalementAction terminerTravaux(Long actionId, boolean conformes, String commentaire, User modifiedBy) {
@@ -174,7 +200,16 @@ public class SignalementActionService {
         action.terminerTravaux(conformes, commentaire);
         action.setModifiedBy(modifiedBy);
         
-        return signalementActionRepository.save(action);
+        SignalementAction savedAction = signalementActionRepository.save(action);
+
+        // Envoyer une notification push au créateur du signalement
+        try {
+            pushNotificationService.notifyTravauxFinished(savedAction);
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
+        return savedAction;
     }
 
     public SignalementAction ajouterPhotosAvant(Long actionId, String[] photos, User modifiedBy) {

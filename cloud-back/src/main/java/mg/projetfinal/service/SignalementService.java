@@ -23,6 +23,7 @@ public class SignalementService {
 
     private final SignalementRepository signalementRepository;
     private final HistoriqueStatusService historiqueStatusService;
+    private final FirebasePushNotificationService pushNotificationService;
 
     public Signalement create(Signalement signalement, User user) {
         log.info("Création d'un nouveau signalement pour l'utilisateur: {}", user.getId());
@@ -44,6 +45,13 @@ public class SignalementService {
             historiqueStatusService.createInitialHistorique(savedSignalement, user);
         }
         
+        // Envoyer une notification push aux managers
+        try {
+            pushNotificationService.notifyNewSignalement(savedSignalement);
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
         return savedSignalement;
     }
 
@@ -155,7 +163,16 @@ public class SignalementService {
         signalement.setStatus(newStatus);
         signalement.setFirebaseSynced(false);
         
-        return signalementRepository.save(signalement);
+        Signalement savedSignalement = signalementRepository.save(signalement);
+
+        // Envoyer une notification push au créateur du signalement
+        try {
+            pushNotificationService.notifyStatusChange(savedSignalement, oldStatus.getCode(), newStatus.getCode());
+        } catch (Exception e) {
+            log.warn("Erreur lors de l'envoi de la notification push: {}", e.getMessage());
+        }
+
+        return savedSignalement;
     }
 
     public void markAsSynced(Long id, String firebaseId) {
