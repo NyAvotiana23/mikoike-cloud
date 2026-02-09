@@ -1,3 +1,4 @@
+// Updated file: src/pages/Login.jsx
 // src/pages/Login.jsx
 import {useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
@@ -80,6 +81,10 @@ const Login = () => {
                 formData.password
             );
 
+            // Stocker le token et l'userId dans le sessionStorage
+            sessionStorage.setItem('sessionId', sessionId);
+            sessionStorage.setItem('userId', user.id);
+
             // Sauvegarder dans le contexte
             login(user, sessionId);
 
@@ -126,29 +131,19 @@ const Login = () => {
                         {/* Email */}
                         <div>
                             <label htmlFor="email" className="block text-label text-neutral-700 mb-2">
-                                Adresse email
+                                Email
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <EnvelopeIcon className="h-5 w-5 text-neutral-400"/>
-                                </div>
+                                <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400"/>
                                 <input
                                     id="email"
                                     name="email"
                                     type="email"
-                                    autoComplete="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className={`
-                    block w-full pl-10 pr-3 py-3 
-                    border ${errors.email ? 'border-error' : 'border-neutral-300'}
-                    rounded-lg text-body text-neutral-900 
-                    placeholder-neutral-400
-                    focus:outline-none focus:ring-2 
-                    ${errors.email ? 'focus:ring-error' : 'focus:ring-primary-500'}
-                    focus:border-transparent
-                    transition-all duration-200
-                  `}
+                                    className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
+                                        errors.email ? 'border-error' : 'border-neutral-300'
+                                    }`}
                                     placeholder="votre@email.com"
                                 />
                             </div>
@@ -166,37 +161,27 @@ const Login = () => {
                                 Mot de passe
                             </label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <LockClosedIcon className="h-5 w-5 text-neutral-400"/>
-                                </div>
+                                <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400"/>
                                 <input
                                     id="password"
                                     name="password"
                                     type={showPassword ? 'text' : 'password'}
-                                    autoComplete="current-password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className={`
-                    block w-full pl-10 pr-10 py-3 
-                    border ${errors.password ? 'border-error' : 'border-neutral-300'}
-                    rounded-lg text-body text-neutral-900 
-                    placeholder-neutral-400
-                    focus:outline-none focus:ring-2 
-                    ${errors.password ? 'focus:ring-error' : 'focus:ring-primary-500'}
-                    focus:border-transparent
-                    transition-all duration-200
-                  `}
+                                    className={`block w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
+                                        errors.password ? 'border-error' : 'border-neutral-300'
+                                    }`}
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:opacity-70 transition-opacity"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
                                 >
                                     {showPassword ? (
-                                        <EyeSlashIcon className="h-5 w-5 text-neutral-400"/>
+                                        <EyeSlashIcon className="h-5 w-5"/>
                                     ) : (
-                                        <EyeIcon className="h-5 w-5 text-neutral-400"/>
+                                        <EyeIcon className="h-5 w-5"/>
                                     )}
                                 </button>
                             </div>

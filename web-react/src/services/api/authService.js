@@ -42,8 +42,8 @@ class AuthService {
             // Cas où les identifiants sont incorrects
             // throw new Error('Email ou mot de passe incorrect');
 
-            // MODE LOCAL - PostgreSQL
-              const response = await api.post('/auth/login', {
+            // MODE LOCAL - PostgreSQL pour managers (sans blocage)
+              const response = await api.post('/admin/login', {
                 email,
                 password,
               });

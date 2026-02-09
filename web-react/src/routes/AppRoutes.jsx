@@ -1,3 +1,4 @@
+// Updated file: src/routes/AppRoutes.jsx
 // src/routes/AppRoutes.jsx
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../pages/Login';
@@ -14,7 +15,7 @@ import Map from '../pages/carte/Map.jsx';
 import SignalementList from '../pages/signalement/SignalementList.jsx';
 import SignalementDetail from '../pages/signalement/SignalementDetail.jsx';
 import SignalementStatistics from '../pages/signalement/SignalementStatistics.jsx';
-import ManagerDashboard from '../pages/dashboard/ManagerDashboard.jsx';
+import { Navigate } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
@@ -78,21 +79,15 @@ const router = createBrowserRouter([
             element: <SignalementStatistics />,
           },
         ],
-      },
-      {
-        path: 'stats',
-        element: <div>Stats Page</div>,
-      },
-      {
-        path: 'dashboard/manager',
-        element: <ManagerDashboard/>,
-      },
+      }
 
-      {
-        path: 'settings',
-        element: <div>Settings Page</div>,
-      },
+
     ],
+  },
+  // Catch-all route to redirect unauthorized users to login
+  {
+    path: '*',
+    element: <Navigate to="/login" replace />,
   },
 ]);
 
