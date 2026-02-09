@@ -1654,6 +1654,126 @@ public class HistoriqueStatusService {
 
 
 ============================================================
+FILE: PhotoSignalementService.java
+PACKAGE: mg.projetfinal.service
+============================================================
+
+package mg.projetfinal.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mg.projetfinal.entity.PhotoSignalement;
+import mg.projetfinal.entity.Signalement;
+import mg.projetfinal.entity.User;
+import mg.projetfinal.repository.PhotoSignalementRepository;
+import mg.projetfinal.repository.SignalementRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PhotoSignalementService {
+
+    private final PhotoSignalementRepository photoRepository;
+    private final SignalementRepository signalementRepository;
+
+    @Transactional
+    public PhotoSignalement addPhoto(Long signalementId, String url, String description, User uploadedBy) {
+        Signalement signalement = signalementRepository.findById(signalementId)
+                .orElseThrow(() -> new RuntimeException("Signalement introuvable"));
+
+        Long count = photoRepository.countBySignalement(signalement);
+
+        PhotoSignalement photo = PhotoSignalement.builder()
+                .signalement(signalement)
+                .url(url)
+                .description(description)
+                .ordre(count.intValue() + 1)
+                .isPrincipale(count == 0) // Première photo = principale
+                .uploadedBy(uploadedBy)
+                .build();
+
+        return photoRepository.save(photo);
+    }
+
+    @Transactional
+    public PhotoSignalement setPrincipale(Long photoId) {
+        PhotoSignalement photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo introuvable"));
+
+        // Retirer l'ancienne photo principale
+        photoRepository.findBySignalementAndIsPrincipaleTrue(photo.getSignalement())
+                .ifPresent(ancienne -> {
+                    ancienne.setIsPrincipale(false);
+                    photoRepository.save(ancienne);
+                });
+
+        // Définir la nouvelle
+        photo.setIsPrincipale(true);
+        return photoRepository.save(photo);
+    }
+
+    public List<PhotoSignalement> getPhotosBySignalement(Long signalementId) {
+        Signalement signalement = signalementRepository.findById(signalementId)
+                .orElseThrow(() -> new RuntimeException("Signalement introuvable"));
+        return photoRepository.findBySignalementOrderByOrdreAsc(signalement);
+    }
+
+    public PhotoSignalement getPhotoPrincipale(Long signalementId) {
+        Signalement signalement = signalementRepository.findById(signalementId)
+                .orElseThrow(() -> new RuntimeException("Signalement introuvable"));
+        return photoRepository.findBySignalementAndIsPrincipaleTrue(signalement)
+                .orElse(null);
+    }
+
+    @Transactional
+    public void deletePhoto(Long photoId) {
+        PhotoSignalement photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo introuvable"));
+
+        boolean wasPrincipale = photo.getIsPrincipale();
+        Signalement signalement = photo.getSignalement();
+
+        photoRepository.delete(photo);
+
+        // Si c'était la photo principale, définir une nouvelle
+        if (wasPrincipale) {
+            List<PhotoSignalement> remaining = photoRepository.findBySignalementOrderByOrdreAsc(signalement);
+            if (!remaining.isEmpty()) {
+                PhotoSignalement newPrincipale = remaining.get(0);
+                newPrincipale.setIsPrincipale(true);
+                photoRepository.save(newPrincipale);
+            }
+        }
+    }
+
+    @Transactional
+    public void reorderPhotos(Long signalementId, List<Long> photoIds) {
+        Signalement signalement = signalementRepository.findById(signalementId)
+                .orElseThrow(() -> new RuntimeException("Signalement introuvable"));
+
+        for (int i = 0; i < photoIds.size(); i++) {
+            Long photoId = photoIds.get(i);
+            PhotoSignalement photo = photoRepository.findById(photoId)
+                    .orElseThrow(() -> new RuntimeException("Photo " + photoId + " introuvable"));
+
+            // Vérifier que la photo appartient bien à ce signalement
+            if (!photo.getSignalement().getId().equals(signalementId)) {
+                throw new RuntimeException("La photo " + photoId + " n'appartient pas au signalement " + signalementId);
+            }
+
+            photo.setOrdre(i + 1);
+            photoRepository.save(photo);
+        }
+    }
+}
+
+
+
+============================================================
 FILE: SignalementActionService.java
 PACKAGE: mg.projetfinal.service
 ============================================================
@@ -2209,6 +2329,161 @@ public class SignalementService {
         
         return EARTH_RADIUS * c;
     }
+}
+
+
+
+============================================================
+FILE: SignalementStatusService.java
+PACKAGE: mg.projetfinal.service
+============================================================
+
+// SignalementStatusService.java
+package mg.projetfinal.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mg.projetfinal.entity.SignalementStatus;
+import mg.projetfinal.repository.SignalementStatusRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service pour la gestion des statuts de signalements
+ */
+@Service
+@RequiredArgsConstructor
+@Slf4j
+@Transactional
+public class SignalementStatusService {
+
+    private final SignalementStatusRepository statusRepository;
+
+    /**
+     * Récupère tous les statuts ordonnés par ordre
+     */
+    public List<SignalementStatus> findAllOrderByOrdre() {
+        log.debug("Récupération de tous les statuts ordonnés");
+        return statusRepository.findAllByOrderByOrdreAsc();
+    }
+
+    /**
+     * Récupère tous les statuts
+     */
+    public List<SignalementStatus> findAll() {
+        log.debug("Récupération de tous les statuts");
+        return statusRepository.findAll();
+    }
+
+    /**
+     * Récupère un statut par ID
+     */
+    public Optional<SignalementStatus> findById(Integer id) {
+        log.debug("Récupération du statut avec ID: {}", id);
+        return statusRepository.findById(id);
+    }
+
+    /**
+     * Récupère un statut par code
+     */
+    public Optional<SignalementStatus> findByCode(String code) {
+        log.debug("Récupération du statut avec code: {}", code);
+        return statusRepository.findByCode(code);
+    }
+
+    /**
+     * Vérifie si un statut existe par code
+     */
+    public boolean existsByCode(String code) {
+        return statusRepository.existsByCode(code);
+    }
+
+    /**
+     * Crée un nouveau statut
+     */
+    public SignalementStatus create(SignalementStatus status) {
+        log.info("Création d'un nouveau statut: {}", status.getCode());
+
+        if (existsByCode(status.getCode())) {
+            throw new RuntimeException("Un statut avec ce code existe déjà");
+        }
+
+        return statusRepository.save(status);
+    }
+
+    /**
+     * Met à jour un statut
+     */
+    public SignalementStatus update(Integer id, SignalementStatus statusDetails) {
+        log.info("Mise à jour du statut ID: {}", id);
+
+        SignalementStatus status = findById(id)
+                .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
+
+        status.setLibelle(statusDetails.getLibelle());
+        status.setDescription(statusDetails.getDescription());
+        status.setOrdre(statusDetails.getOrdre());
+        status.setCouleur(statusDetails.getCouleur());
+
+        return statusRepository.save(status);
+    }
+
+    /**
+     * Supprime un statut
+     */
+    public void delete(Integer id) {
+        log.info("Suppression du statut ID: {}", id);
+
+        SignalementStatus status = findById(id)
+                .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
+
+        statusRepository.delete(status);
+    }
+
+    /**
+     * Récupère le statut par défaut (généralement "nouveau")
+     */
+    public SignalementStatus getDefaultStatus() {
+        return findByCode("nouveau")
+                .orElseGet(() -> findAllOrderByOrdre().stream()
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Aucun statut disponible")));
+    }
+}
+
+
+
+============================================================
+FILE: UserService.java
+PACKAGE: mg.projetfinal.service
+============================================================
+
+package mg.projetfinal.service;
+
+import mg.projetfinal.entity.User;
+import mg.projetfinal.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
 }
 
 

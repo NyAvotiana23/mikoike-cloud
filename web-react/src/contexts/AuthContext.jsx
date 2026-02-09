@@ -1,5 +1,7 @@
+// Updated file: src/contexts/AuthContext.jsx
 // src/contexts/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
+import authService from '../services/api/authService';
 
 const AuthContext = createContext(null);
 
@@ -8,44 +10,60 @@ export const AuthProvider = ({ children }) => {
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Charger l'utilisateur depuis le localStorage au démarrage
+    // Charger l'utilisateur depuis le sessionStorage au démarrage
     useEffect(() => {
-        const storedUser = localStorage.getItem('userId');
-        const storedSessionId = localStorage.getItem('sessionId');
+        const storedUserId = sessionStorage.getItem('userId');
+        const storedSessionId = sessionStorage.getItem('sessionId');
 
         // Si les deux variables contiennent quelque chose (ne sont pas null, ni undefined, ni vide)
-        if (storedUser && storedSessionId) {
-            try {
-                setUser(storedUser);
-                setSessionId(storedSessionId);
-                console.log(user);
-            } catch (error) {
-                // Sécurité : Si le JSON dans le storage est corrompu, on évite le crash
-                console.error("Erreur de lecture du storage", error);
-                localStorage.clear(); 
-            }
+        if (storedUserId && storedSessionId) {
+            // Vérifier la validité de la session avec le backend
+            authService.verifySession(storedSessionId)
+                .then(isValid => {
+                    if (isValid) {
+                        // Si valide, charger l'utilisateur (vous pouvez fetch plus de détails si besoin)
+                        setUser({ id: storedUserId }); // Adapter selon les données utilisateur stockées
+                        setSessionId(storedSessionId);
+                    } else {
+                        // Session invalide, cleanup
+                        sessionStorage.clear();
+                        setUser(null);
+                        setSessionId(null);
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.clear();
+                    setUser(null);
+                    setSessionId(null);
+                })
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
         }
-        
-        setLoading(false);
     }, []);
 
     const login = (userData, session) => {
         setUser(userData);
         setSessionId(session);
-        localStorage.setItem('userId', userData);
-        localStorage.setItem('sessionId', session);
+        sessionStorage.setItem('userId', userData.id);
+        sessionStorage.setItem('sessionId', session);
     };
 
     const logout = () => {
-        setUser(null);
-        setSessionId(null);
-        localStorage.removeItem('userId');
-        localStorage.removeItem('sessionId');
+        authService.logout()
+            .then(() => {
+                setUser(null);
+                setSessionId(null);
+                sessionStorage.removeItem('userId');
+                sessionStorage.removeItem('sessionId');
+            })
+            .catch(error => console.error('Erreur lors de la déconnexion:', error));
     };
 
     const updateUser = (userData) => {
         setUser(userData);
-        localStorage.setItem('userId',userData);
+        // Mettre à jour le sessionStorage si nécessaire
+        sessionStorage.setItem('userId', userData.id);
     };
 
     const value = {

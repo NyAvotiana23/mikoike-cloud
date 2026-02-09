@@ -31,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages/MapPage.vue')
       },
       {
+        path: 'all-signalements',
+        name: 'AllSignalements',
+        component: () => import('@/pages/AllSignalementsPage.vue')
+      },
+      {
         path: 'signalements',
         name: 'UserSignalements',
         component: () => import('@/pages/UserSignalementsPage.vue'),
@@ -40,6 +45,12 @@ const routes: Array<RouteRecordRaw> = [
         path: 'account',
         name: 'Account',
         component: () => import('@/pages/AccountPage.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: 'notifications',
+        name: 'Notifications',
+        component: () => import('@/pages/NotificationsPage.vue'),
         meta: { requiresAuth: true }
       }
     ]

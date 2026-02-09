@@ -8,6 +8,7 @@ import mg.projetfinal.entity.SignalementStatus;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.mapper.SignalementMapper;
 import mg.projetfinal.service.SignalementService;
+import mg.projetfinal.service.SignalementStatusService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +27,7 @@ import java.util.List;
 public class SignalementController {
 
     private final SignalementService signalementService;
+    private final SignalementStatusService statusService;
     private final SignalementMapper signalementMapper;
 
     /**
@@ -215,26 +217,59 @@ public class SignalementController {
     }
 
     /**
-     * POST /api/signalements/{id}/change-status
+     * PUT /api/signalements/{id}/status
      * Change le statut d'un signalement
      */
-    @PostMapping("/{id}/change-status")
-    public ResponseEntity<SignalementResponseDTO> changeStatus(
+    @PutMapping("/{id}/status")
+    public ResponseEntity<SignalementResponseDTO> setStatus(
             @PathVariable Long id,
-            @RequestParam Long newStatusId,
+            @RequestParam Long statusId,
             @RequestParam(required = false) String commentaire,
             @AuthenticationPrincipal User currentUser) {
-        
-        log.info("POST /api/signalements/{}/change-status - Changement de statut", id);
-        
-        // TODO: Récupérer le nouveau statut
-        // SignalementStatus newStatus = statusService.findById(newStatusId).orElseThrow();
-        // Signalement updated = signalementService.changeStatus(id, newStatus, currentUser, commentaire);
-        
-        // Pour l'instant, retourner le signalement existant
-        Signalement signalement = signalementService.findById(id).orElseThrow();
-        SignalementResponseDTO response = signalementMapper.toResponseDTO(signalement);
-        
+
+        log.info("PUT /api/signalements/{}/status - Changement de statut vers {}", id, statusId);
+
+        Signalement signalement = signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
+
+        SignalementStatus newStatus = statusService.findById(statusId.intValue());
+
+        signalement.setStatus(newStatus);
+
+
+        Signalement updated = signalementService.create(signalement,currentUser);
+
+        SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
+
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/signalements/status-options
+     * Récupère la liste des statuts disponibles pour sélection
+     */
+    @GetMapping("/status-options")
+    public ResponseEntity<List<SignalementStatusDTO>> getStatutOptions() {
+        log.info("GET /api/signalements/status-options - Récupération des options de statut");
+
+        List<SignalementStatusDTO> statuts = statusService.findAllDTOs();
+        return ResponseEntity.ok(statuts);
+    }
+
+    /**
+     * POST /api/signalements/{id}/on-hover
+     * Endpoint pour afficher une bulle d'information au survol
+     * Retourne une liste de statuts pour sélection
+     */
+    @PostMapping("/{id}/on-hover")
+    public ResponseEntity<List<SignalementStatusDTO>> onHoverSignalement(@PathVariable Long id) {
+        log.info("POST /api/signalements/{}/on-hover - Affichage des options de statut", id);
+
+        // Vérifier que le signalement existe
+        signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
+
+        List<SignalementStatusDTO> availableStatuses = statusService.findAllOrderByOrdreDTOs();
+        return ResponseEntity.ok(availableStatuses);
     }
 }

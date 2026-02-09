@@ -5,7 +5,9 @@ class GeolocationService {
   async requestPermissions() {
     try {
       const permission = await Geolocation.requestPermissions();
+      console.log('Permission GPS accordée:', permission);
       return permission.location === 'granted';
+
     } catch (error) {
       console.error('Permission GPS refusée', error);
       return false;
@@ -16,6 +18,7 @@ class GeolocationService {
     try {
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
+        console.warn('Permission de géolocalisation refusée, utilisation de la position par défaut (Antananarivo)');
         return this.getDefaultLocation();
       }
 
@@ -29,12 +32,12 @@ class GeolocationService {
         lng: position.coords.longitude
       };
     } catch (error) {
-      console.warn('Géolocalisation échouée, utilisation position par défaut', error);
+      console.warn('Erreur de géolocalisation, utilisation de la position par défaut (Antananarivo)', error);
       return this.getDefaultLocation();
     }
   }
 
-  private getDefaultLocation() {
+  getDefaultLocation() {
     return {
       lat: environment.defaultLocation.lat,
       lng: environment.defaultLocation.lng
