@@ -5,11 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/ManagerDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/ManagerDashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/ManagerDashboardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/mg.projetfinal.entity.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/mg.projetfinal.entity.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../web-react/src/pages/carte/Map.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/pages/carte/Map.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/pages/signalement/SignalementList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/pages/signalement/SignalementList.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,21 +33,70 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$/.." source="syncFeature" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="39Ejn4AH9KumWtY3bvLezqzD1DM" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="" />
+      <created>1770268290313</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770268290313</updated>
+      <workItem from="1770268292381" duration="114000" />
+      <workItem from="1770647726595" duration="904000" />
+      <workItem from="1770662729747" duration="2539000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

@@ -50,6 +50,8 @@ const createCustomIcon = (color, icon) => {
   });
 };
 
+const MAP_URL = import.meta.env.VITE_MAP_SERVER_URL;
+
 // Component to handle map center changes
 const MapController = ({ center, zoom }) => {
   const map = useMap();
@@ -178,7 +180,7 @@ const Map = () => {
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url={MAP_URL}
             />
 
             <MapController

@@ -21,8 +21,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 const navigation = [
   { name: 'Accueil', href: '/', icon: HomeIcon },
   { name: 'Carte', href: '/carte', icon: MapIcon },
-  { name: 'Dashboard Manager', href: '/dashboard/manager', icon: ChartBarIcon },
-  { name: 'Équipe', href: '/team', icon: UserGroupIcon }
 ];
 
 const secondaryNavigation = [
@@ -290,63 +288,11 @@ const Sidebar = () => {
               )}
             </div>
 
-            {/* Entreprises */}
-            <div className="pt-3">
-              <NavLink
-                to="/entreprises"
-                className={({ isActive }) =>
-                  `group flex items-center px-3 py-2 text-body-sm font-medium rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <BuildingOfficeIcon
-                      className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                        isActive
-                          ? 'text-primary-600'
-                          : 'text-neutral-400 group-hover:text-neutral-500'
-                      }`}
-                    />
-                    Entreprises
-                  </>
-                )}
-              </NavLink>
-            </div>
-
             {/* Séparateur */}
             <div className="pt-6">
               <div className="border-t border-neutral-200 mb-3"></div>
 
-              {secondaryNavigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `group flex items-center px-3 py-2 text-body-sm font-medium rounded-lg transition-all ${
-                      isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <item.icon
-                        className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                          isActive
-                            ? 'text-primary-600'
-                            : 'text-neutral-400 group-hover:text-neutral-500'
-                        }`}
-                      />
-                      {item.name}
-                    </>
-                  )}
-                </NavLink>
-              ))}
+              
 
               {/* Bouton Synchroniser */}
               <button

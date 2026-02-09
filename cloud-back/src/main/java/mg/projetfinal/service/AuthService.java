@@ -71,24 +71,24 @@ public class AuthService {
                 .build();
 
         // Synchronisation Firebase si mode online
-        if (isOnline()) {
-            try {
-                UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                        .setEmail(email)
-                        .setPassword(password)
-                        .setDisplayName(name);
-
-                UserRecord firebaseUser = FirebaseAuth.getInstance().createUser(request);
-                user.setFirebaseUid(firebaseUser.getUid());
-                user.setFirebaseSynced(true);
-                user.setSyncedAt(LocalDateTime.now());
-
-                log.info("User créé dans Firebase: {}", firebaseUser.getUid());
-            } catch (FirebaseAuthException e) {
-                user.setFirebaseSyncError(e.getMessage());
-                log.error("Erreur création Firebase: {}", e.getMessage());
-            }
-        }
+//        if (isOnline()) {
+//            try {
+//                UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+//                        .setEmail(email)
+//                        .setPassword(password)
+//                        .setDisplayName(name);
+//
+//                UserRecord firebaseUser = FirebaseAuth.getInstance().createUser(request);
+//                user.setFirebaseUid(firebaseUser.getUid());
+//                user.setFirebaseSynced(true);
+//                user.setSyncedAt(LocalDateTime.now());
+//
+//                log.info("User créé dans Firebase: {}", firebaseUser.getUid());
+//            } catch (FirebaseAuthException e) {
+//                user.setFirebaseSyncError(e.getMessage());
+//                log.error("Erreur création Firebase: {}", e.getMessage());
+//            }
+//        }
 
         return userRepository.save(user);
     }

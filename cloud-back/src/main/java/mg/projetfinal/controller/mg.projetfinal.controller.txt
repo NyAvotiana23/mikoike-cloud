@@ -204,12 +204,16 @@ public class AuthController {
     public ResponseEntity<AuthResponse> logout(@RequestHeader("Authorization") String authHeader) {
         try {
             String token = extractToken(authHeader);
-            authService.logout(token);
+            Session session = authService.logout(token);
 
             return ResponseEntity.ok(
                     AuthResponse.builder()
                             .success(true)
                             .message("Déconnexion réussie")
+                            .userId(session.getUser().getId())
+                            .email(session.getUser().getEmail())
+                            .name(session.getUser().getName())
+                            .role(session.getUser().getRole().getCode())
                             .build()
             );
         } catch (Exception e) {
@@ -352,6 +356,28 @@ public class AuthController {
                     AuthResponse.builder()
                             .success(true)
                             .message("Toutes les sessions ont été fermées")
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    AuthResponse.builder()
+                            .success(false)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
+    }
+
+    @PostMapping("/test/logout-all-sessions")
+    @Operation(summary = "UTILITAIRE TEST - Déconnecter TOUTES les sessions")
+    public ResponseEntity<AuthResponse> logoutAllSessionsTest() {
+        try {
+            int count = authService.logoutAllSessions();
+
+            return ResponseEntity.ok(
+                    AuthResponse.builder()
+                            .success(true)
+                            .message(count + " sessions déconnectées")
                             .build()
             );
         } catch (Exception e) {
@@ -1006,7 +1032,6 @@ import java.util.List;
 @RequestMapping("/api/historiques")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class HistoriqueStatusController {
 
     private final HistoriqueStatusService historiqueStatusService;
@@ -1079,6 +1104,181 @@ public class HistoriqueStatusController {
         
         historiqueStatusService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+}
+
+
+
+============================================================
+FILE: PhotoSignalementController.java
+PACKAGE: mg.projetfinal.controller
+============================================================
+
+package mg.projetfinal.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import mg.projetfinal.dto.PhotoSignalementDTO;
+import mg.projetfinal.entity.PhotoSignalement;
+import mg.projetfinal.entity.Session;
+import mg.projetfinal.entity.User;
+import mg.projetfinal.service.AuthService;
+import mg.projetfinal.service.PhotoSignalementService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/photos")
+@RequiredArgsConstructor
+@Tag(name = "Photos", description = "API de gestion des photos de signalement")
+public class PhotoSignalementController {
+
+    private final PhotoSignalementService photoService;
+    private final AuthService authService;
+
+    @PostMapping("/signalement/{signalementId}")
+    @Operation(summary = "Ajouter une photo à un signalement")
+    public ResponseEntity<?> addPhoto(
+            @PathVariable Long signalementId,
+            @RequestBody PhotoRequest request,
+            HttpServletRequest httpRequest) {
+        try {
+            User user = getCurrentUser(httpRequest);
+
+            PhotoSignalement photo = photoService.addPhoto(
+                    signalementId,
+                    request.getUrl(),
+                    request.getDescription(),
+                    user
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(photo));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/signalement/{signalementId}")
+    @Operation(summary = "Récupérer toutes les photos d'un signalement")
+    public ResponseEntity<?> getPhotosBySignalement(@PathVariable Long signalementId) {
+        try {
+            List<PhotoSignalement> photos = photoService.getPhotosBySignalement(signalementId);
+            List<PhotoSignalementDTO> dtos = photos.stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/signalement/{signalementId}/principale")
+    @Operation(summary = "Récupérer la photo principale d'un signalement")
+    public ResponseEntity<?> getPhotoPrincipale(@PathVariable Long signalementId) {
+        try {
+            PhotoSignalement photo = photoService.getPhotoPrincipale(signalementId);
+            if (photo == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(toDTO(photo));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{photoId}/principale")
+    @Operation(summary = "Définir une photo comme principale")
+    public ResponseEntity<?> setPrincipale(@PathVariable Long photoId) {
+        try {
+            PhotoSignalement photo = photoService.setPrincipale(photoId);
+            return ResponseEntity.ok(toDTO(photo));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{photoId}")
+    @Operation(summary = "Supprimer une photo")
+    public ResponseEntity<?> deletePhoto(@PathVariable Long photoId) {
+        try {
+            photoService.deletePhoto(photoId);
+            return ResponseEntity.ok(new SuccessResponse(true, "Photo supprimée avec succès"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    @PutMapping("/signalement/{signalementId}/reorder")
+    @Operation(summary = "Réordonner les photos d'un signalement")
+    public ResponseEntity<?> reorderPhotos(
+            @PathVariable Long signalementId,
+            @RequestBody ReorderRequest request) {
+        try {
+            photoService.reorderPhotos(signalementId, request.getPhotoIds());
+            return ResponseEntity.ok(new SuccessResponse(true, "Photos réordonnées avec succès"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(false, e.getMessage()));
+        }
+    }
+
+    private PhotoSignalementDTO toDTO(PhotoSignalement photo) {
+        return PhotoSignalementDTO.builder()
+                .id(photo.getId())
+                .url(photo.getUrl())
+                .description(photo.getDescription())
+                .ordre(photo.getOrdre())
+                .isPrincipale(photo.getIsPrincipale())
+                .uploadedBy(photo.getUploadedBy() != null ? photo.getUploadedBy().getName() : null)
+                .createdAt(photo.getCreatedAt().toString())
+                .build();
+    }
+
+    private User getCurrentUser(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Non authentifié");
+        }
+        String token = authHeader.substring(7);
+        return authService.validateSession(token)
+                .map(Session::getUser)
+                .orElseThrow(() -> new RuntimeException("Session invalide"));
+    }
+
+    @lombok.Data
+    static class PhotoRequest {
+        private String url;
+        private String description;
+    }
+
+    @lombok.Data
+    static class ReorderRequest {
+        private List<Long> photoIds;
+    }
+
+    @lombok.Data
+    @lombok.AllArgsConstructor
+    static class SuccessResponse {
+        private Boolean success;
+        private String message;
+    }
+
+    @lombok.Data
+    @lombok.AllArgsConstructor
+    static class ErrorResponse {
+        private Boolean success;
+        private String message;
     }
 }
 
@@ -1410,7 +1610,7 @@ import java.util.List;
 @RequestMapping("/api/signalements")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
+//@Validated
 public class SignalementController {
 
     private final SignalementService signalementService;
@@ -1624,6 +1824,156 @@ public class SignalementController {
         SignalementResponseDTO response = signalementMapper.toResponseDTO(signalement);
         
         return ResponseEntity.ok(response);
+    }
+}
+
+
+
+============================================================
+FILE: SignalementStatusController.java
+PACKAGE: mg.projetfinal.controller
+============================================================
+
+// SignalementStatusController.java
+package mg.projetfinal.controller;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mg.projetfinal.dto.SignalementResponseDTO;
+import mg.projetfinal.entity.Signalement;
+import mg.projetfinal.entity.SignalementStatus;
+import mg.projetfinal.entity.User;
+import mg.projetfinal.mapper.SignalementMapper;
+import mg.projetfinal.service.SignalementService;
+import mg.projetfinal.service.SignalementStatusService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Contrôleur pour la gestion des statuts de signalements
+ */
+@RestController
+@RequestMapping("/api/signalements/status")
+@RequiredArgsConstructor
+@Slf4j
+public class SignalementStatusController {
+
+    private final SignalementService signalementService;
+    private final SignalementStatusService statusService;
+    private final SignalementMapper mapper;
+
+    /**
+     * POST /api/signalements/{id}/synchroniser
+     * Synchronise un signalement avec Firebase
+     */
+    @PostMapping("/{id}/synchroniser")
+    public ResponseEntity<SignalementResponseDTO> synchroniserSignalement(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser) {
+
+        log.info("POST /api/signalements/{}/synchroniser - Synchronisation avec Firebase", id);
+
+        Signalement signalement = signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
+
+        // Logique de synchronisation Firebase ici
+        signalement.setFirebaseSynced(true);
+        Signalement synced = signalementService.create(signalement,currentUser);
+
+        SignalementResponseDTO response = mapper.toResponseDTO(synced);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/signalements/{id}/detail
+     * Récupère les détails complets d'un signalement
+     * (surface, budget, entreprise, statut, rues)
+     */
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<SignalementResponseDTO> getDetailSignalement(@PathVariable Long id) {
+        log.info("GET /api/signalements/{}/detail - Récupération des détails complets", id);
+
+        return signalementService.findById(id)
+                .map(mapper::toResponseDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * PUT /api/signalements/{id}/status
+     * Change le statut d'un signalement
+     */
+    @PutMapping("/{id}/status")
+    public ResponseEntity<SignalementResponseDTO> setStatus(
+            @PathVariable Long id,
+            @RequestParam Long statusId,
+            @RequestParam(required = false) String commentaire,
+            @AuthenticationPrincipal User currentUser) {
+
+        log.info("PUT /api/signalements/{}/status - Changement de statut vers {}", id, statusId);
+
+        Signalement signalement = signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
+
+        SignalementStatus newStatus = statusService.findById(statusId.intValue())
+                .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
+
+        signalement.setStatus(newStatus);
+
+
+        Signalement updated = signalementService.create(signalement,currentUser);
+
+        SignalementResponseDTO response = mapper.toResponseDTO(updated);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/signalements/statut-options
+     * Récupère la liste des statuts disponibles pour sélection
+     */
+    @GetMapping("/statut-options")
+    public ResponseEntity<List<SignalementStatus>> getStatutOptions() {
+        log.info("GET /api/signalements/statut-options - Récupération des options de statut");
+
+        List<SignalementStatus> statuts = statusService.findAllOrderByOrdre();
+        return ResponseEntity.ok(statuts);
+    }
+
+    /**
+     * POST /api/signalements/{id}/on-hover
+     * Endpoint pour afficher une bulle d'information au survol
+     * Retourne une liste de statuts pour sélection
+     */
+    @PostMapping("/{id}/on-hover")
+    public ResponseEntity<List<SignalementStatus>> onHoverSignalement(@PathVariable Long id) {
+        log.info("POST /api/signalements/{}/on-hover - Affichage des options de statut", id);
+
+        // Vérifier que le signalement existe
+        signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
+
+        List<SignalementStatus> availableStatuses = statusService.findAllOrderByOrdre();
+        return ResponseEntity.ok(availableStatuses);
+    }
+
+    /**
+     * POST /api/signalements/{id}/set-status-from-detail
+     * Intégration de setStatus lors du clic sur le bouton dans la vue détail
+     */
+    @PostMapping("/{id}/set-status-from-detail")
+    public ResponseEntity<SignalementResponseDTO> setStatusFromDetail(
+            @PathVariable Long id,
+            @RequestParam Long newStatusId,
+            @RequestParam(required = false) String commentaire,
+            @AuthenticationPrincipal User currentUser) {
+
+        log.info("POST /api/signalements/{}/set-status-from-detail - Changement de statut depuis détail", id);
+
+        return setStatus(id, newStatusId, commentaire, currentUser);
     }
 }
 
