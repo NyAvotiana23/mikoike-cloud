@@ -12,6 +12,8 @@ import mg.projetfinal.entity.*;
 import mg.projetfinal.enums.*;
 import mg.projetfinal.repository.*;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -152,10 +154,12 @@ public class FirebaseSyncService {
         // 1. Créer/Mettre à jour dans Firebase Authentication
         String firebaseUid;
         if (user.getFirebaseUid() == null || user.getFirebaseUid().isEmpty()) {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
             // Créer un nouvel utilisateur Firebase Auth
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(user.getEmail())
-                    .setPassword(generateTemporaryPassword()) // Mot de passe temporaire
+                    .setPassword(user.getPasswordTemp()) // Mot de passe temporaire
                     .setDisplayName(user.getName())
                     .setEmailVerified(false);
 
@@ -196,6 +200,7 @@ public class FirebaseSyncService {
         user.setFirebaseSynced(true);
         user.setSyncedAt(LocalDateTime.now());
         user.setFirebaseSyncError(null);
+        user.setPasswordTemp(user.getPasswordHash());
         userRepository.save(user);
 
         recordSyncSuccess(EntityType.USER, user.getId(), firebaseUid);
@@ -543,13 +548,13 @@ public class FirebaseSyncService {
     private Signalement createSignalementFromFirebaseData(Map<String, Object> data, String firebaseId) {
         try {
             // Récupérer l'utilisateur
-            Long userId = data.get("userId") != null ? ((Number) data.get("userId")).longValue() : null;
+            String userId = data.get("userId") != null ? data.get("userId").toString() : null;
             if (userId == null) {
                 log.error("UserId manquant pour le signalement Firebase: {}", firebaseId);
                 return null;
             }
 
-            User user = userRepository.findById(userId).orElse(null);
+            User user = userRepository.findByFirebaseUid(userId).orElse(null);
             if (user == null) {
                 log.error("User introuvable pour le signalement Firebase: {}", firebaseId);
                 return null;
@@ -570,21 +575,23 @@ public class FirebaseSyncService {
             if(data.containsKey("entrepriseId")) {
                  entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
             }
+            System.out.println("AIZA LE CAST TSY METY 1");
 
             // Créer le signalement
+            System.out.println("AIZA LE CAST TSY METY 1");
             Signalement signalement = Signalement.builder()
                     .description((String) data.get("description"))
                     .adresse((String) data.get("adresse"))
                     .latitude(data.get("latitude") != null ?
-                            BigDecimal.valueOf((Double) data.get("latitude")) : null)
+                            BigDecimal.valueOf(Double.valueOf(data.get("latitude").toString())) : null)
                     .longitude(data.get("longitude") != null ?
-                            BigDecimal.valueOf((Double) data.get("longitude")) : null)
+                            BigDecimal.valueOf(Double.valueOf(data.get("longitude").toString())) : null)
 //                    .photoUrl((String) data.get("photoUrl"))
                     .user(user)
                     .status(status)
                     .entreprise(entreprise)
-                    .surface(data.get("surface")!=null?BigDecimal.valueOf((Double) data.get("surface")):null)
-                    .budget(data.get("budget")!=null?BigDecimal.valueOf((Double) data.get("budget")):null)
+                    .surface(data.get("surface")!=null?BigDecimal.valueOf(Double.valueOf(data.get("surface").toString())):null)
+                    .budget(data.get("budget")!=null?BigDecimal.valueOf(Double.valueOf(data.get("budget").toString())):null)
                     .firebaseId(firebaseId)
                     .firebaseSynced(true)
                     .build();

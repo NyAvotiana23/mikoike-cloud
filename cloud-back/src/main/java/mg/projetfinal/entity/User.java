@@ -64,6 +64,9 @@ public class User {
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
 
+    @Column(name = "password_temp")
+    private String passwordTemp;
+
     @Column(name = "failed_attempts")
     @Builder.Default
     private Integer failedAttempts = 0;

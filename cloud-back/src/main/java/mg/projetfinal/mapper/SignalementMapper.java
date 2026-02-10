@@ -33,7 +33,8 @@ public class SignalementMapper {
                 .status(mapStatus(signalement.getStatus()))
                 .surface(calculateSurface(signalement))
                 .budget(calculateBudget(signalement))
-                .entreprise(getEntrepriseName(signalement))
+                .niveau(signalement.getNiveau())
+                .entreprise(signalement.getEntreprise().getNom())
                 .location(signalement.getAdresse())
                 .description(signalement.getDescription())
                 .actions(mapActions(signalement))
@@ -108,6 +109,7 @@ public class SignalementMapper {
     
     private java.math.BigDecimal calculateBudget(Signalement signalement) {
         // Récupérer le budget depuis SignalementAction
+
         return signalement.getBudget();
     }
     

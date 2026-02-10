@@ -33,10 +33,10 @@ public class FirebaseConfig {
     @PostConstruct
     public void initFirebase() {
         // Si le mode est offline, on peut skip Firebase
-        if ("offline".equalsIgnoreCase(appMode)) {
-            logger.info("Application en mode OFFLINE - Firebase désactivé");
-            return;
-        }
+//        if ("offline".equalsIgnoreCase(appMode)) {
+//            logger.info("Application en mode OFFLINE - Firebase désactivé");
+//            return;
+//        }
 
         if (!firebaseEnabled) {
             logger.info("Firebase désactivé via configuration");

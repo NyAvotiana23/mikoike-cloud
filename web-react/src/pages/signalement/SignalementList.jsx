@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import signalementApiService from '../../services/api/signalementApiService';
 import StatusSelector from '../../components/StatusSelector';
+import NiveauInput from '../../components/NiveauInput';
 
 const SignalementList = () => {
   const [roadIssues, setRoadIssues] = useState([]);
@@ -349,6 +350,12 @@ const SignalementList = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Niveau
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   <button
                     onClick={() => handleSort('budget')}
                     className="flex items-center gap-1 hover:text-gray-700"
@@ -371,7 +378,7 @@ const SignalementList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredIssues.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">
                       {searchTerm || statusFilter !== 'all'
@@ -415,6 +422,13 @@ const SignalementList = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {issue.surface} m²
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <NiveauInput
+                        signalementId={issue.id}
+                        currentNiveau={issue.niveau}
+                        onNiveauUpdate={() => loadSignalements()}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                       {(issue.budget / 1000).toLocaleString()} kAr

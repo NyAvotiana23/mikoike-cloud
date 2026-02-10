@@ -5,6 +5,7 @@ import {
   HomeIcon,
   MapIcon,
   ChartBarIcon,
+  CalculatorIcon,
   Cog6ToothIcon,
   UserGroupIcon,
   ChevronDownIcon,
@@ -291,7 +292,29 @@ const Sidebar = () => {
             {/* Séparateur */}
             <div className="pt-6">
               <div className="border-t border-neutral-200 mb-3"></div>
-
+              <NavLink
+                    to="/configurations"
+                    className={({ isActive }) =>
+                      `group flex items-center px-3 py-2 text-body-sm font-medium rounded-lg transition-all ${
+                        isActive
+                          ? 'bg-primary-50 text-primary-700'
+                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <CalculatorIcon
+                          className={`mr-3 flex-shrink-0 h-5 w-5 ${
+                            isActive
+                              ? 'text-primary-600'
+                              : 'text-neutral-400 group-hover:text-neutral-500'
+                          }`}
+                        />
+                        Configurations
+                      </>
+                    )}
+                  </NavLink>
               
 
               {/* Bouton Synchroniser */}

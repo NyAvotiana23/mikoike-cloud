@@ -353,6 +353,7 @@ const VisitorMap = () => {
                             <span className="font-medium">Entreprise:</span> {issue.entreprise}
                           </span>
                         </div>
+                        
 
                         {/* Niveau */}
                         {issue.niveau && (

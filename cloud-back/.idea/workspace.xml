@@ -5,14 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/ConfigurationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/ConfigurationDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/UpdateNiveauDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/Configuration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/ConfigurationRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/ConfigurationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/data.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/mg.projetfinal.config.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/mg.projetfinal.controller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/SignalementResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/SignalementResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/mg.projetfinal.dto.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/Signalement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/Signalement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/mg.projetfinal.entity.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/mg.projetfinal.entity.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/mapper/SignalementMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/mapper/SignalementMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/mapper/mg.projetfinal.mapper.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/mapper/mg.projetfinal.mapper.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/repository/mg.projetfinal.repository.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebaseSyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebaseSyncService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/mg.projetfinal.service.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/firebase-service-account.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/components/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web-react/src/pages/signalement/SignalementList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../web-react/src/pages/signalement/SignalementList.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +43,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>

@@ -16,6 +16,7 @@ import SignalementDetail from '../pages/signalement/SignalementDetail.jsx';
 import SignalementStatistics from '../pages/signalement/SignalementStatistics.jsx';
 import VisitorMap from '../pages/VisitorMap.jsx';
 import { Navigate } from 'react-router-dom';
+import ConfigurationPage from '../pages/ConfigurationPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: 'about',
             element: <About />,
+          },
+          {
+            path: 'configurations',
+            element: <ConfigurationPage />,
           },
           // Routes Utilisateurs avec sous-layout
           {
