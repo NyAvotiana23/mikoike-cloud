@@ -216,7 +216,6 @@ public class FirebaseSyncService {
         data.put("adresse", signalement.getAdresse());
         data.put("latitude", signalement.getLatitude() != null ? signalement.getLatitude().doubleValue() : null);
         data.put("longitude", signalement.getLongitude() != null ? signalement.getLongitude().doubleValue() : null);
-        data.put("photoUrl", signalement.getPhotoUrl());
         data.put("statusCode", signalement.getStatus() != null ? signalement.getStatus().getCode() : null);
         data.put("statusLibelle", signalement.getStatus() != null ? signalement.getStatus().getLibelle() : null);
         data.put("userEmail", signalement.getUser() != null ? signalement.getUser().getEmail() : null);
@@ -225,6 +224,9 @@ public class FirebaseSyncService {
         data.put("createdAt", convertToDate(signalement.getCreatedAt()));
         data.put("updatedAt", convertToDate(signalement.getUpdatedAt()));
         data.put("syncedAt", new Date());
+        data.put("surface",signalement.getSurface());
+        data.put("budget",signalement.getBudget());
+        data.put("entrepriseId",signalement.getEntreprise().getId());
 
         // Utiliser l'ID Firebase existant ou en générer un nouveau
         String docId = signalement.getFirebaseId() != null ?
@@ -515,13 +517,23 @@ public class FirebaseSyncService {
         if (data.containsKey("longitude")) {
             signalement.setLongitude(BigDecimal.valueOf((Double) data.get("longitude")));
         }
-        if (data.containsKey("photoUrl")) {
-            signalement.setPhotoUrl((String) data.get("photoUrl"));
-        }
+//        if (data.containsKey("photoUrl")) {
+//            signalement.setPhotoUrl((String) data.get("photoUrl"));
+//        }
         if (data.containsKey("statusCode")) {
             String statusCode = (String) data.get("statusCode");
             signalementStatusRepository.findByCode(statusCode)
                     .ifPresent(signalement::setStatus);
+        }
+        if(data.containsKey("entrepriseId")) {
+            Entreprise entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
+            signalement.setEntreprise(entreprise);
+        }
+        if(data.containsKey("surface")){
+            signalement.setSurface(BigDecimal.valueOf((Double) data.get("surface")));
+        }
+        if(data.containsKey("budget")){
+            signalement.setBudget(BigDecimal.valueOf((Double) data.get("budget")));
         }
 
         signalement.setFirebaseSynced(true);
@@ -553,6 +565,12 @@ public class FirebaseSyncService {
                 return null;
             }
 
+            Entreprise entreprise = null;
+
+            if(data.containsKey("entrepriseId")) {
+                 entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
+            }
+
             // Créer le signalement
             Signalement signalement = Signalement.builder()
                     .description((String) data.get("description"))
@@ -561,9 +579,12 @@ public class FirebaseSyncService {
                             BigDecimal.valueOf((Double) data.get("latitude")) : null)
                     .longitude(data.get("longitude") != null ?
                             BigDecimal.valueOf((Double) data.get("longitude")) : null)
-                    .photoUrl((String) data.get("photoUrl"))
+//                    .photoUrl((String) data.get("photoUrl"))
                     .user(user)
                     .status(status)
+                    .entreprise(entreprise)
+                    .surface(data.get("surface")!=null?BigDecimal.valueOf((Double) data.get("surface")):null)
+                    .budget(data.get("budget")!=null?BigDecimal.valueOf((Double) data.get("budget")):null)
                     .firebaseId(firebaseId)
                     .firebaseSynced(true)
                     .build();

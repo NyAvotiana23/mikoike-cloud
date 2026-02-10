@@ -134,7 +134,8 @@ class SignalementApiService {
 
   /**
    * Calcule les statistiques des signalements
-   * @returns {Promise<Object>} Statistiques
+   * Correspond à l'endpoint GET /api/signalements/statistics
+   * @returns {Promise<Object>} StatisticsDTO {total, totalSurface, totalBudget, nouveau, enCours, termine, avancement}
    */
   async getStatistics() {
     try {
@@ -152,6 +153,8 @@ class SignalementApiService {
       return ApiErrorHandler.handle(error);
     }
   }
+
+
 
   /**
    * Crée un nouveau signalement

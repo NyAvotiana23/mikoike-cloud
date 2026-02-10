@@ -151,7 +151,6 @@ public class SignalementController {
                 .longitude(dto.getLongitude())
                 .description(dto.getDescription())
                 .adresse(dto.getAdresse())
-                .photoUrl(dto.getPhotoUrl())
                 // .status(status)
                 .build();
         
@@ -177,7 +176,6 @@ public class SignalementController {
                 .longitude(dto.getLongitude())
                 .description(dto.getDescription())
                 .adresse(dto.getAdresse())
-                .photoUrl(dto.getPhotoUrl())
                 .build();
         
         Signalement updated = signalementService.update(id, signalement);
