@@ -12,7 +12,9 @@ import {
   Timestamp
 } from 'firebase/firestore';
 import firebaseService from './firebase.service';
+import photoSignalementService from './photo-signalement.service';
 import type { Signalement } from '@/types/signalement';
+import type { PhotoSignalement } from '@/types/photo-signalement';
 
 /**
  * Service de gestion des signalements avec Firebase
@@ -574,6 +576,134 @@ class FirebaseSignalementsService {
 
   getError() {
     return this.error;
+  }
+
+  // ===============================================
+  // GESTION DES PHOTOS (Collection photo_signalement)
+  // ===============================================
+
+  /**
+   * Charge les photos d'un signalement depuis la collection photo_signalement
+   */
+  async loadPhotosForSignalement(signalementId: string): Promise<string[]> {
+    try {
+      const photos = await photoSignalementService.loadPhotosForSignalement(signalementId);
+      return photos.map(p => p.url);
+    } catch (err: any) {
+      console.error('❌ Erreur chargement photos:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Ajoute une photo à un signalement
+   * Upload vers Cloudinary puis sauvegarde dans photo_signalement
+   */
+  async addPhotoToSignalement(
+    signalementId: string,
+    file: File | Blob | string,
+    legende?: string
+  ): Promise<{ success: boolean; url?: string; error?: string }> {
+    const result = await photoSignalementService.addPhoto(signalementId, file, legende);
+
+    if (result.success && result.photo) {
+      // Mettre à jour le cache local du signalement
+      const signalement = this.signalements.value.find(s => s.id === signalementId);
+      if (signalement) {
+        if (!signalement.photos) {
+          signalement.photos = [];
+        }
+        signalement.photos.push(result.photo.url);
+      }
+
+      return { success: true, url: result.photo.url };
+    }
+
+    return { success: false, error: result.error };
+  }
+
+  /**
+   * Ajoute plusieurs photos à un signalement
+   */
+  async addPhotosToSignalement(
+    signalementId: string,
+    files: (File | Blob | string)[]
+  ): Promise<{ success: boolean; urls: string[]; errors: string[] }> {
+    const results = await photoSignalementService.addMultiplePhotos(signalementId, files);
+
+    const urls: string[] = [];
+    const errors: string[] = [];
+
+    for (const result of results) {
+      if (result.success && result.photo) {
+        urls.push(result.photo.url);
+      } else if (result.error) {
+        errors.push(result.error);
+      }
+    }
+
+    // Mettre à jour le cache local
+    const signalement = this.signalements.value.find(s => s.id === signalementId);
+    if (signalement) {
+      if (!signalement.photos) {
+        signalement.photos = [];
+      }
+      signalement.photos.push(...urls);
+    }
+
+    return { success: errors.length === 0, urls, errors };
+  }
+
+  /**
+   * Supprime une photo d'un signalement
+   */
+  async deletePhotoFromSignalement(signalementId: string, photoId: string): Promise<boolean> {
+    const success = await photoSignalementService.deletePhoto(photoId);
+
+    if (success) {
+      // Recharger les photos pour le cache
+      await this.loadPhotosForSignalement(signalementId);
+    }
+
+    return success;
+  }
+
+  /**
+   * Obtient toutes les photos d'un signalement avec leurs métadonnées
+   */
+  async getPhotosWithMetadata(signalementId: string): Promise<PhotoSignalement[]> {
+    return await photoSignalementService.loadPhotosForSignalement(signalementId);
+  }
+
+  /**
+   * Crée un signalement avec photos
+   * Upload les photos vers Cloudinary puis crée le signalement
+   */
+  async createWithPhotos(
+    data: Omit<Signalement, 'id'>,
+    photoFiles: (File | Blob | string)[]
+  ): Promise<{ signalement: Signalement; photoUrls: string[]; errors: string[] }> {
+    // 1. Créer le signalement d'abord
+    const signalement = await this.create(data);
+
+    // 2. Uploader les photos
+    const photoResults = await this.addPhotosToSignalement(signalement.id, photoFiles);
+
+    // 3. Mettre à jour le signalement avec les URLs des photos
+    signalement.photos = photoResults.urls;
+
+    return {
+      signalement,
+      photoUrls: photoResults.urls,
+      errors: photoResults.errors
+    };
+  }
+
+  /**
+   * Accès au service photo pour des opérations avancées
+   */
+  getPhotoService() {
+    return photoSignalementService;
   }
 }
 

@@ -1,4 +1,3 @@
-// Updated file: src/routes/AppRoutes.jsx
 // src/routes/AppRoutes.jsx
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../pages/Login';
@@ -23,65 +22,64 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: '/',
-    element: (
-        <ProtectedRoute>
-          <MainLayout />
-        </ProtectedRoute>
-    ),
+    element: <ProtectedRoute />,  // Now the protector is here, using <Outlet /> to render children
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: 'about',
-        element: <About />,
-      },
-      // Routes Utilisateurs avec sous-layout
-      {
-        path: 'users',
-        element: <UserLayout />,
+        path: '/',
+        element: <MainLayout />,
         children: [
           {
             index: true,
-            element: <UserList />,
+            element: <Home />,
           },
           {
-            path: 'add',
-            element: <UserForm />,
+            path: 'about',
+            element: <About />,
           },
+          // Routes Utilisateurs avec sous-layout
           {
-            path: ':id',
-            element: <UserDetail />,
+            path: 'users',
+            element: <UserLayout />,
+            children: [
+              {
+                index: true,
+                element: <UserList />,
+              },
+              {
+                path: 'add',
+                element: <UserForm />,
+              },
+              {
+                path: ':id',
+                element: <UserDetail />,
+              }
+            ],
+          },
+          // Routes Carte - Gestion des problèmes routiers avec sous-layout
+          {
+            path: 'carte',
+            element: <CarteLayout />,
+            children: [
+              {
+                index: true,
+                element: <Map />,
+              },
+              {
+                path: 'signalements',
+                element: <SignalementList />,
+              },
+              {
+                path: 'signalements/:id',
+                element: <SignalementDetail />,
+              },
+              {
+                path: 'statistiques',
+                element: <SignalementStatistics />,
+              },
+            ],
           }
         ],
       },
-      // Routes Carte - Gestion des problèmes routiers avec sous-layout
-      {
-        path: 'carte',
-        element: <CarteLayout />,
-        children: [
-          {
-            index: true,
-            element: <Map />,
-          },
-          {
-            path: 'signalements',
-            element: <SignalementList />,
-          },
-          {
-            path: 'signalements/:id',
-            element: <SignalementDetail />,
-          },
-          {
-            path: 'statistiques',
-            element: <SignalementStatistics />,
-          },
-        ],
-      }
-
-
     ],
   },
   // Catch-all route to redirect unauthorized users to login
