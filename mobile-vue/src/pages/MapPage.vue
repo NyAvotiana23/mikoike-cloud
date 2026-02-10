@@ -252,21 +252,6 @@
                 required
               ></ion-input>
             </div>
-
-            <div class="form-group half">
-              <label class="form-label">
-                <ion-icon :icon="cashOutline"></ion-icon>
-                Budget (€) *
-              </label>
-              <ion-input
-                v-model.number="newSignalement.budget"
-                type="number"
-                placeholder="0"
-                class="form-input"
-                min="0"
-                required
-              ></ion-input>
-            </div>
           </div>
 
           <!-- Entreprise -->

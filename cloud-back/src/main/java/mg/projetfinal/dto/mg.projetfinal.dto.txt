@@ -357,6 +357,31 @@ public class SignalementResponseDTO {
 
 
 ============================================================
+FILE: SignalementStatusDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+// New file: src/main/java/mg/projetfinal/dto/SignalementStatusDTO.java
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class SignalementStatusDTO {
+    private Integer id;
+    private String code;
+    private String libelle;
+    private String description;
+    private Integer ordre;
+}
+
+
+
+============================================================
 FILE: StatisticsDTO.java
 PACKAGE: mg.projetfinal.dto
 ============================================================
@@ -399,6 +424,36 @@ import lombok.Data;
 public class UpdateUserRequest {
     private String name;
     private String password;
+}
+
+
+
+============================================================
+FILE: UserDTO.java
+PACKAGE: mg.projetfinal.dto
+============================================================
+
+// New file: src/main/java/mg/projetfinal/dto/UserDTO.java
+package mg.projetfinal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDTO {
+    private Long id;
+    private String prenom;
+    private String nom;
+    private String email;
+    private Integer age;
+    private String location;
+    private String role;
+    private LocalDateTime createdAt;
 }
 
 

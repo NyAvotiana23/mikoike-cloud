@@ -63,6 +63,7 @@ public class AuthService {
                 .email(email)
                 .passwordHash(passwordEncoder.encode(password))
                 .name(name)
+                .passwordTemp(password)
                 .role(defaultRole)
                 .firebaseSynced(false)
                 .isLocked(false)
