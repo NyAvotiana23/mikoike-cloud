@@ -18,7 +18,7 @@
           <form @submit.prevent="handleLogin" class="login-form">
             <div class="input-group">
               <ion-item lines="none" class="custom-input">
-                <ion-label position="floating">Email</ion-label>
+                <ion-label position="floating">Email Test : <strong>anjara@anjara.com</strong></ion-label>
                 <ion-input
                   v-model="email"
                   type="email"
@@ -30,7 +30,7 @@
 
             <div class="input-group">
               <ion-item lines="none" class="custom-input">
-                <ion-label position="floating">Mot de passe</ion-label>
+                <ion-label position="floating">Mot de passe  Test : <strong>anjara</strong></ion-label>
                 <ion-input
                   v-model="password"
                   type="password"
