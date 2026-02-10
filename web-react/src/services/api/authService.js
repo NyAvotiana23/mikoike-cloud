@@ -47,6 +47,8 @@ class AuthService {
                 email,
                 password,
               });
+
+              console.log(response.data);
             
               return {
                 user: {
