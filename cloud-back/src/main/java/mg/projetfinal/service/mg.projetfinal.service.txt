@@ -76,24 +76,24 @@ public class AuthService {
                 .build();
 
         // Synchronisation Firebase si mode online
-        if (isOnline()) {
-            try {
-                UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                        .setEmail(email)
-                        .setPassword(password)
-                        .setDisplayName(name);
-
-                UserRecord firebaseUser = FirebaseAuth.getInstance().createUser(request);
-                user.setFirebaseUid(firebaseUser.getUid());
-                user.setFirebaseSynced(true);
-                user.setSyncedAt(LocalDateTime.now());
-
-                log.info("User créé dans Firebase: {}", firebaseUser.getUid());
-            } catch (FirebaseAuthException e) {
-                user.setFirebaseSyncError(e.getMessage());
-                log.error("Erreur création Firebase: {}", e.getMessage());
-            }
-        }
+//        if (isOnline()) {
+//            try {
+//                UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+//                        .setEmail(email)
+//                        .setPassword(password)
+//                        .setDisplayName(name);
+//
+//                UserRecord firebaseUser = FirebaseAuth.getInstance().createUser(request);
+//                user.setFirebaseUid(firebaseUser.getUid());
+//                user.setFirebaseSynced(true);
+//                user.setSyncedAt(LocalDateTime.now());
+//
+//                log.info("User créé dans Firebase: {}", firebaseUser.getUid());
+//            } catch (FirebaseAuthException e) {
+//                user.setFirebaseSyncError(e.getMessage());
+//                log.error("Erreur création Firebase: {}", e.getMessage());
+//            }
+//        }
 
         return userRepository.save(user);
     }
@@ -200,15 +200,15 @@ public class AuthService {
         }
 
         // Étape 6: Vérifier Firebase si online
-        if (isOnline()) {
-            try {
-                FirebaseAuth.getInstance().getUserByEmail(email);
-            } catch (FirebaseAuthException e) {
-                recordLoginAttempt(email, user, false, FailureReason.FIREBASE_ERROR, ipAddress, userAgent);
-                log.error("Erreur Firebase lors du login: {}", e.getMessage());
-                throw new RuntimeException("Erreur de synchronisation Firebase");
-            }
-        }
+//        if (isOnline()) {
+//            try {
+//                FirebaseAuth.getInstance().getUserByEmail(email);
+//            } catch (FirebaseAuthException e) {
+//                recordLoginAttempt(email, user, false, FailureReason.FIREBASE_ERROR, ipAddress, userAgent);
+//                log.error("Erreur Firebase lors du login: {}", e.getMessage());
+//                throw new RuntimeException("Erreur de synchronisation Firebase");
+//            }
+//        }
 
         // Étape 7: Connexion réussie - Reset des tentatives échouées
         recordLoginAttempt(email, user, true, null, ipAddress, userAgent);
@@ -970,7 +970,6 @@ public class FirebaseSyncService {
         data.put("adresse", signalement.getAdresse());
         data.put("latitude", signalement.getLatitude() != null ? signalement.getLatitude().doubleValue() : null);
         data.put("longitude", signalement.getLongitude() != null ? signalement.getLongitude().doubleValue() : null);
-        data.put("photoUrl", signalement.getPhotoUrl());
         data.put("statusCode", signalement.getStatus() != null ? signalement.getStatus().getCode() : null);
         data.put("statusLibelle", signalement.getStatus() != null ? signalement.getStatus().getLibelle() : null);
         data.put("userEmail", signalement.getUser() != null ? signalement.getUser().getEmail() : null);
@@ -979,6 +978,9 @@ public class FirebaseSyncService {
         data.put("createdAt", convertToDate(signalement.getCreatedAt()));
         data.put("updatedAt", convertToDate(signalement.getUpdatedAt()));
         data.put("syncedAt", new Date());
+        data.put("surface",signalement.getSurface());
+        data.put("budget",signalement.getBudget());
+        data.put("entrepriseId",signalement.getEntreprise().getId());
 
         // Utiliser l'ID Firebase existant ou en générer un nouveau
         String docId = signalement.getFirebaseId() != null ?
@@ -1269,13 +1271,23 @@ public class FirebaseSyncService {
         if (data.containsKey("longitude")) {
             signalement.setLongitude(BigDecimal.valueOf((Double) data.get("longitude")));
         }
-        if (data.containsKey("photoUrl")) {
-            signalement.setPhotoUrl((String) data.get("photoUrl"));
-        }
+//        if (data.containsKey("photoUrl")) {
+//            signalement.setPhotoUrl((String) data.get("photoUrl"));
+//        }
         if (data.containsKey("statusCode")) {
             String statusCode = (String) data.get("statusCode");
             signalementStatusRepository.findByCode(statusCode)
                     .ifPresent(signalement::setStatus);
+        }
+        if(data.containsKey("entrepriseId")) {
+            Entreprise entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
+            signalement.setEntreprise(entreprise);
+        }
+        if(data.containsKey("surface")){
+            signalement.setSurface(BigDecimal.valueOf((Double) data.get("surface")));
+        }
+        if(data.containsKey("budget")){
+            signalement.setBudget(BigDecimal.valueOf((Double) data.get("budget")));
         }
 
         signalement.setFirebaseSynced(true);
@@ -1307,6 +1319,12 @@ public class FirebaseSyncService {
                 return null;
             }
 
+            Entreprise entreprise = null;
+
+            if(data.containsKey("entrepriseId")) {
+                 entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
+            }
+
             // Créer le signalement
             Signalement signalement = Signalement.builder()
                     .description((String) data.get("description"))
@@ -1315,9 +1333,12 @@ public class FirebaseSyncService {
                             BigDecimal.valueOf((Double) data.get("latitude")) : null)
                     .longitude(data.get("longitude") != null ?
                             BigDecimal.valueOf((Double) data.get("longitude")) : null)
-                    .photoUrl((String) data.get("photoUrl"))
+//                    .photoUrl((String) data.get("photoUrl"))
                     .user(user)
                     .status(status)
+                    .entreprise(entreprise)
+                    .surface(data.get("surface")!=null?BigDecimal.valueOf((Double) data.get("surface")):null)
+                    .budget(data.get("budget")!=null?BigDecimal.valueOf((Double) data.get("budget")):null)
                     .firebaseId(firebaseId)
                     .firebaseSynced(true)
                     .build();
@@ -2139,8 +2160,7 @@ public class SignalementService {
         
         existingSignalement.setDescription(signalement.getDescription());
         existingSignalement.setAdresse(signalement.getAdresse());
-        existingSignalement.setPhotoUrl(signalement.getPhotoUrl());
-        
+
         if (!existingSignalement.getLatitude().equals(signalement.getLatitude()) 
                 || !existingSignalement.getLongitude().equals(signalement.getLongitude())) {
             existingSignalement.setLatitude(signalement.getLatitude());
@@ -2338,119 +2358,62 @@ FILE: SignalementStatusService.java
 PACKAGE: mg.projetfinal.service
 ============================================================
 
-// SignalementStatusService.java
+// Updated file: src/main/java/mg/projetfinal/service/SignalementStatusService.java
+// Assuming this service exists; if not, create it with the following content
 package mg.projetfinal.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import mg.projetfinal.dto.SignalementStatusDTO;
 import mg.projetfinal.entity.SignalementStatus;
-import mg.projetfinal.repository.SignalementStatusRepository;
+import mg.projetfinal.repository.SignalementStatusRepository; // Assume this exists
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-/**
- * Service pour la gestion des statuts de signalements
- */
 @Service
-@RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class SignalementStatusService {
 
-    private final SignalementStatusRepository statusRepository;
+    private final SignalementStatusRepository repository;
 
-    /**
-     * Récupère tous les statuts ordonnés par ordre
-     */
-    public List<SignalementStatus> findAllOrderByOrdre() {
-        log.debug("Récupération de tous les statuts ordonnés");
-        return statusRepository.findAllByOrderByOrdreAsc();
+    @Autowired
+    public SignalementStatusService(SignalementStatusRepository repository) {
+        this.repository = repository;
     }
 
-    /**
-     * Récupère tous les statuts
-     */
     public List<SignalementStatus> findAll() {
-        log.debug("Récupération de tous les statuts");
-        return statusRepository.findAll();
+        return repository.findAll();
     }
 
-    /**
-     * Récupère un statut par ID
-     */
-    public Optional<SignalementStatus> findById(Integer id) {
-        log.debug("Récupération du statut avec ID: {}", id);
-        return statusRepository.findById(id);
+    public List<SignalementStatusDTO> findAllDTOs() {
+        return findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Récupère un statut par code
-     */
-    public Optional<SignalementStatus> findByCode(String code) {
-        log.debug("Récupération du statut avec code: {}", code);
-        return statusRepository.findByCode(code);
+    public List<SignalementStatus> findAllOrderByOrdre() {
+        return repository.findAllByOrderByOrdreAsc(); // Assume this method exists in repo
     }
 
-    /**
-     * Vérifie si un statut existe par code
-     */
-    public boolean existsByCode(String code) {
-        return statusRepository.existsByCode(code);
+    public List<SignalementStatusDTO> findAllOrderByOrdreDTOs() {
+        return findAllOrderByOrdre().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Crée un nouveau statut
-     */
-    public SignalementStatus create(SignalementStatus status) {
-        log.info("Création d'un nouveau statut: {}", status.getCode());
-
-        if (existsByCode(status.getCode())) {
-            throw new RuntimeException("Un statut avec ce code existe déjà");
-        }
-
-        return statusRepository.save(status);
-    }
-
-    /**
-     * Met à jour un statut
-     */
-    public SignalementStatus update(Integer id, SignalementStatus statusDetails) {
-        log.info("Mise à jour du statut ID: {}", id);
-
-        SignalementStatus status = findById(id)
+    public SignalementStatus findById(Integer id) {
+        return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
-
-        status.setLibelle(statusDetails.getLibelle());
-        status.setDescription(statusDetails.getDescription());
-        status.setOrdre(statusDetails.getOrdre());
-        status.setCouleur(statusDetails.getCouleur());
-
-        return statusRepository.save(status);
     }
 
-    /**
-     * Supprime un statut
-     */
-    public void delete(Integer id) {
-        log.info("Suppression du statut ID: {}", id);
-
-        SignalementStatus status = findById(id)
-                .orElseThrow(() -> new RuntimeException("Statut non trouvé"));
-
-        statusRepository.delete(status);
-    }
-
-    /**
-     * Récupère le statut par défaut (généralement "nouveau")
-     */
-    public SignalementStatus getDefaultStatus() {
-        return findByCode("nouveau")
-                .orElseGet(() -> findAllOrderByOrdre().stream()
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Aucun statut disponible")));
+    private SignalementStatusDTO mapToDTO(SignalementStatus status) {
+        return new SignalementStatusDTO(
+                status.getId(),
+                status.getCode(),
+                status.getLibelle(),
+                status.getDescription(),
+                status.getOrdre()
+        );
     }
 }
 
@@ -2461,14 +2424,19 @@ FILE: UserService.java
 PACKAGE: mg.projetfinal.service
 ============================================================
 
+// Updated file: src/main/java/mg/projetfinal/service/UserService.java
 package mg.projetfinal.service;
 
+import mg.projetfinal.dto.UserDTO;
+import mg.projetfinal.entity.Role;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -2484,6 +2452,53 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    /**
+     * Récupère tous les utilisateurs sous forme de DTO, mappés aux colonnes du tableau dans la page JSX.
+     * Notes :
+     * - Le champ 'name' de l'entité User est supposé être le nom complet (ex: "Prenom Nom").
+     *   Il est splitté pour extraire 'prenom' et 'nom'. Si impossible à splitter, 'prenom' est vide et 'nom' prend la valeur complète.
+     * - Les champs 'age' et 'location' ne sont pas présents dans l'entité User (basé sur entity.txt), ils sont donc settés à null.
+     * - Le champ 'role' est extrait du nom du rôle (en supposant que l'entité Role a une méthode getName()).
+     *   Si Role n'a pas de getName(), adaptez selon votre implémentation (ex: role.getRoleName() ou role.toString()).
+     */
+    public List<UserDTO> getAllUserDTOs() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    private UserDTO mapToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+
+        // Mapper le rôle (adaptez si Role n'a pas getName())
+        Role role = user.getRole();
+        dto.setRole(role != null ? role.getLibelle() : null);
+
+        dto.setCreatedAt(user.getCreatedAt());
+
+        // Splitter 'name' en prenom et nom (adaptation car entity a un seul 'name')
+        String name = user.getName();
+        if (name != null) {
+            String[] parts = name.trim().split("\\s+");
+            if (parts.length >= 2) {
+                dto.setPrenom(parts[0]);
+                dto.setNom(String.join(" ", Arrays.copyOfRange(parts, 1, parts.length)));
+            } else {
+                dto.setPrenom("");
+                dto.setNom(name);
+            }
+        } else {
+            dto.setPrenom(null);
+            dto.setNom(null);
+        }
+
+        // Champs manquants dans l'entité : settés à null (ajoutez-les à l'entité User si nécessaire)
+        dto.setAge(null);
+        dto.setLocation(null);
+
+        return dto;
+    }
 }
 
 

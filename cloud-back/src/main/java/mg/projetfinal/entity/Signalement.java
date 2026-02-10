@@ -62,6 +62,9 @@ public class Signalement {
     @Column(name = "budget", nullable = false)
     private BigDecimal budget;
 
+    @Column(name = "niveau", nullable = true)
+    private Integer niveau;
+
     @Column(name = "surface", nullable = false)
     private BigDecimal surface;
 

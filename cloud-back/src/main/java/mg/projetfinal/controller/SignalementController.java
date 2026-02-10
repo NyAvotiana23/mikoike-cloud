@@ -9,6 +9,7 @@ import mg.projetfinal.entity.User;
 import mg.projetfinal.mapper.SignalementMapper;
 import mg.projetfinal.service.SignalementService;
 import mg.projetfinal.service.SignalementStatusService;
+import mg.projetfinal.service.ConfigurationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ public class SignalementController {
     private final SignalementService signalementService;
     private final SignalementStatusService statusService;
     private final SignalementMapper signalementMapper;
+    private final ConfigurationService configurationService;
 
     /**
      * GET /api/signalements
@@ -37,10 +39,10 @@ public class SignalementController {
     @GetMapping
     public ResponseEntity<List<SignalementResponseDTO>> getAllSignalements() {
         log.info("GET /api/signalements - Récupération de tous les signalements");
-        
+
         List<Signalement> signalements = signalementService.findAllOrderByDateDesc();
         List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +53,7 @@ public class SignalementController {
     @GetMapping("/{id}")
     public ResponseEntity<SignalementResponseDTO> getSignalementById(@PathVariable Long id) {
         log.info("GET /api/signalements/{} - Récupération du signalement", id);
-        
+
         return signalementService.findById(id)
                 .map(signalementMapper::toResponseDTO)
                 .map(ResponseEntity::ok)
@@ -65,10 +67,10 @@ public class SignalementController {
     @GetMapping("/status/{statusCode}")
     public ResponseEntity<List<SignalementResponseDTO>> getSignalementsByStatus(@PathVariable String statusCode) {
         log.info("GET /api/signalements/status/{} - Récupération par statut", statusCode);
-        
+
         List<Signalement> signalements = signalementService.findByStatusCode(statusCode);
         List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -79,10 +81,10 @@ public class SignalementController {
     @GetMapping("/map")
     public ResponseEntity<List<SignalementResponseDTO>> getSignalementsForMap() {
         log.info("GET /api/signalements/map - Récupération pour la carte");
-        
+
         List<Signalement> signalements = signalementService.findAll();
         List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -93,32 +95,32 @@ public class SignalementController {
     @GetMapping("/statistics")
     public ResponseEntity<StatisticsDTO> getStatistics() {
         log.info("GET /api/signalements/statistics - Récupération des statistiques");
-        
+
         List<Signalement> signalements = signalementService.findAll();
-        
+
         int total = signalements.size();
         int totalSurface = signalements.stream()
                 .mapToInt(s -> {
                     var action = s.getActiveAction();
-                    return action != null && action.getSurfaceM2() != null 
+                    return action != null && action.getSurfaceM2() != null
                             ? action.getSurfaceM2().intValue() : 0;
                 })
                 .sum();
-        
+
         BigDecimal totalBudget = signalements.stream()
                 .map(s -> {
                     var action = s.getActiveAction();
-                    return action != null && action.getBudget() != null 
+                    return action != null && action.getBudget() != null
                             ? action.getBudget() : BigDecimal.ZERO;
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         long nouveau = signalementService.countNouveau();
         long enCours = signalementService.countEnCours();
         long termine = signalementService.countTermine();
-        
+
         double avancement = total > 0 ? ((double) termine / total) * 100 : 0;
-        
+
         StatisticsDTO stats = StatisticsDTO.builder()
                 .total(total)
                 .totalSurface(totalSurface)
@@ -128,7 +130,7 @@ public class SignalementController {
                 .termine((int) termine)
                 .avancement(Math.round(avancement * 10.0) / 10.0)
                 .build();
-        
+
         return ResponseEntity.ok(stats);
     }
 
@@ -140,12 +142,12 @@ public class SignalementController {
     public ResponseEntity<SignalementResponseDTO> createSignalement(
             @Valid @RequestBody CreateSignalementDTO dto,
             @AuthenticationPrincipal User currentUser) {
-        
+
         log.info("POST /api/signalements - Création d'un nouveau signalement");
-        
+
         // TODO: Récupérer le statut par défaut ou utiliser dto.statusId
         // SignalementStatus status = statusService.findById(dto.getStatusId()).orElseThrow();
-        
+
         Signalement signalement = Signalement.builder()
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
@@ -153,10 +155,10 @@ public class SignalementController {
                 .adresse(dto.getAdresse())
                 // .status(status)
                 .build();
-        
+
         Signalement created = signalementService.create(signalement, currentUser);
         SignalementResponseDTO response = signalementMapper.toResponseDTO(created);
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -168,19 +170,19 @@ public class SignalementController {
     public ResponseEntity<SignalementResponseDTO> updateSignalement(
             @PathVariable Long id,
             @Valid @RequestBody CreateSignalementDTO dto) {
-        
+
         log.info("PUT /api/signalements/{} - Mise à jour du signalement", id);
-        
+
         Signalement signalement = Signalement.builder()
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .description(dto.getDescription())
                 .adresse(dto.getAdresse())
                 .build();
-        
+
         Signalement updated = signalementService.update(id, signalement);
         SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -191,7 +193,7 @@ public class SignalementController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSignalement(@PathVariable Long id) {
         log.info("DELETE /api/signalements/{} - Suppression du signalement", id);
-        
+
         signalementService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -205,12 +207,12 @@ public class SignalementController {
             @RequestParam BigDecimal latitude,
             @RequestParam BigDecimal longitude,
             @RequestParam(defaultValue = "5.0") double radiusKm) {
-        
+
         log.info("GET /api/signalements/location - Recherche par localisation");
-        
+
         List<Signalement> signalements = signalementService.findByLocation(latitude, longitude, radiusKm);
         List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -263,5 +265,52 @@ public class SignalementController {
 
         List<SignalementStatusDTO> availableStatuses = statusService.findAllOrderByOrdreDTOs();
         return ResponseEntity.ok(availableStatuses);
+    }
+
+    /**
+     * PUT /api/signalements/{id}/niveau
+     * Met à jour le niveau et recalcule automatiquement le budget
+     */
+    @PutMapping("/{id}/niveau")
+    public ResponseEntity<SignalementResponseDTO> updateNiveau(
+            @PathVariable Long id,
+            @RequestBody UpdateNiveauDTO dto) {
+
+        log.info("PUT /api/signalements/{}/niveau - Mise à jour du niveau : {}", id, dto.getNiveau());
+
+        Signalement signalement = signalementService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Signalement non trouvé avec l'ID: " + id));
+
+        // Vérifier que le niveau est valide
+        if (dto.getNiveau() < 1 || dto.getNiveau() > 10) {
+            throw new IllegalArgumentException("Le niveau doit être entre 1 et 10");
+        }
+
+        // Vérifier que la surface est définie
+        if (signalement.getSurface() == null) {
+            throw new IllegalArgumentException("La surface doit être définie avant de définir le niveau");
+        }
+
+        // Mettre à jour le niveau
+        signalement.setNiveau(dto.getNiveau());
+
+        // Calculer automatiquement le budget
+        BigDecimal budget = configurationService.calculerBudget(
+                dto.getNiveau(),
+                signalement.getSurface()
+        );
+        signalement.setBudget(budget);
+
+        // Marquer comme non synchronisé avec Firebase
+        signalement.setFirebaseSynced(false);
+
+        // Sauvegarder
+        Signalement updated = signalementService.update(id, signalement);
+        SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
+
+        log.info("Niveau mis à jour pour le signalement {} : niveau={}, budget={} Ar",
+                id, dto.getNiveau(), budget);
+
+        return ResponseEntity.ok(response);
     }
 }

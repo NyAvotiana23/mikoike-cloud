@@ -8,13 +8,17 @@ mg\projetfinal\repository\EntrepriseRepository.class
 mg\projetfinal\dto\StatisticsDTO$StatisticsDTOBuilder.class
 mg\projetfinal\entity\Entreprise$EntrepriseBuilder.class
 mg\projetfinal\dto\RegisterRequest.class
+mg\projetfinal\dto\ConfigurationDTO$ConfigurationDTOBuilder.class
 mg\projetfinal\entity\Session.class
 mg\projetfinal\service\FailedLoginTrackingService.class
 mg\projetfinal\ProjetFinalApplication.class
 mg\projetfinal\dto\ActionDTO$ActionDTOBuilder.class
 mg\projetfinal\service\AuthService.class
 mg\projetfinal\controller\FirebaseSyncController.class
+mg\projetfinal\controller\ConfigurationController$BudgetCalculationDTO$BudgetCalculationDTOBuilder.class
 mg\projetfinal\dto\LoginResponse$LoginResponseBuilder.class
+mg\projetfinal\repository\ConfigurationRepository.class
+mg\projetfinal\service\ConfigurationService.class
 mg\projetfinal\dto\SignalementResponseDTO$SignalementResponseDTOBuilder.class
 mg\projetfinal\repository\SignalementActionRepository.class
 mg\projetfinal\entity\Role.class
@@ -36,6 +40,7 @@ mg\projetfinal\controller\UserController.class
 mg\projetfinal\dto\StatisticsDTO.class
 mg\projetfinal\entity\Session$SessionBuilder.class
 mg\projetfinal\repository\SyncHistoryRepository.class
+mg\projetfinal\dto\UpdateNiveauDTO.class
 mg\projetfinal\repository\SignalementRepository.class
 mg\projetfinal\repository\FailedLoginTrackingRepository.class
 mg\projetfinal\service\FirebaseSyncService.class
@@ -57,6 +62,8 @@ mg\projetfinal\entity\SyncQueue.class
 mg\projetfinal\entity\Entreprise.class
 mg\projetfinal\enums\SyncStatus.class
 mg\projetfinal\config\FirebaseConfig.class
+mg\projetfinal\entity\Configuration$ConfigurationBuilder.class
+mg\projetfinal\controller\ConfigurationController$BudgetCalculationDTO.class
 mg\projetfinal\service\SignalementService.class
 mg\projetfinal\dto\CreateSignalementDTO$CreateSignalementDTOBuilder.class
 mg\projetfinal\dto\PhotoSignalementDTO.class
@@ -66,7 +73,9 @@ mg\projetfinal\entity\SignalementStatus.class
 mg\projetfinal\config\SessionAuthenticationFilter.class
 mg\projetfinal\controller\AuthController.class
 mg\projetfinal\dto\SessionResponse$SessionResponseBuilder.class
+mg\projetfinal\dto\UpdateNiveauDTO$UpdateNiveauDTOBuilder.class
 mg\projetfinal\config\SecurityConfig.class
+mg\projetfinal\controller\ConfigurationController.class
 mg\projetfinal\controller\SignalementController.class
 mg\projetfinal\entity\LoginAttempt.class
 mg\projetfinal\dto\LoginResponse.class
@@ -78,7 +87,9 @@ mg\projetfinal\dto\CoordinatesDTO.class
 mg\projetfinal\service\FirebaseSyncService$SyncResult.class
 mg\projetfinal\entity\PhotoSignalement$PhotoSignalementBuilder.class
 mg\projetfinal\dto\ErrorResponse.class
+mg\projetfinal\entity\Configuration.class
 mg\projetfinal\repository\SessionRepository.class
+mg\projetfinal\dto\ConfigurationDTO.class
 mg\projetfinal\entity\SignalementStatus$SignalementStatusBuilder.class
 mg\projetfinal\controller\PhotoSignalementController$ErrorResponse.class
 mg\projetfinal\dto\EntrepriseResponseDTO$EntrepriseResponseDTOBuilder.class

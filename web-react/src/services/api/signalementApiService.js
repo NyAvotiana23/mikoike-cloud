@@ -1,5 +1,6 @@
 // src/services/api/signalementApiService.js
 // Service pour interagir avec l'API REST Spring Boot
+import api from '../httpClient';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -152,6 +153,13 @@ class SignalementApiService {
       console.error('Erreur lors de la récupération des statistiques:', error);
       return ApiErrorHandler.handle(error);
     }
+  }
+
+  async updateNiveau (id, niveau){
+    const response = await api.put(`/signalements/${id}/niveau`, {
+      niveau: niveau
+    });
+    return response.data;
   }
 
 

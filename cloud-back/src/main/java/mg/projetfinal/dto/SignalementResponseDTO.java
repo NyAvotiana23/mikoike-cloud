@@ -27,7 +27,8 @@ public class SignalementResponseDTO {
     private String location;
     private String description;
     private List<ActionDTO> actions;
-    
+    private Integer niveau;  // Niveau de réparation (1-10)
+
     // Pour la carte
     private BigDecimal lat;
     private BigDecimal lng;

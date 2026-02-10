@@ -38,7 +38,7 @@ public class SignalementMapper {
                 .status(mapStatus(signalement.getStatus()))
                 .surface(calculateSurface(signalement))
                 .budget(calculateBudget(signalement))
-                .entreprise(getEntrepriseName(signalement))
+                .entreprise(signalement.getEntreprise().getNom())
                 .location(signalement.getAdresse())
                 .description(signalement.getDescription())
                 .actions(mapActions(signalement))
@@ -108,20 +108,12 @@ public class SignalementMapper {
     
     private Integer calculateSurface(Signalement signalement) {
         // Récupérer la surface depuis SignalementAction
-        SignalementAction action = signalement.getActiveAction();
-        if (action != null && action.getSurfaceM2() != null) {
-            return action.getSurfaceM2().intValue();
-        }
-        return 0;
+        return signalement.getSurface().intValue();
     }
     
     private java.math.BigDecimal calculateBudget(Signalement signalement) {
         // Récupérer le budget depuis SignalementAction
-        SignalementAction action = signalement.getActiveAction();
-        if (action != null && action.getBudget() != null) {
-            return action.getBudget();
-        }
-        return java.math.BigDecimal.ZERO;
+        return signalement.getBudget();
     }
     
     private String getEntrepriseName(Signalement signalement) {
