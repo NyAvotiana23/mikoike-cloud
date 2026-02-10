@@ -331,6 +331,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   IonPage, IonContent, IonFabButton, IonIcon, IonModal,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonInput,
@@ -344,11 +345,11 @@ import {
 } from 'ionicons/icons';
 import SignalementDetailModal from '@/components/SignalementDetailModal.vue';
 import { useUserContext } from '@/services/user-context.service';
-import signalementsService from '@/services/signalements.service';
+import signalementsService from '@/services/signalements.service.firebase';
 import mapService from '@/services/map.service';
-import reportsService from '@/services/reports.service';
 import geolocationService from '@/services/geolocation.service';
 
+const route = useRoute();
 const { isAuthenticated, userContext } = useUserContext();
 
 const signalements = ref<any[]>([]);
@@ -425,6 +426,22 @@ onMounted(async () => {
 
   await loadSignalements();
 
+  // Gérer la navigation depuis une autre page (viewOnMap)
+  if (route.query.id && route.query.lat && route.query.lng) {
+    const signalementId = route.query.id as string;
+    const lat = parseFloat(route.query.lat as string);
+    const lng = parseFloat(route.query.lng as string);
+
+    // Centrer la carte sur le signalement
+    mapService.setMapCenter(lat, lng, 16);
+
+    // Trouver et afficher le signalement
+    const sig = signalements.value.find(s => s.id === signalementId);
+    if (sig) {
+      quickInfoSignalement.value = sig;
+    }
+  }
+
   mapService.onMarkerClick((markerId: string) => {
     if (!isAddingReport.value) {
       const sig = signalements.value.find(s => s.id === markerId);
@@ -448,20 +465,25 @@ onMounted(async () => {
 
 const loadSignalements = async () => {
   try {
-    if (showOnlyMine.value && userContext.value.userId) {
-      allSignalements.value = await reportsService.getAllReports(userContext.value.userId);
-    } else {
-      allSignalements.value = await reportsService.getAllReports();
-    }
-    applyFilters();
-  } catch (error) {
-    console.error('Erreur lors du chargement des signalements:', error);
+    // Charger les signalements depuis Firebase
+    await signalementsService.loadSignalements();
+
     if (showOnlyMine.value && userContext.value.userId) {
       allSignalements.value = signalementsService.getAll(userContext.value.userId);
     } else {
       allSignalements.value = signalementsService.getAll();
     }
     applyFilters();
+  } catch (error) {
+    console.error('Erreur lors du chargement des signalements:', error);
+
+    const toast = await toastController.create({
+      message: 'Erreur de chargement des signalements',
+      duration: 3000,
+      color: 'danger',
+      position: 'top'
+    });
+    await toast.present();
   }
 };
 
@@ -497,6 +519,7 @@ const displayMarkers = () => {
   mapService.clearMarkers();
   signalements.value.forEach(sig => {
     if (sig.location) {
+      console.log(sig)
       mapService.addMarker(sig.location.lat, sig.location.lng, {
         id: sig.id,
         status: sig.status,
@@ -622,8 +645,10 @@ const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    await reportsService.addReport({
+    // Créer le signalement dans Firebase
+    await signalementsService.create({
       userId: userContext.value.userId,
+      userEmail: userContext.value.email || '',
       location: clickedPosition.value,
       date: new Date().toISOString(),
       status: 'nouveau',
@@ -633,13 +658,15 @@ const saveSignalement = async () => {
       surface: newSignalement.value.surface,
       budget: newSignalement.value.budget,
       entreprise: newSignalement.value.entreprise,
-      photos: newSignalement.value.photos
+      photos: newSignalement.value.photos,
+      adresse: '', // À remplir si nécessaire
+      photoUrl: newSignalement.value.photos.length > 0 ? newSignalement.value.photos[0] : ''
     });
 
     await loadSignalements();
 
     const toast = await toastController.create({
-      message: 'Rapport créé avec succès !',
+      message: 'Signalement créé avec succès !',
       duration: 2000,
       color: 'success'
     });
@@ -650,8 +677,8 @@ const saveSignalement = async () => {
     console.error('Erreur lors de la sauvegarde', error);
 
     const toast = await toastController.create({
-      message: 'Erreur lors de la création du rapport',
-      duration: 2000,
+      message: 'Erreur lors de la création du signalement',
+      duration: 3000,
       color: 'danger'
     });
     await toast.present();

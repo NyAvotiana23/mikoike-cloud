@@ -28,14 +28,14 @@
         <div class="summary-item">
           <ion-icon :icon="cashOutline" class="summary-icon"></ion-icon>
           <div>
-            <div class="summary-value">{{ formatCurrency(stats.budgetTotal) }}</div>
+            <div class="summary-value">{{ formatCurrency(stats.totalBudget) }}</div>
             <div class="summary-label">Budget total</div>
           </div>
         </div>
         <div class="summary-item">
           <ion-icon :icon="resizeOutline" class="summary-icon"></ion-icon>
           <div>
-            <div class="summary-value">{{ stats.surfaceTotale }} m²</div>
+            <div class="summary-value">{{ stats.totalSurface }} m²</div>
             <div class="summary-label">Surface totale</div>
           </div>
         </div>
@@ -201,7 +201,7 @@ import {
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
 import SignalementDetailModal from '@/components/SignalementDetailModal.vue';
-import signalementsService from '@/services/signalements.service';
+import signalementsService from '@/services/signalements.service.firebase';
 import { useUserContext } from '@/services/user-context.service';
 import type { Signalement, SignalementFilters, SignalementStats } from '@/types/signalement';
 
@@ -228,8 +228,11 @@ const stats = computed<SignalementStats>(() => {
     en_cours: filtered.filter(s => s.status === 'en_cours').length,
     termine: filtered.filter(s => s.status === 'termine').length,
     annule: filtered.filter(s => s.status === 'annule').length,
-    surfaceTotale: filtered.reduce((sum, s) => sum + s.surface, 0),
-    budgetTotal: filtered.reduce((sum, s) => sum + s.budget, 0)
+    totalSurface: filtered.reduce((sum, s) => sum + s.surface, 0),
+    totalBudget: filtered.reduce((sum, s) => sum + s.budget, 0),
+    avancement: filtered.length > 0
+      ? Math.round((filtered.filter(s => s.status === 'termine').length / filtered.length) * 100)
+      : 0
   };
 });
 
@@ -247,13 +250,18 @@ const filteredSignalements = computed(() => {
   return result;
 });
 
-onMounted(() => {
-  loadSignalements();
+onMounted(async () => {
+  await loadSignalements();
 });
 
-const loadSignalements = () => {
-  if (userContext.value.userId) {
-    signalements.value = signalementsService.getAll(userContext.value.userId);
+const loadSignalements = async () => {
+  try {
+    await signalementsService.loadSignalements();
+    if (userContext.value.userId) {
+      signalements.value = signalementsService.getAll(userContext.value.userId);
+    }
+  } catch (error) {
+    console.error('Erreur chargement signalements:', error);
   }
 };
 

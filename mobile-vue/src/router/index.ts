@@ -28,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'map',
         name: 'Map',
-        component: () => import('@/pages/MapPage.vue')
+        component: () => import('@/pages/MapPage.vue')  
       },
       {
         path: 'all-signalements',

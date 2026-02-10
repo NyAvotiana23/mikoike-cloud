@@ -170,6 +170,11 @@ class MapService {
     return { lat: center.lat, lng: center.lng };
   }
 
+  setMapCenter(lat: number, lng: number, zoom?: number) {
+    if (!this.map) return;
+    this.map.setView([lat, lng], zoom || this.map.getZoom());
+  }
+
   private getStatusIcon(status: string) {
     const colors = {
       nouveau: '#FFB74D',

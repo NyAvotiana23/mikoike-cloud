@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue';
+import type { User } from './auth.service';
 
 // Types d'utilisateurs
 export type UserType = 'authenticated' | 'visitor';
@@ -7,8 +8,8 @@ export interface UserContext {
   type: UserType;
   userId?: string;
   email?: string;
-  nom?: string;
-  prenom?: string;
+  name?: string;
+  displayName?: string;
 }
 
 // État global du contexte utilisateur
@@ -17,31 +18,45 @@ const userContext = ref<UserContext>({
 });
 
 export const useUserContext = () => {
-  const setAuthenticatedUser = (user: { id: string; email: string; nom?: string; prenom?: string }) => {
+  const setAuthenticatedUser = (user: User) => {
     userContext.value = {
       type: 'authenticated',
       userId: user.id,
       email: user.email,
-      nom: user.nom || '',
-      prenom: user.prenom || ''
+      name: user.name || user.displayName || '',
+      displayName: user.displayName || user.name || ''
     };
+    console.log('👤 Contexte utilisateur défini:', userContext.value);
   };
 
   const setVisitor = () => {
     userContext.value = {
       type: 'visitor'
     };
+    console.log('👤 Mode visiteur activé');
+  };
+
+  const clearContext = () => {
+    userContext.value = {
+      type: 'visitor'
+    };
+    console.log('👤 Contexte utilisateur effacé');
   };
 
   const isAuthenticated = computed(() => userContext.value.type === 'authenticated');
   const isVisitor = computed(() => userContext.value.type === 'visitor');
+  const getCurrentUserId = computed(() => userContext.value.userId || null);
+  const getCurrentUserEmail = computed(() => userContext.value.email || null);
 
   return {
     userContext,
     setAuthenticatedUser,
     setVisitor,
+    clearContext,
     isAuthenticated,
-    isVisitor
+    isVisitor,
+    getCurrentUserId,
+    getCurrentUserEmail
   };
 };
 

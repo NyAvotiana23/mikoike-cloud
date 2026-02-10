@@ -2,9 +2,6 @@
   <ion-page>
     <app-header title="Récapitulatif"></app-header>
     
-    <!-- Database Status Chip -->
-    <database-status-chip />
-    
     <ion-content class="ion-padding">
       <div class="dashboard-container">
         <!-- Carte de statistiques globales -->
@@ -34,37 +31,30 @@
           </div>
         </div>
 
-        <!-- Statut de synchronisation -->
-        <div v-if="stats.syncStatus" class="sync-card">
+        <!-- Synchronisation Firebase -->
+        <div class="sync-card">
           <h2 class="card-title">
-            Synchronisation
-            <ion-icon 
-              :icon="stats.syncStatus.isFirebaseAvailable ? cloudDone : cloudOffline"
-              :color="stats.syncStatus.isFirebaseAvailable ? 'success' : 'warning'"
+            Synchronisation Firebase
+            <ion-icon
+              :icon="cloudDone"
+              color="success"
               class="sync-icon"
             ></ion-icon>
           </h2>
           
           <div class="sync-content">
-            <div class="sync-item sync-success">
-              <span class="sync-label">Synchronisés</span>
-              <span class="sync-value">{{ stats.syncStatus.synced }}</span>
-            </div>
-
-            <div v-if="stats.syncStatus.pending > 0" class="sync-item sync-warning">
-              <span class="sync-label">En attente</span>
-              <span class="sync-value">{{ stats.syncStatus.pending }}</span>
-            </div>
+            <p class="sync-info">
+              Tous les signalements sont automatiquement synchronisés avec Firebase.
+            </p>
 
             <ion-button 
-              v-if="stats.syncStatus.isFirebaseAvailable && stats.syncStatus.pending > 0"
               expand="block"
               @click="syncNow"
               :disabled="syncing"
               class="sync-button"
             >
               <ion-icon slot="start" :icon="syncOutline"></ion-icon>
-              {{ syncing ? 'Synchronisation...' : 'Synchroniser maintenant' }}
+              {{ syncing ? 'Actualisation...' : 'Actualiser les données' }}
             </ion-button>
           </div>
         </div>
@@ -151,8 +141,7 @@ import { ref, computed, onMounted } from 'vue';
 import { IonPage, IonContent, IonButton, IonIcon, toastController } from '@ionic/vue';
 import { cloudDone, cloudOffline, cloudUpload, syncOutline } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
-import DatabaseStatusChip from '@/components/DatabaseStatusChip.vue';
-import signalementsService from '@/services/signalements.service.hybrid';
+import signalementsService from '@/services/signalements.service.firebase';
 
 const stats = ref({
   total: 0,
@@ -161,19 +150,14 @@ const stats = ref({
   termine: 0,
   totalSurface: 0,
   totalBudget: 0,
-  avancement: 0,
-  syncStatus: {
-    synced: 0,
-    pending: 0,
-    isFirebaseAvailable: false
-  }
+  avancement: 0
 });
 
 const allSignalements = ref<any[]>([]);
 const syncing = ref(false);
 
 const recentSignalements = computed(() => {
-  return allSignalements.value
+  return [...allSignalements.value]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 });
@@ -182,7 +166,8 @@ onMounted(() => {
   loadData();
 });
 
-const loadData = () => {
+const loadData = async () => {
+  await signalementsService.loadSignalements();
   stats.value = signalementsService.getStats();
   allSignalements.value = signalementsService.getAll();
 };
@@ -191,22 +176,16 @@ const syncNow = async () => {
   syncing.value = true;
   
   try {
-    const result = await signalementsService.syncToFirebase();
-    
-    if (result.success) {
-      await signalementsService.syncFromFirebase();
-      
-      const toast = await toastController.create({
-        message: `✅ ${result.count || 0} signalement(s) synchronisé(s)`,
-        duration: 2000,
-        color: 'success'
-      });
-      await toast.present();
-      
-      loadData();
-    } else {
-      throw new Error(result.error);
-    }
+    await signalementsService.loadSignalements();
+
+    const toast = await toastController.create({
+      message: '✅ Signalements synchronisés depuis Firebase',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+
+    loadData();
   } catch (error: any) {
     const toast = await toastController.create({
       message: `❌ Erreur: ${error.message}`,
