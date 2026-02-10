@@ -519,7 +519,6 @@ const displayMarkers = () => {
   mapService.clearMarkers();
   signalements.value.forEach(sig => {
     if (sig.location) {
-      console.log(sig)
       mapService.addMarker(sig.location.lat, sig.location.lng, {
         id: sig.id,
         status: sig.status,
@@ -645,8 +644,20 @@ const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    // Créer le signalement dans Firebase
-    await signalementsService.create({
+    // Afficher un toast de progression
+    const loadingToast = await toastController.create({
+      message: 'Création du signalement en cours...',
+      duration: 0, // Pas de durée auto
+      color: 'primary'
+    });
+    await loadingToast.present();
+
+    // Séparer les photos base64 des URLs existantes
+    const photosToUpload = newSignalement.value.photos.filter(p => p.startsWith('data:'));
+    const existingPhotoUrls = newSignalement.value.photos.filter(p => !p.startsWith('data:'));
+
+    // Créer le signalement d'abord (sans les photos base64)
+    const signalement = await signalementsService.create({
       userId: userContext.value.userId,
       userEmail: userContext.value.email || '',
       location: clickedPosition.value,
@@ -658,11 +669,32 @@ const saveSignalement = async () => {
       surface: newSignalement.value.surface,
       budget: newSignalement.value.budget,
       entreprise: newSignalement.value.entreprise,
-      photos: newSignalement.value.photos,
-      adresse: '', // À remplir si nécessaire
-      photoUrl: newSignalement.value.photos.length > 0 ? newSignalement.value.photos[0] : ''
+      photos: existingPhotoUrls, // Seulement les URLs existantes pour l'instant
+      adresse: '',
+      photoUrl: existingPhotoUrls.length > 0 ? existingPhotoUrls[0] : ''
     });
 
+    // Uploader les photos base64 vers Cloudinary et les sauvegarder dans photo_signalement
+    if (photosToUpload.length > 0) {
+      loadingToast.message = `Upload des photos (0/${photosToUpload.length})...`;
+
+      const uploadResult = await signalementsService.addPhotosToSignalement(
+        signalement.id,
+        photosToUpload
+      );
+
+      if (uploadResult.errors.length > 0) {
+        console.warn('⚠️ Certaines photos n\'ont pas pu être uploadées:', uploadResult.errors);
+      }
+
+      // Mettre à jour le signalement avec les URLs des photos
+      if (uploadResult.urls.length > 0) {
+        signalement.photos = [...existingPhotoUrls, ...uploadResult.urls];
+        signalement.photoUrl = signalement.photos[0];
+      }
+    }
+
+    await loadingToast.dismiss();
     await loadSignalements();
 
     const toast = await toastController.create({
@@ -708,12 +740,6 @@ const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('fr-FR');
 };
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(amount);
-};
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -735,23 +761,6 @@ const getStatusLabel = (status: string) => {
   return labels[status] || status;
 };
 
-const getPriorityColor = (priorite: string) => {
-  const colors: Record<string, string> = {
-    basse: 'success',
-    moyenne: 'warning',
-    haute: 'danger'
-  };
-  return colors[priorite] || 'medium';
-};
-
-const getPriorityLabel = (priorite: string) => {
-  const labels: Record<string, string> = {
-    basse: 'Priorité basse',
-    moyenne: 'Priorité moyenne',
-    haute: 'Priorité haute'
-  };
-  return labels[priorite] || priorite;
-};
 
 watch(showOnlyMine, () => {
   loadSignalements();

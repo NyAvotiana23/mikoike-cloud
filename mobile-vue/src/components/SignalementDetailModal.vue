@@ -25,14 +25,15 @@
         </div>
 
         <!-- Section Photos -->
-        <div v-if="signalement.photos && signalement.photos.length > 0" class="photos-section">
+        <div class="photos-section">
           <h3 class="section-title">
             <ion-icon :icon="imagesOutline"></ion-icon>
-            Photos ({{ signalement.photos.length }})
+            Photos ({{ allPhotos.length }})
+            <ion-spinner v-if="loadingPhotos" name="crescent" class="photos-spinner"></ion-spinner>
           </h3>
-          <div class="photos-grid">
+          <div v-if="allPhotos.length > 0" class="photos-grid">
             <div
-              v-for="(photo, index) in signalement.photos"
+              v-for="(photo, index) in allPhotos"
               :key="index"
               class="photo-thumbnail"
               @click="openPhotoViewer(index)"
@@ -43,6 +44,7 @@
               </div>
             </div>
           </div>
+          <p v-else-if="!loadingPhotos" class="no-photos-text">Aucune photo disponible</p>
         </div>
 
         <div class="detail-section">
@@ -96,7 +98,7 @@
   <ion-modal :is-open="showPhotoViewer" @didDismiss="closePhotoViewer" class="photo-viewer-modal">
     <ion-header>
       <ion-toolbar color="dark">
-        <ion-title>Photo {{ currentPhotoIndex + 1 }} / {{ signalement?.photos?.length || 0 }}</ion-title>
+        <ion-title>Photo {{ currentPhotoIndex + 1 }} / {{ allPhotos.length }}</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="closePhotoViewer" color="light">
             <ion-icon :icon="closeOutline" slot="icon-only"></ion-icon>
@@ -105,7 +107,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="photo-viewer-content">
-      <div class="photo-viewer-container" v-if="signalement?.photos">
+      <div class="photo-viewer-container" v-if="allPhotos.length > 0">
         <ion-button
           v-if="currentPhotoIndex > 0"
           fill="clear"
@@ -116,13 +118,13 @@
         </ion-button>
 
         <img
-          :src="signalement.photos[currentPhotoIndex]"
+          :src="allPhotos[currentPhotoIndex]"
           class="fullscreen-photo"
           :alt="`Photo ${currentPhotoIndex + 1}`"
         />
 
         <ion-button
-          v-if="currentPhotoIndex < signalement.photos.length - 1"
+          v-if="currentPhotoIndex < allPhotos.length - 1"
           fill="clear"
           class="nav-btn nav-next"
           @click="nextPhoto"
@@ -135,10 +137,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, computed } from 'vue';
 import {
   IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
-  IonContent, IonBadge, IonIcon
+  IonContent, IonBadge, IonIcon, IonSpinner
 } from '@ionic/vue';
 import {
   calendarOutline, locationOutline, businessOutline, resizeOutline,
@@ -146,6 +148,8 @@ import {
   chevronForwardOutline, closeOutline, mapOutline, createOutline
 } from 'ionicons/icons';
 import type { Signalement } from '@/types/signalement';
+import type { PhotoSignalement } from '@/types/photo-signalement';
+import photoSignalementService from '@/services/photo-signalement.service';
 
 
 interface Props {
@@ -172,6 +176,50 @@ defineEmits<{
 const showPhotoViewer = ref(false);
 const currentPhotoIndex = ref(0);
 
+// Photos from Firebase
+const photosFromFirebase = ref<PhotoSignalement[]>([]);
+const loadingPhotos = ref(false);
+
+// Computed pour combiner les photos locales et Firebase
+const allPhotos = computed(() => {
+  // Priorité aux photos Firebase si disponibles
+  if (photosFromFirebase.value.length > 0) {
+    return photosFromFirebase.value.map(p => p.url);
+  }
+  // Sinon utiliser les photos du signalement
+  return props.signalement?.photos || [];
+});
+
+// Watcher pour charger les photos quand le modal s'ouvre
+watch(
+  () => ({ isOpen: props.isOpen, signalementId: props.signalement?.id }),
+  async ({ isOpen, signalementId }) => {
+    if (isOpen && signalementId) {
+      await loadPhotosFromFirebase(signalementId);
+    } else if (!isOpen) {
+      // Reset quand le modal se ferme
+      photosFromFirebase.value = [];
+    }
+  },
+  { immediate: true }
+);
+
+// Charger les photos depuis Firebase
+async function loadPhotosFromFirebase(signalementId: string) {
+  loadingPhotos.value = true;
+  try {
+    const photos = await photoSignalementService.loadPhotosForSignalement(signalementId);
+    photosFromFirebase.value = photos;
+    console.log(`✅ ${photos.length} photos chargées depuis Firebase`);
+  } catch (error) {
+    console.error('❌ Erreur chargement photos:', error);
+    // Fallback vers les photos du signalement
+    photosFromFirebase.value = [];
+  } finally {
+    loadingPhotos.value = false;
+  }
+}
+
 // Photo viewer functions
 const openPhotoViewer = (index: number) => {
   currentPhotoIndex.value = index;
@@ -189,7 +237,7 @@ const prevPhoto = () => {
 };
 
 const nextPhoto = () => {
-  if (props.signalement?.photos && currentPhotoIndex.value < props.signalement.photos.length - 1) {
+  if (currentPhotoIndex.value < allPhotos.value.length - 1) {
     currentPhotoIndex.value++;
   }
 };
@@ -294,6 +342,21 @@ const getPriorityLabel = (priorite: string) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.photos-spinner {
+  --color: #0ea5e9;
+  width: 18px;
+  height: 18px;
+  margin-left: 0.5rem;
+}
+
+.no-photos-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+  margin: 0;
 }
 
 .photos-grid {
