@@ -1,0 +1,713 @@
+{
+	"info": {
+		"_postman_id": "a8bb8d4c-c093-46ef-ab6d-3e3507707419",
+		"name": "Cloud-project-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "52257675",
+		"_collection_link": "https://rakotonavalona206-8326907.postman.co/workspace/Rakoto's-Workspace~210b6a38-9874-4911-8c93-19773717001f/collection/52257675-a8bb8d4c-c093-46ef-ab6d-3e3507707419?action=share&source=collection_link&creator=52257675"
+	},
+	"item": [
+		{
+			"name": "Creer compte admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"Admin123!\",\r\n    \"name\": \"Administrateur\",\r\n    \"secretKey\": \"MySecretKey2026\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/admin/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Connexion manager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"Admin123!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/admin/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Inscription utilisateur",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"User123!\",\r\n    \"name\": \"Utilisateur Test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/auth/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Connexion utilisateur",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"User123!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Deconnexion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "a18fad47-d589-4abd-8cb2-d22bf96120e0"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/auth/logout"
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier utilisateur",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Nouveau Nom\",\r\n    \"password\": \"NouveauMotDePasse123!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/auth/update/5"
+			},
+			"response": []
+		},
+		{
+			"name": "Debloquer un utilisateur",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "a18fad47-d589-4abd-8cb2-d22bf96120e0"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/auth/unlock/user@example.com"
+			},
+			"response": []
+		},
+		{
+			"name": "Lister les signalements",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements"
+			},
+			"response": []
+		},
+		{
+			"name": "Lister signalement par id",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Creer un signalement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"latitude\": -18.8792,\r\n    \"longitude\": 47.5079,\r\n    \"description\": \"Nid de poule dangereux\",\r\n    \"adresse\": \"Rue de l'Indépendance, Antananarivo\",\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/signalements"
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier un signalement",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"latitude\": -18.8792,\r\n    \"longitude\": 47.5079,\r\n    \"description\": \"Description mise à jour\",\r\n    \"adresse\": \"Nouvelle adresse\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/signalements/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer un signalement",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/signalements/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Signalements par status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements/status/nouveau"
+			},
+			"response": []
+		},
+		{
+			"name": "Signalements pour la carte",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements/map"
+			},
+			"response": []
+		},
+		{
+			"name": "Statistiques des signalements",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements/statistics"
+			},
+			"response": []
+		},
+		{
+			"name": "Recherche par localisation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8002/api/signalements/location?latitude=-18.8792&longitude=47.5079&radiusKm=5.0",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"signalements",
+						"location"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "-18.8792"
+						},
+						{
+							"key": "longitude",
+							"value": "47.5079"
+						},
+						{
+							"key": "radiusKm",
+							"value": "5.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Changer le statut",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8002/api/signalements/1/change-status?newStatusId=2&commentaire=En cours de traitement",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"signalements",
+						"1",
+						"change-status"
+					],
+					"query": [
+						{
+							"key": "newStatusId",
+							"value": "2"
+						},
+						{
+							"key": "commentaire",
+							"value": "En cours de traitement"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Synchroniser avec Firebase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/signalements/status/1/synchroniser1"
+			},
+			"response": []
+		},
+		{
+			"name": "Details complet signalement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements/status/1/detail"
+			},
+			"response": []
+		},
+		{
+			"name": "Changer status",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8002/api/signalements/status/1/status?statusId=2&commentaire=Changement de statut",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"signalements",
+						"status",
+						"1",
+						"status"
+					],
+					"query": [
+						{
+							"key": "statusId",
+							"value": "2"
+						},
+						{
+							"key": "commentaire",
+							"value": "Changement de statut"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Option de status disponible",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/signalements/status/statut-options"
+			},
+			"response": []
+		},
+		{
+			"name": "On hover (liste des statuts)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/signalements/status/1/on-hover"
+			},
+			"response": []
+		},
+		{
+			"name": "Definir status depuis detail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8002/api/signalements/status/1/set-status-from-detail?newStatusId=2&commentaire=Depuis vue détail",
+					"host": [
+						"localhost"
+					],
+					"port": "8002",
+					"path": [
+						"api",
+						"signalements",
+						"status",
+						"1",
+						"set-status-from-detail"
+					],
+					"query": [
+						{
+							"key": "newStatusId",
+							"value": "2"
+						},
+						{
+							"key": "commentaire",
+							"value": "Depuis vue détail"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lister toutes les entreprises",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/entreprises"
+			},
+			"response": []
+		},
+		{
+			"name": "Entreprises actives",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/entreprises/active"
+			},
+			"response": []
+		},
+		{
+			"name": "Meilleures entreprises",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/entreprises/top-rated"
+			},
+			"response": []
+		},
+		{
+			"name": "Recuperer une entreprise par id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/entreprises/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Recuperer entreprise par specialite",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Creer une entreprise",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nom\": \"Entreprise BTP Madagascar\",\r\n    \"specialite\": \"Voirie\",\r\n    \"email\": \"contact@btp-mada.mg\",\r\n    \"telephone\": \"+261 34 00 000 00\",\r\n    \"adresse\": \"Antananarivo, Madagascar\",\r\n    \"isActive\": true,\r\n    \"noteMoyenne\": 4.5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/entreprises"
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier une entreprise",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nom\": \"Entreprise BTP Madagascar - Updated\",\r\n    \"specialite\": \"Voirie et Assainissement\",\r\n    \"noteMoyenne\": 4.8\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/entreprises/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer une entreprise",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "localhost:8002/api/entreprises/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Ajouter une photo a un signalement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://example.com/photo.jpg\",\r\n    \"description\": \"Photo du nid de poule\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/photos/signalement/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Photo d'un signalement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/photos/signalement/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer une signalement",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "localhost:8002/api/photos/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Tous les historiques",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/historiques"
+			},
+			"response": []
+		},
+		{
+			"name": "Historique par id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/historiques/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Historique d'un signalement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/historiques/signalement/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Dernier changement de status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/historiques/signalement/1/dernier"
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer un historique",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "localhost:8002/api/historiques/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Enregister token fcm",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fcmToken\": \"votre_token_fcm_ici\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8002/api/notifications/fcm-token"
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer token fcm",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "localhost:8002/api/notifications/fcm-token"
+			},
+			"response": []
+		},
+		{
+			"name": "Synchronisation complete bidirectionnelle",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/all"
+			},
+			"response": []
+		},
+		{
+			"name": "Postgres -> Firebase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/postgres-to-firebase"
+			},
+			"response": []
+		},
+		{
+			"name": "Firebase -> Postgres",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/firebase-to-postgres"
+			},
+			"response": []
+		},
+		{
+			"name": "Sync utilisateurs uniquement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Sync signalement uniquement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/signalements"
+			},
+			"response": []
+		},
+		{
+			"name": "Sync entreprise uniquement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/entreprises"
+			},
+			"response": []
+		},
+		{
+			"name": "Pull utilisateur",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "localhost:8002/api/sync/pull-users"
+			},
+			"response": []
+		},
+		{
+			"name": "Statut de synchronisation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/sync/status"
+			},
+			"response": []
+		},
+		{
+			"name": "Health check Firebase",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/sync/health"
+			},
+			"response": []
+		},
+		{
+			"name": "Manager dashboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/manager/dashboard"
+			},
+			"response": []
+		},
+		{
+			"name": "Statistiques uniquement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/manager/dashboard/statistics"
+			},
+			"response": []
+		},
+		{
+			"name": "Resume des budgets",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Indicateurs de performances",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8002/api/manager/dashboard/performance"
+			},
+			"response": []
+		}
+	]
+}

@@ -75,8 +75,11 @@
         </div>
 
         <div v-if="signalement.description" class="description-section">
-          <h3 class="section-title">Description</h3>
+          <h3 class="section-title">Description : </h3>
           <p>{{ signalement.description }}</p>
+          <h3 class="section-title">Addresse : </h3>
+          <p>{{ signalement.adresse }}</p>
+
         </div>
 
         <!-- Actions optionnelles -->
