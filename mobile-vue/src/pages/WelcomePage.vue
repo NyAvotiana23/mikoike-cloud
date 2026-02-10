@@ -7,7 +7,7 @@
           <div class="logo-section">
             <ion-icon :icon="construct" class="logo-icon"></ion-icon>
             <h1 class="main-title">
-              Road Works Tracker
+              Mikoike
             </h1>
             <p class="subtitle">
               Suivi des travaux routiers
