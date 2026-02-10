@@ -193,6 +193,7 @@ class FirebaseSignalementsService {
         ancienStatusId: this.STATUS_NOUVEAU_ID,
         nouveauStatusId: this.STATUS_NOUVEAU_ID,
         modifiedBy: userId ? Number(userId) : null,
+        userId: userId || null,  // Requis par les règles Firestore
         commentaire: commentaire,
         metadata: null,
         changedAt: Timestamp.now()
