@@ -64,12 +64,6 @@ public class User {
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
 
-    @Column(name = "failed_attempts")
-    @Builder.Default
-    private Integer failedAttempts = 0;
-
-    @Column(name = "last_failed_attempt_at")
-    private LocalDateTime lastFailedAttemptAt;
 
     // Firebase Cloud Messaging Token
     @Column(name = "fcm_token", length = 500)
@@ -128,15 +122,6 @@ public class User {
         return LocalDateTime.now().isBefore(this.lockedUntil);
     }
 
-    public void incrementFailedAttempts() {
-        this.failedAttempts = (this.failedAttempts == null ? 0 : this.failedAttempts) + 1;
-        this.lastFailedAttemptAt = LocalDateTime.now();
-    }
-
-    public void resetFailedAttempts() {
-        this.failedAttempts = 0;
-        this.lastFailedAttemptAt = null;
-    }
 
     public void lockAccount(int minutes) {
         this.isLocked = true;
@@ -146,6 +131,5 @@ public class User {
     public void unlockAccount() {
         this.isLocked = false;
         this.lockedUntil = null;
-        this.failedAttempts = 0;
     }
 }

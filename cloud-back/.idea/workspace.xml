@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebasePushNotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebasePushNotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +88,7 @@
       <option name="presentableId" value="Default" />
       <updated>1770699279299</updated>
       <workItem from="1770699288554" duration="4040000" />
-      <workItem from="1770703664703" duration="1789000" />
+      <workItem from="1770703664703" duration="2083000" />
     </task>
     <servers />
   </component>

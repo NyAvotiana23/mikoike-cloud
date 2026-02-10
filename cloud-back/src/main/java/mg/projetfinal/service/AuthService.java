@@ -63,7 +63,6 @@ public class AuthService {
                 .role(defaultRole)
                 .firebaseSynced(false)
                 .isLocked(false)
-                .failedAttempts(0)
                 .createdBy(createdBy)
                 .build();
 
@@ -109,7 +108,6 @@ public class AuthService {
                 .role(managerRole)
                 .firebaseSynced(false)
                 .isLocked(false)
-                .failedAttempts(0)
                 .build();
 
         // Synchronisation Firebase si mode online
@@ -201,9 +199,6 @@ public class AuthService {
             failedLoginTrackingRepository.save(tracking);
         }
 
-        // Reset user
-        user.resetFailedAttempts();
-        userRepository.save(user);
 
         // Créer une session
         return createSession(user, ipAddress, userAgent);
@@ -416,9 +411,8 @@ public class AuthService {
             failedLoginTrackingRepository.save(tracking);
         });
 
-        // Reset user
+        // Débloquer l'utilisateur si nécessaire
         if (user != null) {
-            user.resetFailedAttempts();
             user.unlockAccount();
             userRepository.save(user);
         }
