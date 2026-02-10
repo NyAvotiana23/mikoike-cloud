@@ -25,8 +25,7 @@ class FirebaseSignalementsService {
   private readonly COLLECTION_NAME = 'signalements';
 
   constructor() {
-    // Charger les signalements au démarrage
-    this.loadSignalements();
+    // Le chargement sera fait explicitement par les pages
   }
 
   /**
@@ -50,15 +49,174 @@ class FirebaseSignalementsService {
         }
       });
 
-      this.signalements.value = data;
-      console.log(`✅ ${data.length} signalements chargés depuis Firebase`);
+      // Si Firebase est vide, utiliser des données mockées pour le développement
+      if (data.length === 0) {
+        console.log('⚠️ Firebase vide, chargement des données mockées...');
+        this.signalements.value = this.getMockSignalements();
+        console.log(`✅ ${this.signalements.value.length} signalements mockés chargés`);
+      } else {
+        this.signalements.value = data;
+        console.log(`✅ ${data.length} signalements chargés depuis Firebase`);
+      }
     } catch (err: any) {
       console.error('❌ Erreur chargement signalements:', err);
-      this.error.value = 'Impossible de charger les signalements';
-      throw err;
+      console.log('⚠️ Chargement des données mockées en fallback...');
+      this.signalements.value = this.getMockSignalements();
+      this.error.value = 'Firebase non disponible, utilisation des données mockées';
     } finally {
       this.loading.value = false;
     }
+  }
+
+  /**
+   * Retourne des données mockées pour le développement
+   */
+  private getMockSignalements(): Signalement[] {
+    return [
+      {
+        id: '1',
+        userId: '1',
+        location: { lat: -18.8792, lng: 47.5079 },
+        date: new Date('2026-01-15').toISOString(),
+        status: 'nouveau',
+        surface: 120,
+        budget: 5000000,
+        entreprise: 'BTP Madagascar',
+        description: 'Nid de poule avenue de l\'Indépendance',
+        titre: 'Réparation avenue Indépendance',
+        priorite: 'haute',
+        dateDebut: new Date('2026-01-20').toISOString(),
+        photos: [
+          'https://picsum.photos/seed/road1/400/400',
+          'https://picsum.photos/seed/road2/400/400',
+          'https://picsum.photos/seed/road3/400/400',
+        ]
+      },
+      {
+        id: '2',
+        userId: '2',
+        location: { lat: -18.8850, lng: 47.5100 },
+        date: new Date('2026-01-10').toISOString(),
+        status: 'en_cours',
+        surface: 250,
+        budget: 12000000,
+        entreprise: 'Routes Modernes SA',
+        description: 'Réfection chaussée Route Digue',
+        titre: 'Réfection Route Digue',
+        priorite: 'moyenne',
+        dateDebut: new Date('2026-01-12').toISOString(),
+        dateFin: new Date('2026-02-15').toISOString(),
+        photos: [
+          'https://picsum.photos/seed/repair1/400/400',
+          'https://picsum.photos/seed/repair2/400/400',
+          'https://picsum.photos/seed/repair3/400/400',
+        ]
+      },
+      {
+        id: '3',
+        userId: '1',
+        location: { lat: -18.8700, lng: 47.5150 },
+        date: new Date('2026-01-05').toISOString(),
+        status: 'termine',
+        surface: 80,
+        budget: 3500000,
+        entreprise: 'Travaux Publics Ltd',
+        description: 'Réparation après inondation',
+        titre: 'Réparation post-inondation',
+        priorite: 'haute',
+        dateDebut: new Date('2026-01-06').toISOString(),
+        dateFin: new Date('2026-01-25').toISOString(),
+        photos: [
+          'https://picsum.photos/seed/pothole1/400/400',
+          'https://picsum.photos/seed/pothole2/400/400',
+        ]
+      },
+      {
+        id: '4',
+        userId: '1',
+        location: { lat: -18.8900, lng: 47.5200 },
+        date: new Date('2026-01-18').toISOString(),
+        status: 'nouveau',
+        surface: 150,
+        budget: 7000000,
+        entreprise: 'Infrastructure Pro',
+        description: 'Dégradation route Analakely',
+        titre: 'Route Analakely dégradée',
+        priorite: 'moyenne',
+        photos: [
+          'https://picsum.photos/seed/road1/400/400',
+        ]
+      },
+      {
+        id: '5',
+        userId: '2',
+        location: { lat: -18.8920, lng: 47.5250 },
+        date: new Date('2026-01-20').toISOString(),
+        status: 'en_cours',
+        surface: 180,
+        budget: 8500000,
+        entreprise: 'BTP Madagascar',
+        description: 'Trottoir endommagé devant le marché',
+        titre: 'Trottoir marché Petite Vitesse',
+        priorite: 'basse',
+        dateDebut: new Date('2026-01-22').toISOString(),
+        photos: [
+          'https://picsum.photos/seed/pothole1/400/400',
+          'https://picsum.photos/seed/pothole2/400/400',
+        ]
+      },
+      {
+        id: '6',
+        userId: '1',
+        location: { lat: -18.8750, lng: 47.5280 },
+        date: new Date('2026-01-22').toISOString(),
+        status: 'nouveau',
+        surface: 95,
+        budget: 4200000,
+        entreprise: '',
+        description: 'Affaissement de chaussée suite aux pluies',
+        titre: 'Affaissement chaussée',
+        priorite: 'haute',
+        photos: [
+          'https://picsum.photos/seed/repair1/400/400',
+          'https://picsum.photos/seed/repair2/400/400',
+        ]
+      },
+      {
+        id: '7',
+        userId: '1',
+        location: { lat: -18.8820, lng: 47.5120 },
+        date: new Date('2026-01-08').toISOString(),
+        status: 'termine',
+        surface: 200,
+        budget: 9500000,
+        entreprise: 'Routes Modernes SA',
+        description: 'Rénovation complète intersection',
+        titre: 'Rénovation carrefour principal',
+        priorite: 'haute',
+        dateDebut: new Date('2026-01-09').toISOString(),
+        dateFin: new Date('2026-01-26').toISOString(),
+        photos: [
+          'https://picsum.photos/seed/road1/400/400',
+        ]
+      },
+      {
+        id: '8',
+        userId: '2',
+        location: { lat: -18.8780, lng: 47.5180 },
+        date: new Date('2026-01-25').toISOString(),
+        status: 'annule',
+        surface: 60,
+        budget: 2500000,
+        entreprise: 'Infrastructure Pro',
+        description: 'Travaux annulés suite changement de priorité',
+        titre: 'Réparation mineure (annulée)',
+        priorite: 'basse',
+        photos: [
+          'https://picsum.photos/seed/pothole2/400/400',
+        ]
+      }
+    ];
   }
 
   /**
@@ -105,13 +263,14 @@ class FirebaseSignalementsService {
       console.log('📤 Création signalement dans Firebase...');
       const db = firebaseService.db;
 
-      // Générer un ID unique
-      const newId = Date.now().toString();
-      const docRef = doc(db, this.COLLECTION_NAME, newId);
+      // Générer un ID numérique basé sur le timestamp
+      const newId = Date.now();
+      const docId = String(newId);
+      const docRef = doc(db, this.COLLECTION_NAME, docId);
 
       // Préparer les données selon la structure Firebase Java
       const firebaseData = this.convertSignalementToFirebase(data);
-      firebaseData.id = newId;
+      firebaseData.id = newId; // ID numérique dans le document
       firebaseData.createdAt = Timestamp.now();
       firebaseData.updatedAt = Timestamp.now();
       firebaseData.syncedAt = Timestamp.now();
@@ -122,13 +281,13 @@ class FirebaseSignalementsService {
       // Créer l'objet signalement
       const newSignalement: Signalement = {
         ...data,
-        id: newId
+        id: docId
       };
 
       // Ajouter au cache local
       this.signalements.value.push(newSignalement);
 
-      console.log('✅ Signalement créé:', newId);
+      console.log('✅ Signalement créé:', docId);
       return newSignalement;
     } catch (err: any) {
       console.error('❌ Erreur création signalement:', err);
@@ -155,7 +314,7 @@ class FirebaseSignalementsService {
         updateData.longitude = updates.location.lng;
       }
       if (updates.status !== undefined) {
-        updateData.statusCode = updates.status;
+        updateData.statusCode = this.statusToFirebaseCode(updates.status);
         updateData.statusLibelle = this.getStatusLibelle(updates.status);
       }
       if (updates.surface !== undefined) updateData.surface = updates.surface;
@@ -248,10 +407,12 @@ class FirebaseSignalementsService {
       let q = query(collection(db, this.COLLECTION_NAME));
 
       if (filters.userId) {
-        q = query(q, where('userId', '==', filters.userId));
+        q = query(q, where('userId', '==', Number(filters.userId) || filters.userId));
       }
       if (filters.status) {
-        q = query(q, where('statusCode', '==', filters.status));
+        // Convertir le status en code Firebase
+        const firebaseStatusCode = this.statusToFirebaseCode(filters.status);
+        q = query(q, where('statusCode', '==', firebaseStatusCode));
       }
 
       const snapshot = await getDocs(q);
@@ -276,23 +437,29 @@ class FirebaseSignalementsService {
    */
   private convertFirebaseToSignalement(id: string, data: any): Signalement | null {
     try {
+      // Gérer les différents formats d'ID (string ou number)
+      const signalementId = data.id ? String(data.id) : id;
+
+      // Gérer les différents formats de userId (string ou number)
+      const userId = data.userId ? String(data.userId) : '';
+
       const signalement: Signalement = {
-        id: id,
-        userId: data.userId || '',
+        id: signalementId,
+        userId: userId,
         location: {
           lat: data.latitude || 0,
           lng: data.longitude || 0
         },
         date: data.dateSignalement?.toDate?.()?.toISOString() || data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-        status: data.statusCode || 'nouveau',
+        status: this.normalizeStatus(data.statusCode || 'nouveau'),
         surface: data.surface || 0,
         budget: data.budget || 0,
         entreprise: data.entreprise || '',
         description: data.description || '',
-        titre: data.titre || '',
+        titre: data.titre || this.generateTitleFromDescription(data.description),
         adresse: data.adresse || '',
         photoUrl: data.photoUrl || '',
-        photos: data.photos || [],
+        photos: data.photos || (data.photoUrl ? [data.photoUrl] : []),
         priorite: data.priorite || 'moyenne',
         dateDebut: data.dateDebut || undefined,
         dateFin: data.dateFin || undefined,
@@ -306,18 +473,52 @@ class FirebaseSignalementsService {
   }
 
   /**
+   * Normalise les codes de status Firebase vers les codes de l'app
+   */
+  private normalizeStatus(statusCode: string): 'nouveau' | 'en_cours' | 'termine' | 'annule' {
+    const normalized = statusCode.toLowerCase().replace(/_/g, '_');
+
+    const statusMap: { [key: string]: 'nouveau' | 'en_cours' | 'termine' | 'annule' } = {
+      'nouveau': 'nouveau',
+      'en_cours': 'en_cours',
+      'en cours': 'en_cours',
+      'encours': 'en_cours',
+      'termine': 'termine',
+      'terminé': 'termine',
+      'annule': 'annule',
+      'annulé': 'annule'
+    };
+
+    return statusMap[normalized] || 'nouveau';
+  }
+
+  /**
+   * Génère un titre à partir de la description si absent
+   */
+  private generateTitleFromDescription(description?: string): string {
+    if (!description) return 'Signalement';
+
+    // Prendre les 50 premiers caractères de la description
+    const shortDesc = description.substring(0, 50);
+    return shortDesc.length < description.length ? shortDesc + '...' : shortDesc;
+  }
+
+  /**
    * Convertit un objet Signalement en données Firebase
    */
   private convertSignalementToFirebase(signalement: Omit<Signalement, 'id'>): any {
+    // Convertir le status vers le format Firebase (MAJUSCULES)
+    const statusCode = this.statusToFirebaseCode(signalement.status);
+
     return {
-      userId: signalement.userId,
+      userId: Number(signalement.userId) || signalement.userId,
       description: signalement.description || '',
       adresse: signalement.adresse || '',
       latitude: signalement.location.lat,
       longitude: signalement.location.lng,
       photoUrl: signalement.photoUrl || '',
       photos: signalement.photos || [],
-      statusCode: signalement.status,
+      statusCode: statusCode,
       statusLibelle: this.getStatusLibelle(signalement.status),
       userEmail: signalement.userEmail || '',
       dateSignalement: signalement.date ? Timestamp.fromDate(new Date(signalement.date)) : Timestamp.now(),
@@ -329,6 +530,20 @@ class FirebaseSignalementsService {
       dateDebut: signalement.dateDebut || null,
       dateFin: signalement.dateFin || null
     };
+  }
+
+  /**
+   * Convertit le status de l'app vers le code Firebase (MAJUSCULES avec underscore)
+   */
+  private statusToFirebaseCode(status: string): string {
+    const codeMap: { [key: string]: string } = {
+      'nouveau': 'NOUVEAU',
+      'en_cours': 'EN_COURS',
+      'termine': 'TERMINE',
+      'annule': 'ANNULE'
+    };
+
+    return codeMap[status] || 'NOUVEAU';
   }
 
   /**

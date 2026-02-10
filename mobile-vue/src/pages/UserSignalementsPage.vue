@@ -250,13 +250,18 @@ const filteredSignalements = computed(() => {
   return result;
 });
 
-onMounted(() => {
-  loadSignalements();
+onMounted(async () => {
+  await loadSignalements();
 });
 
-const loadSignalements = () => {
-  if (userContext.value.userId) {
-    signalements.value = signalementsService.getAll(userContext.value.userId);
+const loadSignalements = async () => {
+  try {
+    await signalementsService.loadSignalements();
+    if (userContext.value.userId) {
+      signalements.value = signalementsService.getAll(userContext.value.userId);
+    }
+  } catch (error) {
+    console.error('Erreur chargement signalements:', error);
   }
 };
 

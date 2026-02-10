@@ -9,7 +9,7 @@
           <div class="avatar">
             <ion-icon :icon="personCircle" class="avatar-icon"></ion-icon>
           </div>
-          <h2 class="user-name">{{ userContext.prenom }} {{ userContext.nom }}</h2>
+          <h2 class="user-name">{{ userContext.name || userContext.displayName || 'Utilisateur' }}</h2>
           <p class="user-email">{{ userContext.email }}</p>
         </div>
 
@@ -147,13 +147,14 @@ const userStats = ref({
   nouveau: 0
 });
 
-onMounted(() => {
-  loadUserStats();
+onMounted(async () => {
+  await loadUserStats();
   loadUnreadNotificationsCount();
 });
 
-const loadUserStats = () => {
+const loadUserStats = async () => {
   if (userContext.value.userId) {
+    await signalementsService.loadSignalements();
     const signalements = signalementsService.getAll(userContext.value.userId);
     userStats.value = {
       total: signalements.length,

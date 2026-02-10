@@ -331,6 +331,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   IonPage, IonContent, IonFabButton, IonIcon, IonModal,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonInput,
@@ -346,9 +347,9 @@ import SignalementDetailModal from '@/components/SignalementDetailModal.vue';
 import { useUserContext } from '@/services/user-context.service';
 import signalementsService from '@/services/signalements.service.firebase';
 import mapService from '@/services/map.service';
-import reportsService from '@/services/reports.service';
 import geolocationService from '@/services/geolocation.service';
 
+const route = useRoute();
 const { isAuthenticated, userContext } = useUserContext();
 
 const signalements = ref<any[]>([]);
@@ -424,6 +425,22 @@ onMounted(async () => {
   }
 
   await loadSignalements();
+
+  // Gérer la navigation depuis une autre page (viewOnMap)
+  if (route.query.id && route.query.lat && route.query.lng) {
+    const signalementId = route.query.id as string;
+    const lat = parseFloat(route.query.lat as string);
+    const lng = parseFloat(route.query.lng as string);
+
+    // Centrer la carte sur le signalement
+    mapService.setMapCenter(lat, lng, 16);
+
+    // Trouver et afficher le signalement
+    const sig = signalements.value.find(s => s.id === signalementId);
+    if (sig) {
+      quickInfoSignalement.value = sig;
+    }
+  }
 
   mapService.onMarkerClick((markerId: string) => {
     if (!isAddingReport.value) {
@@ -502,6 +519,7 @@ const displayMarkers = () => {
   mapService.clearMarkers();
   signalements.value.forEach(sig => {
     if (sig.location) {
+      console.log(sig)
       mapService.addMarker(sig.location.lat, sig.location.lng, {
         id: sig.id,
         status: sig.status,
@@ -630,6 +648,7 @@ const saveSignalement = async () => {
     // Créer le signalement dans Firebase
     await signalementsService.create({
       userId: userContext.value.userId,
+      userEmail: userContext.value.email || '',
       location: clickedPosition.value,
       date: new Date().toISOString(),
       status: 'nouveau',

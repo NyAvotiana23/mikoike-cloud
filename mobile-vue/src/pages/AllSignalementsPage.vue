@@ -201,7 +201,7 @@ import {
 } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
 import SignalementDetailModal from '@/components/SignalementDetailModal.vue';
-import reportsService from '@/services/reports.service';
+import signalementsService from '@/services/signalements.service.firebase';
 import type { Signalement } from '@/types/signalement';
 
 const router = useRouter();
@@ -251,7 +251,8 @@ onMounted(async () => {
 const loadSignalements = async () => {
   loading.value = true;
   try {
-    allSignalements.value = await reportsService.getAllReports();
+    await signalementsService.loadSignalements();
+    allSignalements.value = signalementsService.getAll();
     applyFilters();
   } catch (error) {
     console.error('Erreur lors du chargement des signalements:', error);
