@@ -1,0 +1,37 @@
+# Maven
+target/
+!target/*.jar
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+mcd/
+*.png
+*.txt
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Test files (optionnel, à retirer si besoin)
+src/test/
