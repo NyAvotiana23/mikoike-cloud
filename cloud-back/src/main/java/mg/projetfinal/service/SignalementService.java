@@ -55,8 +55,7 @@ public class SignalementService {
         
         existingSignalement.setDescription(signalement.getDescription());
         existingSignalement.setAdresse(signalement.getAdresse());
-        existingSignalement.setPhotoUrl(signalement.getPhotoUrl());
-        
+
         if (!existingSignalement.getLatitude().equals(signalement.getLatitude()) 
                 || !existingSignalement.getLongitude().equals(signalement.getLongitude())) {
             existingSignalement.setLatitude(signalement.getLatitude());

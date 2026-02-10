@@ -59,8 +59,15 @@ public class Signalement {
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "photo_url", length = 500)
-    private String photoUrl;
+    @Column(name = "budget", nullable = false)
+    private BigDecimal budget;
+
+    @Column(name = "surface", nullable = false)
+    private BigDecimal surface;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entreprise_id")
+    private Entreprise entreprise;
 
     // Statut
     @ManyToOne(fetch = FetchType.EAGER)
@@ -81,7 +88,7 @@ public class Signalement {
     private LocalDateTime updatedAt;
 
     // Relations
-    @OneToMany(mappedBy = "signalement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "signalement", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @Builder.Default
     private Set<SignalementAction> actions = new HashSet<>();
 
