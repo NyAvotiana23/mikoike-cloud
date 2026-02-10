@@ -84,8 +84,13 @@ class FirebaseAuthService {
     const result = await firebaseService.logout();
     if (result.success) {
       this.currentUser.value = null;
+      return { success: true };
     }
-    return result;
+    return {
+      success: false,
+      error: result.error,
+      errorCode: result.errorCode
+    };
   }
 
   /**
