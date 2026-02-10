@@ -1,7 +1,7 @@
 // src/pages/admin/ConfigurationPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Settings, DollarSign, Save, RefreshCw, AlertCircle, Check } from 'lucide-react';
-import axios from 'axios';
+import api from '../services/httpClient';
 
 const ConfigurationPage = () => {
   const [prixParM2, setPrixParM2] = useState('');
@@ -25,7 +25,7 @@ const ConfigurationPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('/api/configurations/prix-par-m2');
+      const response = await api.get('/configurations/prix-par-m2');
       setPrixParM2(response.data.valeur);
     } catch (err) {
       console.error('Erreur lors du chargement:', err);
@@ -46,7 +46,7 @@ const ConfigurationPage = () => {
       setError(null);
       setSuccess(false);
       
-      await axios.put(`/api/configurations/prix-par-m2?prix=${prixParM2}`);
+      await api.put(`/configurations/prix-par-m2?prix=${prixParM2}`);
       
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
