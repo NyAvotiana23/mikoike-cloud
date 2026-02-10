@@ -27,16 +27,8 @@ public class FirebaseConfig {
     @Value("${firebase.config.file:firebase-service-account.json}")
     private String firebaseConfigFile;
 
-    @Value("${app.mode:offline}")
-    private String appMode;
-
     @PostConstruct
     public void initFirebase() {
-        // Si le mode est offline, on peut skip Firebase
-        if ("offline".equalsIgnoreCase(appMode)) {
-            logger.info("Application en mode OFFLINE - Firebase désactivé");
-            return;
-        }
 
         if (!firebaseEnabled) {
             logger.info("Firebase désactivé via configuration");
@@ -100,10 +92,4 @@ public class FirebaseConfig {
         return !FirebaseApp.getApps().isEmpty();
     }
 
-    /**
-     * Retourne le mode de l'application
-     */
-    public String getAppMode() {
-        return appMode;
-    }
 }
