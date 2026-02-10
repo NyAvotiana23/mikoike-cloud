@@ -56,7 +56,7 @@ RUN npm install -g @capacitor/cli@8.0.1 @ionic/cli
 COPY package.json package-lock.json* ./
 
 # Installation des dépendances npm
-RUN npm ci
+RUN npm install
 
 # Copier tous les fichiers du projet
 COPY . .
