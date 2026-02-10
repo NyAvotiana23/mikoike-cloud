@@ -11,8 +11,8 @@ const Login = () => {
     const {login} = useAuth();
 
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
+        email: 'admin.tana@mg.gov',
+        password: 'admin',
     });
 
     const [errors, setErrors] = useState({});
