@@ -139,7 +139,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { IonPage, IonContent, IonButton, IonIcon, toastController } from '@ionic/vue';
-import { cloudDone, cloudOffline, cloudUpload, syncOutline } from 'ionicons/icons';
+import { cloudDone, cloudUpload, syncOutline } from 'ionicons/icons';
 import AppHeader from '@/components/AppHeader.vue';
 import signalementsService from '@/services/signalements.service.firebase';
 
@@ -327,7 +327,6 @@ const formatDate = (dateStr: string) => {
 .sync-item {
   display: flex;
   align-items: center;
-  justify-between;
   padding: 0.75rem;
   border-radius: 8px;
 }
@@ -373,7 +372,6 @@ const formatDate = (dateStr: string) => {
 .status-item {
   display: flex;
   align-items: center;
-  justify-between;
   padding: 0.75rem;
   border-radius: 8px;
 }
