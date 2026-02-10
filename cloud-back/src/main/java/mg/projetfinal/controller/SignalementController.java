@@ -27,6 +27,7 @@ public class SignalementController {
 
     private final SignalementService signalementService;
     private final SignalementMapper signalementMapper;
+    private final mg.projetfinal.service.SignalementStatusService signalementStatusService;
 
     /**
      * GET /api/signalements
@@ -38,7 +39,22 @@ public class SignalementController {
         
         List<Signalement> signalements = signalementService.findAllOrderByDateDesc();
         List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/signalements/mes-signalements
+     * Récupère les signalements de l'utilisateur connecté
+     */
+    @GetMapping("/mes-signalements")
+    public ResponseEntity<List<SignalementResponseDTO>> getMesSignalements(
+            @AuthenticationPrincipal User currentUser) {
+        log.info("GET /api/signalements/mes-signalements - Récupération des signalements de l'utilisateur {}", currentUser.getId());
         
+        List<Signalement> signalements = signalementService.findByUser(currentUser);
+        List<SignalementResponseDTO> response = signalementMapper.toResponseDTOList(signalements);
+
         return ResponseEntity.ok(response);
     }
 
@@ -216,7 +232,7 @@ public class SignalementController {
 
     /**
      * POST /api/signalements/{id}/change-status
-     * Change le statut d'un signalement
+     * Change le statut d'un signalement et envoie une notification au créateur
      */
     @PostMapping("/{id}/change-status")
     public ResponseEntity<SignalementResponseDTO> changeStatus(
@@ -225,16 +241,16 @@ public class SignalementController {
             @RequestParam(required = false) String commentaire,
             @AuthenticationPrincipal User currentUser) {
         
-        log.info("POST /api/signalements/{}/change-status - Changement de statut", id);
-        
-        // TODO: Récupérer le nouveau statut
-        // SignalementStatus newStatus = statusService.findById(newStatusId).orElseThrow();
-        // Signalement updated = signalementService.changeStatus(id, newStatus, currentUser, commentaire);
-        
-        // Pour l'instant, retourner le signalement existant
-        Signalement signalement = signalementService.findById(id).orElseThrow();
-        SignalementResponseDTO response = signalementMapper.toResponseDTO(signalement);
-        
+        log.info("POST /api/signalements/{}/change-status - Changement de statut vers ID: {}", id, newStatusId);
+
+        // Récupérer le nouveau statut
+        mg.projetfinal.entity.SignalementStatus newStatus = signalementStatusService.findById(newStatusId.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("Statut non trouvé avec l'ID: " + newStatusId));
+
+        // Changer le statut (la notification est envoyée automatiquement dans le service)
+        Signalement updated = signalementService.changeStatus(id, newStatus, currentUser, commentaire);
+        SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
+
         return ResponseEntity.ok(response);
     }
 }

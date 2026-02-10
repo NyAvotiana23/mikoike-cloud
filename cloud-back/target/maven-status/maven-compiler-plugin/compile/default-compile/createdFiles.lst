@@ -21,7 +21,6 @@ mg\projetfinal\controller\ManagerDashboardController$DashboardResponse.class
 mg\projetfinal\dto\SignalementResponseDTO$SignalementResponseDTOBuilder.class
 mg\projetfinal\repository\SignalementActionRepository.class
 mg\projetfinal\entity\Role.class
-mg\projetfinal\controller\EntrepriseController.class
 mg\projetfinal\dto\UpdateUserRequest.class
 mg\projetfinal\controller\PhotoSignalementController$SuccessResponse.class
 mg\projetfinal\enums\SyncDirection.class
@@ -42,6 +41,7 @@ mg\projetfinal\repository\SignalementRepository.class
 mg\projetfinal\repository\FailedLoginTrackingRepository.class
 mg\projetfinal\service\FirebaseSyncService.class
 mg\projetfinal\dto\CoordinatesDTO$CoordinatesDTOBuilder.class
+mg\projetfinal\dto\PushNotificationRequest$PushNotificationRequestBuilder.class
 mg\projetfinal\entity\SyncQueue$SyncQueueBuilder.class
 mg\projetfinal\controller\ActionStatisticsDTO.class
 mg\projetfinal\controller\HistoriqueStatusController.class
@@ -51,6 +51,7 @@ mg\projetfinal\entity\FailedLoginTracking$FailedLoginTrackingBuilder.class
 mg\projetfinal\repository\HistoriqueStatusRepository.class
 mg\projetfinal\entity\Role$RoleBuilder.class
 mg\projetfinal\repository\LoginAttemptRepository.class
+mg\projetfinal\dto\FcmTokenRequest.class
 mg\projetfinal\dto\CreateSignalementDTO.class
 mg\projetfinal\entity\SyncHistory.class
 mg\projetfinal\entity\Signalement$SignalementBuilder.class
@@ -58,7 +59,6 @@ mg\projetfinal\entity\PhotoSignalement.class
 mg\projetfinal\entity\SyncQueue.class
 mg\projetfinal\entity\Entreprise.class
 mg\projetfinal\enums\SyncStatus.class
-mg\projetfinal\config\FirebaseConfig.class
 mg\projetfinal\service\SignalementService.class
 mg\projetfinal\controller\ManagerDashboardController$SignalementParStatus$SignalementParStatusBuilder.class
 mg\projetfinal\dto\CreateSignalementDTO$CreateSignalementDTOBuilder.class
@@ -67,7 +67,6 @@ mg\projetfinal\entity\HistoriqueStatus$HistoriqueStatusBuilder.class
 mg\projetfinal\repository\SyncQueueRepository.class
 mg\projetfinal\entity\SignalementStatus.class
 mg\projetfinal\config\SessionAuthenticationFilter.class
-mg\projetfinal\controller\AuthController.class
 mg\projetfinal\dto\SessionResponse$SessionResponseBuilder.class
 mg\projetfinal\config\SecurityConfig.class
 mg\projetfinal\controller\SignalementController.class
@@ -93,11 +92,11 @@ mg\projetfinal\entity\User$UserBuilder.class
 mg\projetfinal\repository\RoleRepository.class
 mg\projetfinal\dto\SessionResponse.class
 mg\projetfinal\enums\FailureReason.class
+mg\projetfinal\dto\PushNotificationRequest.class
 mg\projetfinal\repository\PhotoSignalementRepository.class
 mg\projetfinal\controller\PhotoSignalementController.class
 mg\projetfinal\entity\SignalementAction.class
 mg\projetfinal\entity\SignalementAction$SignalementActionBuilder.class
-mg\projetfinal\controller\AdminController.class
 mg\projetfinal\service\PhotoSignalementService.class
 mg\projetfinal\dto\PhotoSignalementDTO$PhotoSignalementDTOBuilder.class
 mg\projetfinal\entity\HistoriqueStatus.class
@@ -107,5 +106,4 @@ mg\projetfinal\dto\AuthResponse.class
 mg\projetfinal\controller\ManagerDashboardController$DashboardResponse$DashboardResponseBuilder.class
 mg\projetfinal\controller\PhotoSignalementController$PhotoRequest.class
 mg\projetfinal\service\SignalementStatusService.class
-mg\projetfinal\dto\LoginManagerRequest.class
 mg\projetfinal\repository\SignalementStatusRepository.class

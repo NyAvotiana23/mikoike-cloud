@@ -42,9 +42,6 @@ public class AuthService {
     @Value("${auth.lockout-duration-minutes:30}")
     private int lockoutDurationMinutes;
 
-    @Value("${app.mode:online}")
-    private String appMode;
-
     // ==================== INSCRIPTION ====================
 
     @Transactional
@@ -194,18 +191,7 @@ public class AuthService {
             }
         }
 
-        // Étape 6: Vérifier Firebase si online
-        if (isOnline()) {
-            try {
-                FirebaseAuth.getInstance().getUserByEmail(email);
-            } catch (FirebaseAuthException e) {
-                recordLoginAttempt(email, user, false, FailureReason.FIREBASE_ERROR, ipAddress, userAgent);
-                log.error("Erreur Firebase lors du login: {}", e.getMessage());
-                throw new RuntimeException("Erreur de synchronisation Firebase");
-            }
-        }
-
-        // Étape 7: Connexion réussie - Reset des tentatives échouées
+        // Étape 6: Connexion réussie (Firebase vérifié uniquement lors de la synchronisation manuelle) - Reset des tentatives échouées
         recordLoginAttempt(email, user, true, null, ipAddress, userAgent);
 
         // Reset tracking
@@ -464,8 +450,11 @@ public class AuthService {
 
     // ==================== UTILITAIRES ====================
 
+    /**
+     * Vérifie si Firebase est disponible et si la connexion Internet est active
+     */
     private boolean isOnline() {
-        return "online".equalsIgnoreCase(appMode) && NetworkUtils.isInternetAvailable();
+        return !com.google.firebase.FirebaseApp.getApps().isEmpty() && NetworkUtils.isInternetAvailable();
     }
 
     private String getClientIp(HttpServletRequest request) {

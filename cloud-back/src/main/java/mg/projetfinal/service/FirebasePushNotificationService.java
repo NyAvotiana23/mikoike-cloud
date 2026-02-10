@@ -9,7 +9,6 @@ import mg.projetfinal.entity.Signalement;
 import mg.projetfinal.entity.SignalementAction;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,17 +23,10 @@ public class FirebasePushNotificationService {
 
     private final UserRepository userRepository;
 
-    @Value("${app.mode:offline}")
-    private String appMode;
-
     /**
      * Vérifie si Firebase est disponible pour les notifications
      */
     private boolean isFirebaseAvailable() {
-        if ("offline".equalsIgnoreCase(appMode)) {
-            log.debug("Application en mode OFFLINE - Notifications push désactivées");
-            return false;
-        }
         return !FirebaseApp.getApps().isEmpty();
     }
 

@@ -5,20 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/NotificationController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/FcmTokenRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/dto/PushNotificationRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebasePushNotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementActionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementActionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/SignalementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/config/FirebaseConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/controller/SignalementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebasePushNotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mg/projetfinal/service/FirebasePushNotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_D:/ProjetFinal/mikoike-cloud/cloud-back" value="39SpLcAyolcoylNG0RL9c38Xozm" />
+    </persistenceIdMap>
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="chat-panel" value="Claude Opus 4.5" />
+      <entry key="agent-panel" value="Claude Opus 4.5" />
+    </selectedModels>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -30,20 +41,73 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$MAVEN_REPOSITORY$/com/google/firebase/firebase-admin/9.3.0/firebase-admin-9.3.0.jar!/com/google/firebase/FirebaseApp.class" root0="SKIP_INSPECTION" />
+  </component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="39SpLcAyolcoylNG0RL9c38Xozm" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "test-notification",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Color Scheme Font"
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;test-notification&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/ProjetFinal/mikoike-cloud/cloud-back&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors.Color Scheme Font&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\ProjetFinal\mikoike-cloud\cloud-back" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92e9235c-18ae-464a-ba3f-c58b6b908ff1" name="Changes" comment="" />
+      <created>1770699279299</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770699279299</updated>
+      <workItem from="1770699288554" duration="4040000" />
+      <workItem from="1770703664703" duration="1789000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>
