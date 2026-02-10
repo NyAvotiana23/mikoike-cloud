@@ -1,8 +1,8 @@
 # ==============================================
 # Stage 1: Base - Installation des dépendances
 # ==============================================
-# FROM node:20-alpine AS base # Utilisation d'une image légère basée sur Alpine
-FROM node:latest AS base
+FROM node:20-alpine AS base
+#FROM node:latest AS base
 
 WORKDIR /app
 

@@ -1,6 +1,6 @@
 # TileServer avec fichier mbtiles pré-téléchargé
-# FROM maptiler/tileserver-gl:latest # public image officielle de TileServer GL
-FROM angular_spring_gis-tileserver:latest
+FROM maptiler/tileserver-gl:latest
+#FROM angular_spring_gis-tileserver:latest
 
 WORKDIR /data
 
