@@ -35,6 +35,7 @@ public class FirebaseSyncService {
     private final SignalementStatusRepository signalementStatusRepository;
     private final SyncQueueRepository syncQueueRepository;
     private final SyncHistoryRepository syncHistoryRepository;
+    private final RoleRepository roleRepository;
 
     private static final String COLLECTION_USERS = "users";
     private static final String COLLECTION_SIGNALEMENTS = "signalements";
@@ -369,10 +370,21 @@ public class FirebaseSyncService {
                     log.info("User mis à jour depuis Firebase: {}", firebaseUid);
                 } else {
                     // Créer un nouvel utilisateur
+                    User user = new User();
+                    user.setSyncedAt(LocalDateTime.now());
+                    user.setFirebaseUid(firebaseUid);
+                    user.setEmail(document.getString("email"));
+                    user.setRole(roleRepository.findByCode(document.getString("roleCode")).get());
+                    user.setPasswordHash(document.getString("email"));
+                    user.setFirebaseSynced(true);
+                    user.setIsLocked(false);
+                    user.setCreatedAt(LocalDateTime.now());
+                    user.setUpdatedAt(LocalDateTime.now());
+                    user.setId(document.getLong("id"));
+                    userRepository.save(user);
                     // Note: On ne crée pas automatiquement un user depuis Firebase
                     // car il faut un mot de passe hashé et un rôle
-                    log.warn("User Firebase trouvé mais pas dans PostgreSQL: {}", firebaseUid);
-                    result.incrementError("users_not_found");
+                    result.incrementSuccess("users_updated");
                 }
             } catch (Exception e) {
                 log.error("Erreur traitement user Firebase: {}", e.getMessage());
