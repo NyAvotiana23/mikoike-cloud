@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, Auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { environment } from '@/environments/environment';
-
+import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL, StorageReference } from 'firebase/storage';
 export interface AuthResponse {
   success: boolean;
   user?: User;
@@ -14,6 +14,7 @@ class FirebaseService {
   private app;
   public auth: Auth;
   public db: Firestore;
+  public storage;
   private isInitialized = false;
 
   constructor() {
@@ -21,6 +22,7 @@ class FirebaseService {
       this.app = initializeApp(environment.firebase);
       this.auth = getAuth(this.app);
       this.db = getFirestore(this.app);
+      this.storage = getStorage(this.app);
       this.isInitialized = true;
       console.log('✅ Firebase initialisé avec succès');
     } catch (error: any) {
