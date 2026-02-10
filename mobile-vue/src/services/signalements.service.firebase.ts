@@ -25,6 +25,12 @@ class FirebaseSignalementsService {
   private loading = ref(false);
   private error = ref<string | null>(null);
   private readonly COLLECTION_NAME = 'signalements';
+  private readonly HISTORIQUE_STATUS_COLLECTION = 'historique_status';
+
+  // Constantes pour les statuts
+  private readonly STATUS_NOUVEAU_ID = 1;
+  private readonly STATUS_EN_COURS_ID = 2;
+  private readonly STATUS_TERMINE_ID = 3;
 
   constructor() {
     // Le chargement sera fait explicitement par les pages
@@ -54,7 +60,6 @@ class FirebaseSignalementsService {
       // Si Firebase est vide, utiliser des données mockées pour le développement
       if (data.length === 0) {
         console.log('⚠️ Firebase vide, chargement des données mockées...');
-        this.signalements.value = this.getMockSignalements();
         console.log(`✅ ${this.signalements.value.length} signalements mockés chargés`);
       } else {
         this.signalements.value = data;
@@ -63,162 +68,10 @@ class FirebaseSignalementsService {
     } catch (err: any) {
       console.error('❌ Erreur chargement signalements:', err);
       console.log('⚠️ Chargement des données mockées en fallback...');
-      this.signalements.value = this.getMockSignalements();
       this.error.value = 'Firebase non disponible, utilisation des données mockées';
     } finally {
       this.loading.value = false;
     }
-  }
-
-  /**
-   * Retourne des données mockées pour le développement
-   */
-  private getMockSignalements(): Signalement[] {
-    return [
-      {
-        id: '1',
-        userId: '1',
-        location: { lat: -18.8792, lng: 47.5079 },
-        date: new Date('2026-01-15').toISOString(),
-        status: 'nouveau',
-        surface: 120,
-        budget: 5000000,
-        entreprise: 'BTP Madagascar',
-        description: 'Nid de poule avenue de l\'Indépendance',
-        titre: 'Réparation avenue Indépendance',
-        priorite: 'haute',
-        dateDebut: new Date('2026-01-20').toISOString(),
-        photos: [
-          'https://picsum.photos/seed/road1/400/400',
-          'https://picsum.photos/seed/road2/400/400',
-          'https://picsum.photos/seed/road3/400/400',
-        ]
-      },
-      {
-        id: '2',
-        userId: '2',
-        location: { lat: -18.8850, lng: 47.5100 },
-        date: new Date('2026-01-10').toISOString(),
-        status: 'en_cours',
-        surface: 250,
-        budget: 12000000,
-        entreprise: 'Routes Modernes SA',
-        description: 'Réfection chaussée Route Digue',
-        titre: 'Réfection Route Digue',
-        priorite: 'moyenne',
-        dateDebut: new Date('2026-01-12').toISOString(),
-        dateFin: new Date('2026-02-15').toISOString(),
-        photos: [
-          'https://picsum.photos/seed/repair1/400/400',
-          'https://picsum.photos/seed/repair2/400/400',
-          'https://picsum.photos/seed/repair3/400/400',
-        ]
-      },
-      {
-        id: '3',
-        userId: '1',
-        location: { lat: -18.8700, lng: 47.5150 },
-        date: new Date('2026-01-05').toISOString(),
-        status: 'termine',
-        surface: 80,
-        budget: 3500000,
-        entreprise: 'Travaux Publics Ltd',
-        description: 'Réparation après inondation',
-        titre: 'Réparation post-inondation',
-        priorite: 'haute',
-        dateDebut: new Date('2026-01-06').toISOString(),
-        dateFin: new Date('2026-01-25').toISOString(),
-        photos: [
-          'https://picsum.photos/seed/pothole1/400/400',
-          'https://picsum.photos/seed/pothole2/400/400',
-        ]
-      },
-      {
-        id: '4',
-        userId: '1',
-        location: { lat: -18.8900, lng: 47.5200 },
-        date: new Date('2026-01-18').toISOString(),
-        status: 'nouveau',
-        surface: 150,
-        budget: 7000000,
-        entreprise: 'Infrastructure Pro',
-        description: 'Dégradation route Analakely',
-        titre: 'Route Analakely dégradée',
-        priorite: 'moyenne',
-        photos: [
-          'https://picsum.photos/seed/road1/400/400',
-        ]
-      },
-      {
-        id: '5',
-        userId: '2',
-        location: { lat: -18.8920, lng: 47.5250 },
-        date: new Date('2026-01-20').toISOString(),
-        status: 'en_cours',
-        surface: 180,
-        budget: 8500000,
-        entreprise: 'BTP Madagascar',
-        description: 'Trottoir endommagé devant le marché',
-        titre: 'Trottoir marché Petite Vitesse',
-        priorite: 'basse',
-        dateDebut: new Date('2026-01-22').toISOString(),
-        photos: [
-          'https://picsum.photos/seed/pothole1/400/400',
-          'https://picsum.photos/seed/pothole2/400/400',
-        ]
-      },
-      {
-        id: '6',
-        userId: '1',
-        location: { lat: -18.8750, lng: 47.5280 },
-        date: new Date('2026-01-22').toISOString(),
-        status: 'nouveau',
-        surface: 95,
-        budget: 4200000,
-        entreprise: '',
-        description: 'Affaissement de chaussée suite aux pluies',
-        titre: 'Affaissement chaussée',
-        priorite: 'haute',
-        photos: [
-          'https://picsum.photos/seed/repair1/400/400',
-          'https://picsum.photos/seed/repair2/400/400',
-        ]
-      },
-      {
-        id: '7',
-        userId: '1',
-        location: { lat: -18.8820, lng: 47.5120 },
-        date: new Date('2026-01-08').toISOString(),
-        status: 'termine',
-        surface: 200,
-        budget: 9500000,
-        entreprise: 'Routes Modernes SA',
-        description: 'Rénovation complète intersection',
-        titre: 'Rénovation carrefour principal',
-        priorite: 'haute',
-        dateDebut: new Date('2026-01-09').toISOString(),
-        dateFin: new Date('2026-01-26').toISOString(),
-        photos: [
-          'https://picsum.photos/seed/road1/400/400',
-        ]
-      },
-      {
-        id: '8',
-        userId: '2',
-        location: { lat: -18.8780, lng: 47.5180 },
-        date: new Date('2026-01-25').toISOString(),
-        status: 'annule',
-        surface: 60,
-        budget: 2500000,
-        entreprise: 'Infrastructure Pro',
-        description: 'Travaux annulés suite changement de priorité',
-        titre: 'Réparation mineure (annulée)',
-        priorite: 'basse',
-        photos: [
-          'https://picsum.photos/seed/pothole2/400/400',
-        ]
-      }
-    ];
   }
 
   /**
@@ -291,6 +144,10 @@ class FirebaseSignalementsService {
         ...data,
         id: docId
       };
+      console.log("Historique de statut initial en cours de création pour le signalement ID:", newId);
+      // Créer l'historique de statut initial
+      await this.createInitialHistoriqueStatus(newId, data.userId, data.adresse);
+      console.log("---------------------------------------");
 
       // Ajouter au cache local
       this.signalements.value.push(newSignalement);
@@ -302,6 +159,51 @@ class FirebaseSignalementsService {
       console.error('❌ Code erreur:', err.code);
       console.error('❌ Message:', err.message);
       throw new Error('Impossible de créer le signalement');
+    }
+  }
+
+  /**
+   * Crée l'historique de statut initial pour un nouveau signalement
+   * @param signalementId ID du signalement
+   * @param userId ID de l'utilisateur qui a créé le signalement
+   * @param adresse Adresse du signalement (optionnel)
+   */
+  private async createInitialHistoriqueStatus(
+    signalementId: number,
+    userId: string | undefined,
+    adresse: string | undefined
+  ): Promise<void> {
+    try {
+      console.log('📤 Création historique de statut initial...');
+
+      const db = firebaseService.db;
+
+      // Générer un ID pour l'historique
+      const historiqueId = Date.now();
+      const docId = String(historiqueId);
+      const docRef = doc(db, this.HISTORIQUE_STATUS_COLLECTION, docId);
+
+      // Construire le commentaire avec l'adresse
+      const commentaire = `Création de nouveau signalement à ${adresse && adresse.trim() !== '' ? adresse : 'emplacement non spécifié'}`;
+
+      // Données de l'historique de statut
+      const historiqueData = {
+        id: historiqueId,
+        signalementId: signalementId,
+        ancienStatusId: this.STATUS_NOUVEAU_ID,
+        nouveauStatusId: this.STATUS_NOUVEAU_ID,
+        modifiedBy: userId ? Number(userId) : null,
+        commentaire: commentaire,
+        metadata: null,
+        changedAt: Timestamp.now()
+      };
+
+      await setDoc(docRef, historiqueData);
+
+      console.log('✅ Historique de statut initial créé:', docId);
+    } catch (err: any) {
+      console.error('❌ Erreur création historique de statut:', err);
+      // On ne propage pas l'erreur pour ne pas bloquer la création du signalement
     }
   }
 
