@@ -1,0 +1,170 @@
+
+# ==============================================
+# DOCKER COMPOSE UNIFIÉ - MIKOIKE CLOUD
+# Lancer avec: docker-compose up dev
+# ==============================================
+
+services:
+  # ==============================================
+  # Base de données PostgreSQL
+  # ==============================================
+  postgres:
+    image: postgres:15
+    container_name: mikoike-postgres
+    environment:
+      POSTGRES_DB: projet_cloud
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sql
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mikoike-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d projet_cloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==============================================
+  # Backend Spring Boot - Développement
+  # ==============================================
+  backend-dev:
+    build:
+      context: ./cloud-back
+      target: development
+      dockerfile: Dockerfile
+    container_name: mikoike-backend-dev
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./cloud-back/src:/app/src
+      - ./cloud-back/pom.xml:/app/pom.xml
+      - maven-cache:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/projet_cloud
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=sql
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mikoike-network
+    stdin_open: true
+    tty: true
+
+  # ==============================================
+  # Frontend Mobile Vue/Ionic - Développement
+  # ==============================================
+  mobile-dev:
+    build:
+      context: ./mobile-vue
+      target: development
+      dockerfile: Dockerfile
+    container_name: mikoike-mobile-dev
+    ports:
+      - "5174:5173"
+    volumes:
+      - ./mobile-vue:/app
+      - mobile-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+      - VITE_API_URL=http://localhost:8002
+    networks:
+      - mikoike-network
+    stdin_open: true
+    tty: true
+    command: npm run dev -- --host 0.0.0.0
+
+  # ==============================================
+  # Frontend Web React - Développement
+  # ==============================================
+  web-dev:
+    build:
+      context: ./web-react
+      target: development
+      dockerfile: Dockerfile
+    container_name: mikoike-web-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web-react:/app
+      - web-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+      - VITE_API_URL=http://localhost:8002
+    networks:
+      - mikoike-network
+    stdin_open: true
+    tty: true
+    command: npm run dev -- --host 0.0.0.0
+
+  # ==============================================
+  # TileServer - Cartes Offline
+  # ==============================================
+  tileserver:
+    build:
+      context: ./map-server
+      dockerfile: Dockerfile
+    container_name: mikoike-tileserver
+    ports:
+      - "8081:8080"
+    networks:
+      - mikoike-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==============================================
+  # Service DEV unifié - Lance tous les services
+  # ==============================================
+  dev:
+    image: alpine:latest
+    container_name: mikoike-dev-orchestrator
+    depends_on:
+      - postgres
+      - backend-dev
+      - mobile-dev
+      - web-dev
+      - tileserver
+    networks:
+      - mikoike-network
+    command: >
+      sh -c "echo '✅ Tous les services de développement sont lancés!' && 
+             echo '📦 PostgreSQL     : localhost:5432' &&
+             echo '🚀 Backend API    : http://localhost:8002' &&
+             echo '📱 Mobile Vue     : http://localhost:5174' &&
+             echo '🌐 Web React      : http://localhost:5173' &&
+             echo '🗺️  TileServer     : http://localhost:8081' &&
+             echo '📚 Swagger UI     : http://localhost:8002/swagger-ui.html' &&
+             tail -f /dev/null"
+    stdin_open: true
+    tty: true
+
+# ==============================================
+# Volumes nommés
+# ==============================================
+volumes:
+  postgres-data:
+    driver: local
+  maven-cache:
+    driver: local
+  mobile-node-modules:
+    driver: local
+  web-node-modules:
+    driver: local
+
+# ==============================================
+# Réseaux
+# ==============================================
+networks:
+  mikoike-network:
+    driver: bridge

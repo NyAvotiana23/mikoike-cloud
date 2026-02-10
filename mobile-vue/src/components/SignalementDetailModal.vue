@@ -184,10 +184,13 @@ const loadingPhotos = ref(false);
 const allPhotos = computed(() => {
   // Priorité aux photos Firebase si disponibles
   if (photosFromFirebase.value.length > 0) {
-    return photosFromFirebase.value.map(p => p.url);
+    return photosFromFirebase.value
+      .map(p => p.url)
+      .filter(url => url && url.trim() !== '' && url.startsWith('http'));
   }
-  // Sinon utiliser les photos du signalement
-  return props.signalement?.photos || [];
+  // Sinon utiliser les photos du signalement (filtrer les URLs vides/invalides)
+  const photos = props.signalement?.photos || [];
+  return photos.filter(url => url && url.trim() !== '' && url.startsWith('http'));
 });
 
 // Watcher pour charger les photos quand le modal s'ouvre

@@ -328,6 +328,10 @@ const getPriorityLabel = (priorite: string) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const viewOnMap = (signalement: Signalement) => {
+  // Retirer le focus pour éviter l'erreur aria-hidden
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
   closeDetailsModal();
   router.push({
     path: '/tabs/map',

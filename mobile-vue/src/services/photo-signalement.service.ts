@@ -9,7 +9,6 @@ import {
   deleteDoc,
   query,
   where,
-  orderBy,
   Timestamp,
   writeBatch
 } from 'firebase/firestore';
@@ -40,11 +39,10 @@ class PhotoSignalementService {
       const db = firebaseService.db;
       const photosCol = collection(db, this.COLLECTION_NAME);
 
-      // Query pour obtenir les photos d'un signalement spécifique, ordonnées
+      // Query simple sans orderBy pour éviter le besoin d'index composite
       const q = query(
         photosCol,
-        where('signalementId', '==', signalementId),
-        orderBy('ordre', 'asc')
+        where('signalementId', '==', signalementId)
       );
 
       const snapshot = await getDocs(q);
@@ -56,6 +54,9 @@ class PhotoSignalementService {
           data.push(photo);
         }
       });
+
+      // Trier côté client par ordre
+      data.sort((a, b) => a.ordre - b.ordre);
 
       this.photos.value = data;
       console.log(`✅ ${data.length} photos chargées pour le signalement ${signalementId}`);

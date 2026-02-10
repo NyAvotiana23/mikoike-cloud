@@ -87,6 +87,10 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    // Push notifications
+    @Column(name = "fcm_token", length = 512)
+    private String fcmToken;
+
     // Relations
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

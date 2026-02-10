@@ -154,26 +154,29 @@
             </div>
           </div>
 
-          <!-- Titre -->
-          <div class="form-group">
-            <label class="form-label">Titre *</label>
-            <ion-input
-              v-model="newSignalement.titre"
-              placeholder="Ex: Rénovation trottoir rue principale"
-              class="form-input"
-              required
-            ></ion-input>
-          </div>
-
           <!-- Description -->
           <div class="form-group">
-            <label class="form-label">Description</label>
+            <label class="form-label">Description *</label>
             <ion-textarea
               v-model="newSignalement.description"
               placeholder="Décrivez le signalement en détail..."
               :rows="4"
               class="form-textarea"
+              required
             ></ion-textarea>
+          </div>
+
+          <!-- Adresse -->
+          <div class="form-group">
+            <label class="form-label">
+              <ion-icon :icon="locationOutline"></ion-icon>
+              Adresse
+            </label>
+            <ion-input
+              v-model="newSignalement.adresse"
+              placeholder="Ex: Rue de la République, 13001 Marseille"
+              class="form-input"
+            ></ion-input>
           </div>
 
           <!-- Section Upload Photo -->
@@ -232,39 +235,6 @@
             </div>
           </div>
 
-          <!-- Priorité -->
-          <div class="form-group">
-            <label class="form-label">Priorité</label>
-            <div class="priority-selector">
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'basse', 'priority-low': newSignalement.priorite === 'basse' }"
-                @click="newSignalement.priorite = 'basse'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Basse
-              </button>
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'moyenne', 'priority-medium': newSignalement.priorite === 'moyenne' }"
-                @click="newSignalement.priorite = 'moyenne'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Moyenne
-              </button>
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'haute', 'priority-high': newSignalement.priorite === 'haute' }"
-                @click="newSignalement.priorite = 'haute'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Haute
-              </button>
-            </div>
-          </div>
 
           <!-- Surface et Budget côte à côte -->
           <div class="form-row">
@@ -303,13 +273,24 @@
           <div class="form-group">
             <label class="form-label">
               <ion-icon :icon="businessOutline"></ion-icon>
-              Entreprise (optionnel)
+              Entreprise
             </label>
-            <ion-input
-              v-model="newSignalement.entreprise"
-              placeholder="Nom de l'entreprise assignée"
+            <ion-select
+              v-model="newSignalement.entrepriseId"
+              placeholder="Sélectionnez une entreprise (optionnel)"
               class="form-input"
-            ></ion-input>
+              interface="action-sheet"
+              cancel-text="Annuler"
+            >
+              <ion-select-option :value="null">Aucune</ion-select-option>
+              <ion-select-option
+                v-for="entreprise in entreprises"
+                :key="entreprise.id"
+                :value="entreprise.id"
+              >
+                {{ entreprise.nom }}
+              </ion-select-option>
+            </ion-select>
           </div>
 
           <!-- Boutons d'action -->
@@ -330,15 +311,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, watch, onMounted, computed, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage, IonContent, IonFabButton, IonIcon, IonModal,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonInput,
-  IonTextarea, IonBadge, toastController
+  IonTextarea, IonBadge, IonSelect, IonSelectOption, toastController
 } from '@ionic/vue';
 import {
-  add, informationCircle, calendarOutline, flagOutline, locationOutline,
+  add, informationCircle, locationOutline,
   businessOutline, resizeOutline, cashOutline, checkmark, close,
   globeOutline, personOutline, cameraOutline, imagesOutline, closeCircle,
   checkmarkCircle, alertCircle, eyeOutline
@@ -348,8 +329,10 @@ import { useUserContext } from '@/services/user-context.service';
 import signalementsService from '@/services/signalements.service.firebase';
 import mapService from '@/services/map.service';
 import geolocationService from '@/services/geolocation.service';
+import entreprisesService, { type Entreprise } from '@/services/entreprises.service';
 
 const route = useRoute();
+const router = useRouter();
 const { isAuthenticated, userContext } = useUserContext();
 
 const signalements = ref<any[]>([]);
@@ -362,23 +345,23 @@ const selectedSignalement = ref<any>(null);
 const clickedPosition = ref<any>(null);
 const isAddingReport = ref(false);
 const userLocation = ref<{ lat: number, lng: number } | null>(null);
+const entreprises = ref<Entreprise[]>([]);
 
 // Quick info panel
 const quickInfoSignalement = ref<any>(null);
 
 
 const newSignalement = ref({
-  titre: '',
   description: '',
-  priorite: 'moyenne',
+  adresse: '',
   surface: 0,
   budget: 0,
-  entreprise: '',
+  entrepriseId: null as number | null,
   photos: [] as string[]
 });
 
 const isFormValid = computed(() => {
-  return newSignalement.value.titre.trim() !== '' &&
+  return newSignalement.value.description.trim() !== '' &&
          newSignalement.value.surface > 0 &&
          newSignalement.value.budget > 0 &&
          clickedPosition.value !== null;
@@ -425,6 +408,7 @@ onMounted(async () => {
   }
 
   await loadSignalements();
+  await loadEntreprises();
 
   // Gérer la navigation depuis une autre page (viewOnMap)
   if (route.query.id && route.query.lat && route.query.lng) {
@@ -432,14 +416,10 @@ onMounted(async () => {
     const lat = parseFloat(route.query.lat as string);
     const lng = parseFloat(route.query.lng as string);
 
-    // Centrer la carte sur le signalement
-    mapService.setMapCenter(lat, lng, 16);
-
-    // Trouver et afficher le signalement
-    const sig = signalements.value.find(s => s.id === signalementId);
-    if (sig) {
-      quickInfoSignalement.value = sig;
-    }
+    // Utiliser la fonction focusOnSignalement
+    setTimeout(() => {
+      focusOnSignalement(signalementId, lat, lng);
+    }, 300);
   }
 
   mapService.onMarkerClick((markerId: string) => {
@@ -481,6 +461,63 @@ const loadSignalements = async () => {
       message: 'Erreur de chargement des signalements',
       duration: 3000,
       color: 'danger',
+      position: 'top'
+    });
+    await toast.present();
+  }
+};
+
+// Fonction pour centrer la carte sur un signalement
+const focusOnSignalement = async (signalementId: string, lat: number, lng: number) => {
+  // Retirer le focus pour éviter l'erreur aria-hidden
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
+  // Attendre que la carte soit prête
+  await nextTick();
+
+  // Centrer la carte sur le signalement avec un zoom de 18
+  mapService.setMapCenter(lat, lng, 18);
+
+  // Trouver et afficher le signalement dans le quick info
+  const sig = signalements.value.find(s => s.id === signalementId);
+  if (sig) {
+    quickInfoSignalement.value = sig;
+  }
+
+  // Nettoyer les paramètres de l'URL après le focus
+  router.replace({ path: '/tabs/map' });
+};
+
+// Watch pour détecter la navigation depuis d'autres pages
+watch(
+  () => route.query,
+  async (newQuery) => {
+    if (newQuery.id && newQuery.lat && newQuery.lng) {
+      const signalementId = newQuery.id as string;
+      const lat = parseFloat(newQuery.lat as string);
+      const lng = parseFloat(newQuery.lng as string);
+
+      // Attendre un peu pour que la carte soit bien initialisée
+      setTimeout(() => {
+        focusOnSignalement(signalementId, lat, lng);
+      }, 300);
+    }
+  },
+  { immediate: false }
+);
+
+const loadEntreprises = async () => {
+  try {
+    entreprises.value = await entreprisesService.getEntreprisesActives();
+    console.log('Entreprises chargées:', entreprises.value.length);
+  } catch (error) {
+    console.error('Erreur chargement entreprises:', error);
+    const toast = await toastController.create({
+      message: 'Erreur lors du chargement des entreprises',
+      duration: 2000,
+      color: 'warning',
       position: 'top'
     });
     await toast.present();
@@ -554,6 +591,10 @@ const closeQuickInfo = () => {
 };
 
 const openDetailsFromQuickInfo = () => {
+  // Retirer le focus de l'élément actif pour éviter l'erreur aria-hidden
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
   selectedSignalement.value = quickInfoSignalement.value;
   quickInfoSignalement.value = null;
   showDetailsModal.value = true;
@@ -644,57 +685,45 @@ const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    // Afficher un toast de progression
-    const loadingToast = await toastController.create({
-      message: 'Création du signalement en cours...',
-      duration: 0, // Pas de durée auto
-      color: 'primary'
-    });
-    await loadingToast.present();
+    console.log('📤 Création du signalement...');
 
-    // Séparer les photos base64 des URLs existantes
-    const photosToUpload = newSignalement.value.photos.filter(p => p.startsWith('data:'));
-    const existingPhotoUrls = newSignalement.value.photos.filter(p => !p.startsWith('data:'));
-
-    // Créer le signalement d'abord (sans les photos base64)
-    const signalement = await signalementsService.create({
+    // Données du signalement (sans les photos qui seront uploadées séparément)
+    const signalementData = {
       userId: userContext.value.userId,
       userEmail: userContext.value.email || '',
       location: clickedPosition.value,
       date: new Date().toISOString(),
-      status: 'nouveau',
-      titre: newSignalement.value.titre,
+      status: 'nouveau' as const,
       description: newSignalement.value.description,
-      priorite: newSignalement.value.priorite as any,
+      adresse: newSignalement.value.adresse || '',
       surface: newSignalement.value.surface,
       budget: newSignalement.value.budget,
-      entreprise: newSignalement.value.entreprise,
-      photos: existingPhotoUrls, // Seulement les URLs existantes pour l'instant
-      adresse: '',
-      photoUrl: existingPhotoUrls.length > 0 ? existingPhotoUrls[0] : ''
-    });
+      entreprise: newSignalement.value.entrepriseId ? String(newSignalement.value.entrepriseId) : '',
+      titre: newSignalement.value.description.substring(0, 50) + (newSignalement.value.description.length > 50 ? '...' : ''),
+      priorite: 'moyenne' as const
+    };
 
-    // Uploader les photos base64 vers Cloudinary et les sauvegarder dans photo_signalement
-    if (photosToUpload.length > 0) {
-      loadingToast.message = `Upload des photos (0/${photosToUpload.length})...`;
+    // Utiliser createWithPhotos si des photos ont été ajoutées
+    if (newSignalement.value.photos.length > 0) {
+      console.log(`📸 Upload de ${newSignalement.value.photos.length} photo(s)...`);
+      const result = await signalementsService.createWithPhotos(signalementData, newSignalement.value.photos);
 
-      const uploadResult = await signalementsService.addPhotosToSignalement(
-        signalement.id,
-        photosToUpload
-      );
-
-      if (uploadResult.errors.length > 0) {
-        console.warn('⚠️ Certaines photos n\'ont pas pu être uploadées:', uploadResult.errors);
+      if (result.errors.length > 0) {
+        console.warn('⚠️ Certaines photos n\'ont pas pu être uploadées:', result.errors);
+        const toast = await toastController.create({
+          message: `Signalement créé, mais ${result.errors.length} photo(s) en erreur`,
+          duration: 3000,
+          color: 'warning'
+        });
+        await toast.present();
+      } else {
+        console.log(`✅ Signalement créé avec ${result.photoUrls.length} photo(s)`);
       }
-
-      // Mettre à jour le signalement avec les URLs des photos
-      if (uploadResult.urls.length > 0) {
-        signalement.photos = [...existingPhotoUrls, ...uploadResult.urls];
-        signalement.photoUrl = signalement.photos[0];
-      }
+    } else {
+      // Créer le signalement sans photos
+      await signalementsService.create(signalementData);
     }
 
-    await loadingToast.dismiss();
     await loadSignalements();
 
     const toast = await toastController.create({
@@ -706,10 +735,10 @@ const saveSignalement = async () => {
 
     closeAddModal();
   } catch (error) {
-    console.error('Erreur lors de la sauvegarde', error);
+    console.error('❌ Erreur lors de la sauvegarde', error);
 
     const toast = await toastController.create({
-      message: 'Erreur lors de la création du signalement',
+      message: 'Erreur lors de la création du signalement. Vérifiez vos permissions Firestore.',
       duration: 3000,
       color: 'danger'
     });
@@ -726,12 +755,11 @@ const closeAddModal = () => {
   showAddModal.value = false;
   clickedPosition.value = null;
   newSignalement.value = {
-    titre: '',
     description: '',
-    priorite: 'moyenne',
+    adresse: '',
     surface: 0,
     budget: 0,
-    entreprise: '',
+    entrepriseId: null,
     photos: []
   };
 };

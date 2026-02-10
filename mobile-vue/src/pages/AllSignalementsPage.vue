@@ -330,12 +330,16 @@ const closeDetailsModal = () => {
 };
 
 const viewOnMap = (signalement: Signalement) => {
+  // Retirer le focus pour éviter l'erreur aria-hidden
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
   closeDetailsModal();
   router.push({
-    name: 'Map',
+    path: '/tabs/map',
     query: {
-      lat: signalement.location.lat,
-      lng: signalement.location.lng,
+      lat: signalement.location.lat.toString(),
+      lng: signalement.location.lng.toString(),
       id: signalement.id
     }
   });

@@ -1,7 +1,9 @@
 # ==============================================
 # Stage 1: Base - Installation des dépendances
 # ==============================================
-FROM node:20-alpine AS base
+# FROM node:20-alpine AS base # Utilisation d'une image légère basée sur Alpine
+
+FROM node:latest AS base
 
 WORKDIR /app
 
@@ -14,7 +16,7 @@ COPY package.json package-lock.json* ./
 FROM base AS development
 
 # Installation des dépendances (dev + prod)
-RUN npm ci
+RUN npm install
 
 # Copier tous les fichiers du projet
 COPY . .
@@ -31,7 +33,7 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 FROM base AS builder
 
 # Installation de toutes les dépendances nécessaires pour le build
-RUN npm ci
+RUN npm install
 
 # Copier le reste des fichiers
 COPY . .
@@ -42,7 +44,7 @@ RUN npm run build
 # ==============================================
 # Stage 4: Production - Serveur Nginx
 # ==============================================
-FROM nginx:alpine AS production
+FROM nginx:1.25 AS production
 
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/conf.d/default.conf
