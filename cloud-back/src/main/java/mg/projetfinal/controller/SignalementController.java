@@ -227,15 +227,9 @@ public class SignalementController {
 
         log.info("PUT /api/signalements/{}/status - Changement de statut vers {}", id, statusId);
 
-        Signalement signalement = signalementService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Signalement non trouvé"));
-
         SignalementStatus newStatus = statusService.findById(statusId.intValue());
 
-        signalement.setStatus(newStatus);
-
-
-        Signalement updated = signalementService.create(signalement,currentUser);
+        Signalement updated = signalementService.changeStatus(id, newStatus, currentUser, commentaire);
 
         SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
 
