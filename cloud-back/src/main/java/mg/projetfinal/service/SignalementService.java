@@ -23,6 +23,7 @@ public class SignalementService {
 
     private final SignalementRepository signalementRepository;
     private final HistoriqueStatusService historiqueStatusService;
+    private final FirebasePushNotificationService pushNotificationService;
 
     public Signalement create(Signalement signalement, User user) {
         log.info("Création d'un nouveau signalement pour l'utilisateur: {}", user.getId());
@@ -154,7 +155,18 @@ public class SignalementService {
         signalement.setStatus(newStatus);
         signalement.setFirebaseSynced(false);
         
-        return signalementRepository.save(signalement);
+        Signalement saved = signalementRepository.save(signalement);
+
+        // Envoyer une notification push à chaque changement de statut
+        try {
+            String oldStatusLabel = oldStatus != null ? oldStatus.getLibelle() : "Inconnu";
+            String newStatusLabel = newStatus.getLibelle();
+            pushNotificationService.notifyStatusChange(saved, oldStatusLabel, newStatusLabel);
+        } catch (Exception e) {
+            log.error("Erreur lors de l'envoi de la notification push pour le changement de statut: {}", e.getMessage());
+        }
+
+        return saved;
     }
 
     public void markAsSynced(Long id, String firebaseId) {
