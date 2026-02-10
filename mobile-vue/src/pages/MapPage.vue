@@ -154,26 +154,29 @@
             </div>
           </div>
 
-          <!-- Titre -->
-          <div class="form-group">
-            <label class="form-label">Titre *</label>
-            <ion-input
-              v-model="newSignalement.titre"
-              placeholder="Ex: Rénovation trottoir rue principale"
-              class="form-input"
-              required
-            ></ion-input>
-          </div>
-
           <!-- Description -->
           <div class="form-group">
-            <label class="form-label">Description</label>
+            <label class="form-label">Description *</label>
             <ion-textarea
               v-model="newSignalement.description"
               placeholder="Décrivez le signalement en détail..."
-              :rows="4"
+              :rows="5"
               class="form-textarea"
+              required
             ></ion-textarea>
+          </div>
+
+          <!-- Adresse -->
+          <div class="form-group">
+            <label class="form-label">
+              <ion-icon :icon="locationOutline"></ion-icon>
+              Adresse
+            </label>
+            <ion-input
+              v-model="newSignalement.adresse"
+              placeholder="Ex: Rue de la République, 13001 Marseille"
+              class="form-input"
+            ></ion-input>
           </div>
 
           <!-- Section Upload Photo -->
@@ -232,86 +235,6 @@
             </div>
           </div>
 
-          <!-- Priorité -->
-          <div class="form-group">
-            <label class="form-label">Priorité</label>
-            <div class="priority-selector">
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'basse', 'priority-low': newSignalement.priorite === 'basse' }"
-                @click="newSignalement.priorite = 'basse'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Basse
-              </button>
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'moyenne', 'priority-medium': newSignalement.priorite === 'moyenne' }"
-                @click="newSignalement.priorite = 'moyenne'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Moyenne
-              </button>
-              <button
-                type="button"
-                class="priority-btn"
-                :class="{ active: newSignalement.priorite === 'haute', 'priority-high': newSignalement.priorite === 'haute' }"
-                @click="newSignalement.priorite = 'haute'"
-              >
-                <ion-icon :icon="flagOutline"></ion-icon>
-                Haute
-              </button>
-            </div>
-          </div>
-
-          <!-- Surface et Budget côte à côte -->
-          <div class="form-row">
-            <div class="form-group half">
-              <label class="form-label">
-                <ion-icon :icon="resizeOutline"></ion-icon>
-                Surface (m²) *
-              </label>
-              <ion-input
-                v-model.number="newSignalement.surface"
-                type="number"
-                placeholder="0"
-                class="form-input"
-                min="0"
-                required
-              ></ion-input>
-            </div>
-
-            <div class="form-group half">
-              <label class="form-label">
-                <ion-icon :icon="cashOutline"></ion-icon>
-                Budget (€) *
-              </label>
-              <ion-input
-                v-model.number="newSignalement.budget"
-                type="number"
-                placeholder="0"
-                class="form-input"
-                min="0"
-                required
-              ></ion-input>
-            </div>
-          </div>
-
-          <!-- Entreprise -->
-          <div class="form-group">
-            <label class="form-label">
-              <ion-icon :icon="businessOutline"></ion-icon>
-              Entreprise (optionnel)
-            </label>
-            <ion-input
-              v-model="newSignalement.entreprise"
-              placeholder="Nom de l'entreprise assignée"
-              class="form-input"
-            ></ion-input>
-          </div>
-
           <!-- Boutons d'action -->
           <div class="form-actions">
             <ion-button expand="block" fill="outline" @click="closeAddModal" type="button" class="cancel-button">
@@ -368,19 +291,13 @@ const quickInfoSignalement = ref<any>(null);
 
 
 const newSignalement = ref({
-  titre: '',
   description: '',
-  priorite: 'moyenne',
-  surface: 0,
-  budget: 0,
-  entreprise: '',
+  adresse: '',
   photos: [] as string[]
 });
 
 const isFormValid = computed(() => {
-  return newSignalement.value.titre.trim() !== '' &&
-         newSignalement.value.surface > 0 &&
-         newSignalement.value.budget > 0 &&
+  return newSignalement.value.description.trim() !== '' &&
          clickedPosition.value !== null;
 });
 
@@ -645,22 +562,25 @@ const saveSignalement = async () => {
   if (!userContext.value.userId || !clickedPosition.value) return;
 
   try {
-    // Créer le signalement dans Firebase
+    console.log('📤 Création du signalement...');
+
+    // Créer le signalement dans Firebase avec la structure exacte attendue
     await signalementsService.create({
       userId: userContext.value.userId,
       userEmail: userContext.value.email || '',
       location: clickedPosition.value,
       date: new Date().toISOString(),
       status: 'nouveau',
-      titre: newSignalement.value.titre,
       description: newSignalement.value.description,
-      priorite: newSignalement.value.priorite as any,
-      surface: newSignalement.value.surface,
-      budget: newSignalement.value.budget,
-      entreprise: newSignalement.value.entreprise,
+      adresse: newSignalement.value.adresse || '',
+      photoUrl: newSignalement.value.photos.length > 0 ? newSignalement.value.photos[0] : '',
+      // Champs par défaut pour compatibilité avec l'interface Signalement
       photos: newSignalement.value.photos,
-      adresse: '', // À remplir si nécessaire
-      photoUrl: newSignalement.value.photos.length > 0 ? newSignalement.value.photos[0] : ''
+      titre: newSignalement.value.description.substring(0, 50) + (newSignalement.value.description.length > 50 ? '...' : ''),
+      priorite: 'moyenne',
+      surface: 0,
+      budget: 0,
+      entreprise: ''
     });
 
     await loadSignalements();
@@ -674,10 +594,10 @@ const saveSignalement = async () => {
 
     closeAddModal();
   } catch (error) {
-    console.error('Erreur lors de la sauvegarde', error);
+    console.error('❌ Erreur lors de la sauvegarde', error);
 
     const toast = await toastController.create({
-      message: 'Erreur lors de la création du signalement',
+      message: 'Erreur lors de la création du signalement. Vérifiez vos permissions.',
       duration: 3000,
       color: 'danger'
     });
@@ -694,12 +614,8 @@ const closeAddModal = () => {
   showAddModal.value = false;
   clickedPosition.value = null;
   newSignalement.value = {
-    titre: '',
     description: '',
-    priorite: 'moyenne',
-    surface: 0,
-    budget: 0,
-    entreprise: '',
+    adresse: '',
     photos: []
   };
 };

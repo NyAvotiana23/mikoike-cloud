@@ -261,6 +261,8 @@ class FirebaseSignalementsService {
   async create(data: Omit<Signalement, 'id'>): Promise<Signalement> {
     try {
       console.log('📤 Création signalement dans Firebase...');
+      console.log('📊 Données reçues:', data);
+
       const db = firebaseService.db;
 
       // Générer un ID numérique basé sur le timestamp
@@ -274,6 +276,10 @@ class FirebaseSignalementsService {
       firebaseData.createdAt = Timestamp.now();
       firebaseData.updatedAt = Timestamp.now();
       firebaseData.syncedAt = Timestamp.now();
+
+      console.log('📤 Données Firebase à envoyer:', firebaseData);
+      console.log('🔑 Document ID:', docId);
+      console.log('👤 User ID:', firebaseData.userId, 'Type:', typeof firebaseData.userId);
 
       // Sauvegarder dans Firebase
       await setDoc(docRef, firebaseData);
@@ -291,6 +297,8 @@ class FirebaseSignalementsService {
       return newSignalement;
     } catch (err: any) {
       console.error('❌ Erreur création signalement:', err);
+      console.error('❌ Code erreur:', err.code);
+      console.error('❌ Message:', err.message);
       throw new Error('Impossible de créer le signalement');
     }
   }
@@ -435,7 +443,7 @@ class FirebaseSignalementsService {
   /**
    * Convertit un document Firebase en objet Signalement
    */
-  private convertFirebaseToSignalement(id: string, data: any): Signalement | null {
+  private convertFirebaseToSignalement ( id : string, data : any): Signalement | null {
     try {
       // Gérer les différents formats d'ID (string ou number)
       const signalementId = data.id ? String(data.id) : id;
@@ -505,30 +513,24 @@ class FirebaseSignalementsService {
 
   /**
    * Convertit un objet Signalement en données Firebase
+   * Structure minimale conforme à Firebase
    */
   private convertSignalementToFirebase(signalement: Omit<Signalement, 'id'>): any {
     // Convertir le status vers le format Firebase (MAJUSCULES)
     const statusCode = this.statusToFirebaseCode(signalement.status);
 
     return {
+      // Champs obligatoires de la structure Firebase
       userId: Number(signalement.userId) || signalement.userId,
+      userEmail: signalement.userEmail || '',
       description: signalement.description || '',
       adresse: signalement.adresse || '',
       latitude: signalement.location.lat,
       longitude: signalement.location.lng,
       photoUrl: signalement.photoUrl || '',
-      photos: signalement.photos || [],
       statusCode: statusCode,
       statusLibelle: this.getStatusLibelle(signalement.status),
-      userEmail: signalement.userEmail || '',
-      dateSignalement: signalement.date ? Timestamp.fromDate(new Date(signalement.date)) : Timestamp.now(),
-      surface: signalement.surface || 0,
-      budget: signalement.budget || 0,
-      entreprise: signalement.entreprise || '',
-      titre: signalement.titre || '',
-      priorite: signalement.priorite || 'moyenne',
-      dateDebut: signalement.dateDebut || null,
-      dateFin: signalement.dateFin || null
+      dateSignalement: signalement.date ? Timestamp.fromDate(new Date(signalement.date)) : Timestamp.now()
     };
   }
 
