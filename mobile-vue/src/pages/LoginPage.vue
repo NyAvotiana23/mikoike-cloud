@@ -91,27 +91,61 @@ const password = ref('');
 const loading = ref(false);
 
 const handleLogin = async () => {
-  loading.value = true;
-  
-  const result = await login(email.value, password.value);
-  
-  loading.value = false;
-
-  if (result.success && result.user) {
-    setAuthenticatedUser(result.user);
-
+  // Validation basique
+  if (!email.value || !password.value) {
     const toast = await toastController.create({
-      message: 'Connexion réussie !',
-      duration: 2000,
-      color: 'success',
+      message: 'Veuillez remplir tous les champs',
+      duration: 2500,
+      color: 'warning',
       position: 'top'
     });
     await toast.present();
-    router.push('/tabs/map');
-  } else {
+    return;
+  }
+
+  loading.value = true;
+  
+  try {
+    const result = await login(email.value, password.value);
+
+    loading.value = false;
+
+    if (result.success && result.user) {
+      setAuthenticatedUser(result.user);
+
+      const toast = await toastController.create({
+        message: `Bienvenue ${result.user.email} !`,
+        duration: 2000,
+        color: 'success',
+        position: 'top',
+        icon: 'checkmark-circle'
+      });
+      await toast.present();
+
+      // Redirection vers la carte
+      router.push('/tabs/map');
+    } else {
+      // Afficher le message d'erreur spécifique
+      const errorMessage = result.error || 'Erreur de connexion';
+      const toast = await toastController.create({
+        message: errorMessage,
+        duration: 4000,
+        color: 'danger',
+        position: 'top',
+        icon: 'alert-circle'
+      });
+      await toast.present();
+
+      // Log pour debug
+      console.error('Erreur de connexion:', result.errorCode, result.error);
+    }
+  } catch (err: any) {
+    loading.value = false;
+    console.error('Erreur inattendue:', err);
+
     const toast = await toastController.create({
-      message: result.error || 'Erreur de connexion',
-      duration: 3000,
+      message: 'Une erreur inattendue est survenue. Vérifiez votre connexion internet.',
+      duration: 4000,
       color: 'danger',
       position: 'top'
     });

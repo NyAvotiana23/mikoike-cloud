@@ -131,11 +131,11 @@ import {
 import AppHeader from '@/components/AppHeader.vue';
 import { useUserContext } from '@/services/user-context.service';
 import { useAuth } from '@/services/auth.service';
-import signalementsService from '@/services/signalements.service';
+import signalementsService from '@/services/signalements.service.firebase';
 import notificationsService from '@/services/notifications.service';
 
 const router = useRouter();
-const { userContext, setVisitor } = useUserContext();
+const { userContext, clearContext } = useUserContext();
 const { logout } = useAuth();
 
 const unreadNotificationsCount = ref(0);
@@ -193,18 +193,29 @@ const confirmLogout = async () => {
         text: 'Se déconnecter',
         role: 'destructive',
         handler: async () => {
-          await logout();
-          setVisitor();
-          
-          const toast = await toastController.create({
-            message: 'Déconnexion réussie',
-            duration: 2000,
-            color: 'success',
-            position: 'top'
-          });
-          await toast.present();
-          
-          router.push('/');
+          const result = await logout();
+
+          if (result.success) {
+            clearContext();
+
+            const toast = await toastController.create({
+              message: 'Déconnexion réussie',
+              duration: 2000,
+              color: 'success',
+              position: 'top'
+            });
+            await toast.present();
+
+            router.push('/');
+          } else {
+            const toast = await toastController.create({
+              message: result.error || 'Erreur lors de la déconnexion',
+              duration: 3000,
+              color: 'danger',
+              position: 'top'
+            });
+            await toast.present();
+          }
         }
       }
     ]

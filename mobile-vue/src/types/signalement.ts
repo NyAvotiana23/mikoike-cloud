@@ -8,14 +8,17 @@ export interface Signalement {
   date: string;
   status: 'nouveau' | 'en_cours' | 'termine' | 'annule';
   surface: number; // en m²
-  budget: number; // en euros
+  budget: number; // en Ar (Ariary)
   entreprise: string;
   description: string;
   titre?: string;
+  adresse?: string;
+  photoUrl?: string;
   photos?: string[];
   priorite?: 'basse' | 'moyenne' | 'haute';
   dateDebut?: string;
   dateFin?: string;
+  userEmail?: string;
 }
 
 export interface SignalementFilters {
@@ -23,6 +26,7 @@ export interface SignalementFilters {
   priorite?: string[];
   dateDebut?: string;
   dateFin?: string;
+  userId?: string;
 }
 
 export interface SignalementStats {
@@ -30,7 +34,8 @@ export interface SignalementStats {
   nouveau: number;
   en_cours: number;
   termine: number;
-  annule: number;
-  surfaceTotale: number;
-  budgetTotal: number;
+  annule?: number;
+  totalSurface: number;
+  totalBudget: number;
+  avancement: number;
 }
