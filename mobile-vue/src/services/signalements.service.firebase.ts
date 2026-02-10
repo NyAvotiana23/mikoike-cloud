@@ -515,24 +515,27 @@ class FirebaseSignalementsService {
 
   /**
    * Convertit un objet Signalement en données Firebase
-   * Structure minimale conforme à Firebase
    */
   private convertSignalementToFirebase(signalement: Omit<Signalement, 'id'>): any {
     // Convertir le status vers le format Firebase (MAJUSCULES)
     const statusCode = this.statusToFirebaseCode(signalement.status);
 
     return {
-      // Champs obligatoires de la structure Firebase
-      userId: Number(signalement.userId) || signalement.userId,
-      userEmail: signalement.userEmail || '',
+      // Champs EXACTS du backend Java
       description: signalement.description || '',
       adresse: signalement.adresse || '',
       latitude: signalement.location.lat,
       longitude: signalement.location.lng,
-      photoUrl: signalement.photoUrl || '',
       statusCode: statusCode,
       statusLibelle: this.getStatusLibelle(signalement.status),
-      dateSignalement: signalement.date ? Timestamp.fromDate(new Date(signalement.date)) : Timestamp.now()
+      userEmail: signalement.userEmail || '',
+      userId: Number(signalement.userId) || signalement.userId,
+      dateSignalement: signalement.date ? Timestamp.fromDate(new Date(signalement.date)) : Timestamp.now(),
+      surface: signalement.surface || 0,
+      budget: signalement.budget || 0,
+      entrepriseId: signalement.entreprise ? String(signalement.entreprise) : null
+      // createdAt, updatedAt, syncedAt seront ajoutés dans la méthode create()
+      // photoUrl SUPPRIMÉ (n'est plus dans le backend Java)
     };
   }
 
