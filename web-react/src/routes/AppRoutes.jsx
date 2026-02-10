@@ -14,12 +14,17 @@ import Map from '../pages/carte/Map.jsx';
 import SignalementList from '../pages/signalement/SignalementList.jsx';
 import SignalementDetail from '../pages/signalement/SignalementDetail.jsx';
 import SignalementStatistics from '../pages/signalement/SignalementStatistics.jsx';
+import VisitorMap from '../pages/VisitorMap.jsx';
 import { Navigate } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/visiteur',
+    element: <VisitorMap />,
   },
   {
     element: <ProtectedRoute />,  // Now the protector is here, using <Outlet /> to render children
