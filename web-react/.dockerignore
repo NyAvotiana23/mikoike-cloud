@@ -1,0 +1,79 @@
+# Dépendances
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+package-lock.json
+
+# Production
+dist
+dist-ssr
+*.local
+
+# Tests
+coverage
+.nyc_output
+
+# Cache et logs
+.cache
+.vscode
+.idea
+*.log
+logs
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+
+# Environnement (on copie manuellement ce qui est nécessaire)
+.env.local
+.env.development
+.env.production
+
+# Tests
+**/*.spec.js
+**/*.spec.jsx
+**/*.test.js
+**/*.test.jsx
+**/__tests__
+**/__mocks__
+
+# Editeur
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+
+# Divers
+output
+tmp
+temp

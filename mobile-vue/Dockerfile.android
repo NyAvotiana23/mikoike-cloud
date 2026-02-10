@@ -1,0 +1,71 @@
+# ==============================================
+# Dockerfile pour build Android avec Capacitor
+# ==============================================
+FROM ubuntu:22.04
+
+# Éviter les prompts interactifs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Variables d'environnement pour Android
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV ANDROID_HOME=/opt/android-sdk
+ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/34.0.0
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+WORKDIR /app
+
+# Installation des dépendances système
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    unzip \
+    openjdk-17-jdk \
+    gradle \
+    build-essential \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installation de Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest
+
+# Installation du Android SDK
+RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip && \
+    unzip -q commandlinetools-linux-10406996_latest.zip -d $ANDROID_SDK_ROOT/cmdline-tools && \
+    mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest && \
+    rm commandlinetools-linux-10406996_latest.zip
+
+# Accepter les licences Android SDK
+RUN yes | sdkmanager --licenses || true
+
+# Installation des packages Android SDK nécessaires
+RUN sdkmanager "platform-tools" \
+    "platforms;android-34" \
+    "build-tools;34.0.0" \
+    "extras;google;google_play_services" \
+    "extras;android;m2repository" \
+    "extras;google;m2repository"
+
+# Installation de Capacitor CLI globalement
+RUN npm install -g @capacitor/cli@8.0.1 @ionic/cli
+
+# Copier les fichiers de dépendances
+COPY package.json package-lock.json* ./
+
+# Installation des dépendances npm
+RUN npm ci
+
+# Copier tous les fichiers du projet
+COPY . .
+
+# Build de l'application web
+RUN npm run build
+
+# Synchroniser Capacitor
+RUN npx cap sync android
+
+# Point d'entrée pour le build Android
+CMD ["sh", "-c", "cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk /app/output/"]

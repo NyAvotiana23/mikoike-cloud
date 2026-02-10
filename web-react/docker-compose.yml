@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # ==============================================
+  # Service de développement avec hot-reload
+  # ==============================================
+  web-dev:
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    container_name: web-react-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Montage du code source pour le hot-reload
+      - .:/app
+      # Utiliser un volume nommé pour node_modules (performance)
+      - node_modules:/app/node_modules
+      # Montage des fichiers d'environnement
+      - ./.env:/app/.env:ro
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+    networks:
+      - web-network
+    stdin_open: true
+    tty: true
+    command: npm run dev -- --host 0.0.0.0
+
+  # ==============================================
+  # Service de production avec Nginx
+  # ==============================================
+  web-prod:
+    build:
+      context: .
+      target: production
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: web-react-prod
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - web-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ==============================================
+  # Service API Backend (optionnel)
+  # ==============================================
+  api:
+    image: node:20-alpine
+    container_name: web-react-api
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    networks:
+      - web-network
+    command: sh -c "npm install && npm start"
+    profiles:
+      - api
+
+  # ==============================================
+  # Serveur de tiles OpenStreetMap (optionnel)
+  # ==============================================
+  tile-server:
+    image: overv/openstreetmap-tile-server:latest
+    container_name: web-react-tiles
+    ports:
+      - "8081:80"
+    volumes:
+      - osm-data:/data/database
+      - osm-tiles:/data/tiles
+    environment:
+      - THREADS=4
+      - OSM2PGSQL_EXTRA_ARGS=-C 1024
+    networks:
+      - web-network
+    profiles:
+      - tiles
+    shm_size: 192m
+
+# ==============================================
+# Volumes nommés
+# ==============================================
+volumes:
+  node_modules:
+    driver: local
+  osm-data:
+    driver: local
+  osm-tiles:
+    driver: local
+
+# ==============================================
+# Réseaux
+# ==============================================
+networks:
+  web-network:
+    driver: bridge
