@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # ==============================================
+  # Service de développement avec hot-reload
+  # ==============================================
+  dev:
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    container_name: ionic-vue-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Montage du code source pour le hot-reload
+      - .:/app
+      # Utiliser un volume nommé pour node_modules (performance)
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+    networks:
+      - ionic-network
+    stdin_open: true
+    tty: true
+    command: npm run dev -- --host 0.0.0.0
+
+  # ==============================================
+  # Service de production avec Nginx
+  # ==============================================
+  prod:
+    build:
+      context: .
+      target: production
+      dockerfile: Dockerfile
+    container_name: ionic-vue-prod
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - ionic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ==============================================
+  # Service de build Android
+  # ==============================================
+  android-build:
+    build:
+      context: .
+      dockerfile: Dockerfile.android
+    container_name: ionic-vue-android
+    volumes:
+      # Volume pour récupérer l'APK généré
+      - ./output:/app/output
+      # Optionnel: cache Gradle pour accélérer les builds
+      - gradle-cache:/root/.gradle
+    environment:
+      - ANDROID_SDK_ROOT=/opt/android-sdk
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    networks:
+      - ionic-network
+    profiles:
+      - android
+
+# ==============================================
+# Volumes nommés
+# ==============================================
+volumes:
+  node_modules:
+    driver: local
+  gradle-cache:
+    driver: local
+
+# ==============================================
+# Réseaux
+# ==============================================
+networks:
+  ionic-network:
+    driver: bridge
