@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, TrendingUp, DollarSign, Layers, CheckCircle } from 'lucide-react';
+import { Calendar, TrendingUp, DollarSign, Layers, CheckCircle, Clock } from 'lucide-react';
 // Utilisation du vrai service API exporté par défaut
 import signalementApiService from '../../services/api/signalementApiService';
 
@@ -88,6 +88,17 @@ function SignalementStatistics() {
                     <div className="w-full bg-neutral-200 rounded-full h-1.5 mt-2">
                         <div className="bg-success-600 h-1.5 rounded-full" style={{ width: `${stats.avancement}%` }}></div>
                     </div>
+                </div>
+
+                {/* Délai moyen de traitement (DTO: delaiMoyenJours, null si aucun terminé) */}
+                <div className="bg-white p-6 rounded-xl shadow-soft border border-neutral-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-neutral-600 font-medium">Délai moyen de traitement</h3>
+                        <Clock className="text-warning-600" size={24} />
+                    </div>
+                    <p className="text-3xl font-bold text-neutral-900">
+                        {stats.delaiMoyenJours == null ? '—' : `${stats.delaiMoyenJours} j`}
+                    </p>
                 </div>
 
                 {/* Surface Totale (Donnée venant du DTO: totalSurface) */}

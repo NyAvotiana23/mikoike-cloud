@@ -232,7 +232,7 @@ public class FirebaseSyncService {
         data.put("syncedAt", new Date());
         data.put("surface",signalement.getSurface());
         data.put("budget",signalement.getBudget());
-        data.put("entrepriseId",signalement.getEntreprise().getId());
+        data.put("entrepriseId", signalement.getEntreprise() != null ? signalement.getEntreprise().getId() : null);
 
         // Utiliser l'ID Firebase existant ou en générer un nouveau
         String docId = signalement.getFirebaseId() != null ?

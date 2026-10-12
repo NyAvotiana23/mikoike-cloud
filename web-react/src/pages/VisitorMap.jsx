@@ -18,6 +18,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SignalementPhotos from '../components/SignalementPhotos';
 import signalementApiService from '../services/api/signalementApiService';
 
 // Fix for default marker icons in Leaflet with React
@@ -422,17 +423,7 @@ const VisitorMap = () => {
               </div>
             </div>
             <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((index) => (
-                  <div key={index} className="aspect-video rounded-lg overflow-hidden shadow-md">
-                    <img
-                      src={`https://picsum.photos/seed/road${selectedIssueForPhoto.id}-${index}/600/400`}
-                      alt={`Photo ${index} - ${selectedIssueForPhoto.title}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
+              <SignalementPhotos signalementId={selectedIssueForPhoto.id} />
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={() => setPhotoModalOpen(false)}

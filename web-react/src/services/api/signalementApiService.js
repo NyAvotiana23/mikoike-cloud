@@ -272,13 +272,13 @@ class SignalementApiService {
    */
   async changeStatus(id, newStatusId, commentaire) {
     try {
-      const params = new URLSearchParams({ newStatusId: newStatusId.toString() });
+      const params = new URLSearchParams({ statusId: newStatusId.toString() });
       if (commentaire) {
         params.append('commentaire', commentaire);
       }
 
-      const response = await fetch(`${this.baseURL}/${id}/change-status?${params}`, {
-        method: 'POST',
+      const response = await fetch(`${this.baseURL}/${id}/status?${params}`, {
+        method: 'PUT',
         headers: this.getAuthHeaders()
       });
 
@@ -289,6 +289,28 @@ class SignalementApiService {
       return await response.json();
     } catch (error) {
       console.error(`Erreur lors du changement de statut du signalement ${id}:`, error);
+      return ApiErrorHandler.handle(error);
+    }
+  }
+
+  /**
+   * Récupère les photos d'un signalement
+   * @param {number} signalementId
+   * @returns {Promise<Array<{id: number, url: string, description: string, isPrincipale: boolean}>>}
+   */
+  async getPhotosBySignalement(signalementId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/photos/signalement/${signalementId}`, {
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`Erreur lors de la récupération des photos du signalement ${signalementId}:`, error);
       return ApiErrorHandler.handle(error);
     }
   }

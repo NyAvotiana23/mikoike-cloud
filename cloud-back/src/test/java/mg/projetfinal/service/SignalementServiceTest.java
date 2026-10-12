@@ -3,6 +3,7 @@ package mg.projetfinal.service;
 import mg.projetfinal.entity.Signalement;
 import mg.projetfinal.entity.SignalementStatus;
 import mg.projetfinal.entity.User;
+import mg.projetfinal.repository.HistoriqueStatusRepository;
 import mg.projetfinal.repository.SignalementRepository;
 import mg.projetfinal.repository.SignalementStatusRepository;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class SignalementServiceTest {
     @Mock private HistoriqueStatusService historiqueStatusService;
     @Mock private FirebasePushNotificationService pushNotificationService;
     @Mock private SignalementStatusRepository statusRepository;
+    @Mock private HistoriqueStatusRepository historiqueStatusRepository;
     @InjectMocks private SignalementService service;
 
     private final User user = User.builder().id(7L).build();
@@ -98,5 +100,18 @@ class SignalementServiceTest {
         var result = service.findByLocation(new BigDecimal("-18.8792"), new BigDecimal("47.5079"), 5);
 
         assertEquals(java.util.List.of(proche), result);
+    }
+
+    @Test
+    void averageDays_moyenneEnJours() {
+        var result = SignalementService.averageDays(java.util.List.of(
+                java.time.Duration.ofDays(2), java.time.Duration.ofDays(4)));
+
+        assertEquals(Optional.of(3.0), result);
+    }
+
+    @Test
+    void averageDays_aucunTermine_estVide() {
+        assertEquals(Optional.empty(), SignalementService.averageDays(java.util.List.of()));
     }
 }

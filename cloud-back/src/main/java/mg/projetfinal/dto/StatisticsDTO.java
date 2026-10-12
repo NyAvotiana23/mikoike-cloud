@@ -19,4 +19,6 @@ public class StatisticsDTO {
     private Integer enCours;
     private Integer termine;
     private Double avancement;
+    /** Délai moyen (jours) entre le signalement et son passage à TERMINE ; null si aucun terminé. */
+    private Double delaiMoyenJours;
 }
