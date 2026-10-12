@@ -78,7 +78,8 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
-      - VITE_API_URL=http://localhost:8002
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8002/api}
+      - VITE_MAP_SERVER_URL=${VITE_MAP_SERVER_URL:-http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png}
     networks:
       - mikoike-network
     stdin_open: true
@@ -102,7 +103,8 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
-      - VITE_API_URL=http://localhost:8002
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8002/api}
+      - VITE_MAP_SERVER_URL=${VITE_MAP_SERVER_URL:-http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png}
     networks:
       - mikoike-network
     stdin_open: true

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { X, Calendar, DollarSign, TrendingUp, Wrench, AlertCircle, CheckCircle, Clock, MapPin } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';

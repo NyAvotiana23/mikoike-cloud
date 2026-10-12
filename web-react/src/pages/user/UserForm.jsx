@@ -6,7 +6,7 @@ import {
     LockClosedIcon,
     UserIcon,
 } from '@heroicons/react/24/outline';
-import addUserService from '../../services/api/authService';
+import authService from '../../services/api/authService';
 
 const UserForm = () => {
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const UserForm = () => {
         setSuccess('');
 
         try {
-            const result = await addUserService.register(formData.email, formData.password, formData.name);
+            const result = await authService.register(formData.email, formData.password, formData.name);
 
             setSuccess(`Utilisateur ${result.user.name} créé avec succès !`);
 

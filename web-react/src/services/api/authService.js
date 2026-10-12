@@ -1,233 +1,103 @@
-// Updated file: src/services/api/authService.js
-// src/services/api/authService.js
 import api from '../httpClient';
-// import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-// import app from './firebase';
 
+const HTTP_UNAUTHORIZED = 401;
+const HTTP_UNPROCESSABLE = 422;
+const HTTP_TOO_MANY_REQUESTS = 429;
+const HTTP_SERVER_ERROR = 500;
+
+const bearer = (sessionId) => ({ headers: { Authorization: `Bearer ${sessionId}` } });
 
 /**
- * Service d'authentification
- * Supporte PostgreSQL local et Firebase (dev/prod)
+ * Authentification des managers auprès du backend (/api/admin/login, /api/auth/*).
  */
 class AuthService {
     /**
-     * Connexion utilisateur
-     * @param {string} email - Email de l'utilisateur
-     * @param {string} password - Mot de passe
-     * @returns {Promise<{user: object, sessionId: string}>}
+     * Connecte un manager.
+     * @param {string} email
+     * @param {string} password
+     * @returns {Promise<{user: {id, email, name, role}, sessionId: string}>}
+     * @throws {Error} message utilisateur lisible
      */
     async login(email, password) {
         try {
-            // MOCK - Pour test uniquement
-            // if (email === 'test@gmail.com' && password === 'test') {
-            //     // Simuler un délai réseau
-            //     await new Promise(resolve => setTimeout(resolve, 800));
-
-            //     const mockUser = {
-            //         id: '12345',
-            //         email: 'test@gmail.com',
-            //         name: 'Test User',
-            //         role: 'user',
-            //         createdAt: new Date().toISOString(),
-            //     };
-
-            //     const mockSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-            //     return {
-            //         user: mockUser,
-            //         sessionId: mockSessionId,
-            //     };
-            // }
-
-            // Cas où les identifiants sont incorrects
-            // throw new Error('Email ou mot de passe incorrect');
-
-            // MODE LOCAL - PostgreSQL pour managers (sans blocage)
-              const response = await api.post('/admin/login', {
-                email,
-                password,
-              });
-
-              console.log(response.data);
-            
-              return {
-                user: {
-                  id: response.data.userId,
-                  email: response.data.email,
-                  name: response.data.name,
-                  role: response.data.role,
-                },
-                sessionId: response.data.token,
-              };
-            
-
-            // MODE FIREBASE
-        //     if (AUTH_MODE.startsWith('firebase')) {
-        //       const auth = getAuth(app);
-        //       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        //       const user = userCredential.user;
-            
-        //       const token = await user.getIdToken();
-            
-        //       return {
-        //         user: {
-        //           id: user.uid,
-        //           email: user.email,
-        //           name: user.displayName || user.email.split('@')[0],
-        //           emailVerified: user.emailVerified,
-        //         },
-        //         sessionId: token,
-        //       };
-        //     }
-
+            const { data } = await api.post('/admin/login', { email, password });
+            return {
+                user: { id: data.userId, email: data.email, name: data.name, role: data.role },
+                sessionId: data.token,
+            };
         } catch (error) {
             throw this.handleError(error);
         }
     }
 
     /**
-     * Inscription utilisateur
-     * @param {string} email - Email de l'utilisateur
-     * @param {string} password - Mot de passe
-     * @param {string} name - Nom de l'utilisateur
-     * @returns {Promise<{user: object, message: string}>}
+     * Crée un compte utilisateur (réservé à un manager connecté).
+     * @param {string} email
+     * @param {string} password
+     * @param {string} name nom complet
+     * @returns {Promise<{user: {id, email, name, role}, message: string}>}
      */
     async register(email, password, name) {
         try {
-            // MODE LOCAL - PostgreSQL
-              const response = await api.post('/auth/register', {
-                email,
-                password,
-                name,
-              });
-            
-              return {
-                user: {
-                  id: response.data.userId,
-                  email: response.data.email,
-                  name: response.data.name,
-                  role: response.data.role,
-                },
-                message: response.data.message,
-              };
-            
-
-            // MODE FIREBASE
-            // if (AUTH_MODE.startsWith('firebase')) {
-            //   const auth = getAuth(app);
-            //   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            //   const user = userCredential.user;
-            //
-            //   await updateProfile(user, { displayName: name });
-            //
-            //   const token = await user.getIdToken();
-            //
-            //   return {
-            //     user: {
-            //       id: user.uid,
-            //       email: user.email,
-            //       name: name,
-            //       emailVerified: user.emailVerified,
-            //     },
-            //     sessionId: token,
-            //   };
-            // }
-
-            throw new Error('Mode d\'authentification non configuré');
+            const { data } = await api.post(
+                '/auth/register',
+                { email, password, name },
+                bearer(sessionStorage.getItem('sessionId')),
+            );
+            return {
+                user: { id: data.userId, email: data.email, name: data.name, role: data.role },
+                message: data.message,
+            };
         } catch (error) {
             throw this.handleError(error);
         }
     }
 
     /**
-     * Déconnexion utilisateur
+     * Termine la session côté serveur. Les erreurs sont journalisées, jamais propagées :
+     * la session locale doit toujours pouvoir être nettoyée.
      */
-    async logout() {
+    async logout(sessionId = sessionStorage.getItem('sessionId')) {
         try {
-            // MODE LOCAL - PostgreSQL
-              await api.post('/auth/logout');
-            
-
-            // MODE FIREBASE
-            // if (AUTH_MODE.startsWith('firebase')) {
-            //   const auth = getAuth(app);
-            //   await signOut(auth);
-            // }
+            await api.post('/auth/logout', null, bearer(sessionId));
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);
         }
     }
 
     /**
-     * Vérifier si l'utilisateur est authentifié
-     * @param {string} sessionId - ID de session
-     * @returns {Promise<boolean>}
+     * Vérifie auprès du backend qu'une session est encore valide.
+     * @param {string} sessionId
+     * @returns {Promise<boolean>} false si session invalide, expirée ou backend injoignable
      */
     async verifySession(sessionId) {
         try {
-            // MODE LOCAL - PostgreSQL
-            // if (AUTH_MODE === 'local') {
-            //   const response = await api.get('/auth/verify', {
-            //     headers: { Authorization: `Bearer ${sessionId}` }
-            //   });
-            //   return response.data.valid;
-            // }
-
-            // MODE FIREBASE
-            // if (AUTH_MODE.startsWith('firebase')) {
-            //   const auth = getAuth(app);
-            //   return !!auth.currentUser;
-            // }
-
-            return true; // Mock
-        } catch (error) {
+            const { data } = await api.get('/auth/validate', bearer(sessionId));
+            return data.valid === true;
+        } catch {
             return false;
         }
     }
 
     /**
-     * Gestion des erreurs
+     * Convertit une erreur axios en Error au message affichable.
+     * @param {Error & {response?: {status: number, data?: {message?: string}}}} error
+     * @returns {Error}
      */
     handleError(error) {
-        // Erreurs Firebase
-        if (error.code) {
-            const firebaseErrors = {
-                'auth/invalid-email': 'Adresse email invalide',
-                'auth/user-disabled': 'Ce compte a été désactivé',
-                'auth/user-not-found': 'Aucun compte ne correspond à cet email',
-                'auth/wrong-password': 'Mot de passe incorrect',
-                'auth/email-already-in-use': 'Cet email est déjà utilisé',
-                'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères',
-                'auth/network-request-failed': 'Erreur de connexion au réseau',
-                'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard',
-            };
-
-            return new Error(firebaseErrors[error.code] || error.message);
+        if (!error.response) {
+            return error;
         }
 
-        // Erreurs API
-        if (error.response) {
-            const status = error.response.status;
-            const message = error.response.data?.message;
+        const { status, data } = error.response;
+        const message = data?.message;
 
-            if (status === 401) {
-                return new Error(message || 'Email ou mot de passe incorrect');
-            }
-            if (status === 422) {
-                return new Error(message || 'Données invalides');
-            }
-            if (status === 429) {
-                return new Error('Trop de tentatives. Réessayez plus tard');
-            }
-            if (status >= 500) {
-                return new Error('Erreur serveur. Réessayez plus tard');
-            }
+        if (status === HTTP_UNAUTHORIZED) return new Error(message || 'Email ou mot de passe incorrect');
+        if (status === HTTP_UNPROCESSABLE) return new Error(message || 'Données invalides');
+        if (status === HTTP_TOO_MANY_REQUESTS) return new Error('Trop de tentatives. Réessayez plus tard');
+        if (status >= HTTP_SERVER_ERROR) return new Error('Erreur serveur. Réessayez plus tard');
 
-            return new Error(message || 'Une erreur est survenue');
-        }
-
-        // Erreur générique
-        return error;
+        return new Error(message || 'Une erreur est survenue');
     }
 }
 

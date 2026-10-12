@@ -6,7 +6,6 @@ import {
   MapIcon,
   ChartBarIcon,
   CalculatorIcon,
-  Cog6ToothIcon,
   UserGroupIcon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -22,10 +21,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 const navigation = [
   { name: 'Accueil', href: '/', icon: HomeIcon },
   { name: 'Carte', href: '/carte', icon: MapIcon },
-];
-
-const secondaryNavigation = [
-  { name: 'Paramètres', href: '/settings', icon: Cog6ToothIcon }
 ];
 
 const Sidebar = () => {
@@ -46,58 +41,21 @@ const Sidebar = () => {
         return;
       }
 
-    //   // Récupérer tous les signalements non synchronisés
-    //   const response = await fetch(`${API_BASE_URL}/signalements`, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       'Content-Type': 'application/json'
-    //     }
-    //   });
+      const response = await fetch(`${API_BASE_URL}/sync/all`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
 
-    //   if (!response.ok) {
-    //     throw new Error('Erreur lors de la récupération des signalements');
-    //   }
+      if (!response.ok || !result.success) {
+        throw new Error(result.errorMessage || result.message || `HTTP ${response.status}`);
+      }
+      alert(`✅ ${result.message}
 
-    //   const signalements = await response.json();
-
-    //   // Synchroniser chaque signalement
-    //   let syncCount = 0;
-    //   let errorCount = 0;
-
-    //   for (const signalement of signalements) {
-    //     try {
-          const syncResponse = await fetch(
-            `${API_BASE_URL}/sync/all`,
-            {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-
-    //       if (syncResponse.ok) {
-    //         syncCount++;
-    //       } else {
-    //         errorCount++;
-    //       }
-    //     } catch (err) {
-    //       console.error(`Erreur sync signalement ${signalement.id}:`, err);
-    //       errorCount++;
-    //     }
-    //   }
-
-      // Afficher le résultat
-    //   if (errorCount === 0) {
-    //     alert(
-    //       `✅ Synchronisation réussie!\n\n${syncCount} signalements synchronisés avec Firebase.`
-    //     );
-    //   } else {
-    //     alert(
-    //       `⚠️ Synchronisation partielle\n\n✓ ${syncCount} synchronisés\n✗ ${errorCount} erreurs`
-    //     );
-    //   }
+${result.totalSuccess} éléments synchronisés.`);
     } catch (error) {
       console.error('Erreur de synchronisation:', error);
       alert('❌ Erreur lors de la synchronisation:\n' + error.message);

@@ -1,9 +1,8 @@
 // src/layout/CarteLayout.jsx
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { Map, List, BarChart3 } from 'lucide-react';
 
 const CarteLayout = () => {
-    const location = useLocation();
 
     const navItems = [
         {
