@@ -584,13 +584,13 @@ public class FirebaseSyncService {
 
             Entreprise entreprise = null;
 
-            if(data.containsKey("entrepriseId")) {
-                 entreprise = entrepriseRepository.findById(Integer.parseInt((String) data.get("entrepriseId"))).get();
+            Object rawEntrepriseId = data.get("entrepriseId");
+            if (rawEntrepriseId != null) {
+                int entrepriseId = Integer.parseInt(rawEntrepriseId.toString());
+                entreprise = entrepriseRepository.findById(entrepriseId).orElse(null);
             }
-            System.out.println("AIZA LE CAST TSY METY 1");
 
             // Créer le signalement
-            System.out.println("AIZA LE CAST TSY METY 1");
             Signalement signalement = Signalement.builder()
                     .description((String) data.get("description"))
                     .adresse((String) data.get("adresse"))
