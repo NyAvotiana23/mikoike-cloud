@@ -50,6 +50,14 @@ public class SignalementService {
                             "Statut par défaut introuvable : " + DEFAULT_STATUS_CODE)));
         }
 
+        // Surface et budget sont renseignés plus tard par le manager (colonnes NOT NULL).
+        if (signalement.getSurface() == null) {
+            signalement.setSurface(BigDecimal.ZERO);
+        }
+        if (signalement.getBudget() == null) {
+            signalement.setBudget(BigDecimal.ZERO);
+        }
+
         signalement.setUser(user);
         signalement.setFirebaseSynced(false);
         

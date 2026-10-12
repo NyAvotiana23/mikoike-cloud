@@ -466,7 +466,9 @@ public class AuthService {
     // ==================== UTILITAIRES ====================
 
     private boolean isOnline() {
-        return "online".equalsIgnoreCase(appMode) && NetworkUtils.isInternetAvailable();
+        return "online".equalsIgnoreCase(appMode)
+                && mg.projetfinal.config.FirebaseConfig.isInitialized()
+                && NetworkUtils.isInternetAvailable();
     }
 
     private String getClientIp(HttpServletRequest request) {

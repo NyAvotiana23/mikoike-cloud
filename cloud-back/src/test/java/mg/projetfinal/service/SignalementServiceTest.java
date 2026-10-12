@@ -52,6 +52,8 @@ class SignalementServiceTest {
         Signalement created = service.create(draft("Nid de poule"), user);
 
         assertSame(nouveau, created.getStatus());
+        assertEquals(BigDecimal.ZERO, created.getBudget());
+        assertEquals(BigDecimal.ZERO, created.getSurface());
         assertSame(user, created.getUser());
         verify(historiqueStatusService).createInitialHistorique(created, user);
     }

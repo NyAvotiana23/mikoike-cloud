@@ -1,55 +1,63 @@
 # Audit initial (Phase 0)
 
-Date : 2026-10-12. Aucune modification de code. Audit partiel : lecture de la structure, du dépôt git, des configs ; build/lint lancés quand possible. Le code métier n'a pas encore été relu fichier par fichier.
+Date : 2026-10-12. État **avant** intervention ; la colonne « Suite » indique le traitement (détails : `RAPPORT_FINAL.md`).
 
 ## Cartographie
 
 | Module | Techno | Taille | Rôle |
 |---|---|---|---|
-| `cloud-back` | Spring Boot (Java 17 cible), PostgreSQL, Firebase Admin, Swagger | ~7 570 lignes Java | API REST : auth, signalements, entreprises, config, sync Firebase, push |
+| `cloud-back` | Spring Boot (Java 17), PostgreSQL, Firebase Admin, Swagger | ~7 570 lignes Java | API REST |
 | `web-react` | React + Vite + Tailwind + Leaflet | ~6 680 lignes | Back-office manager |
 | `mobile-vue` | Ionic Vue + Capacitor (Android) + Firebase | ~8 360 lignes | App citoyenne |
 | `map-server` | TileServer-GL + `antananarivo.mbtiles` (27 Mo) | — | Cartes hors-ligne |
-| racine | `docker-compose.yml`, README, spec PDF/DOCX, TODO xlsx, collection Postman | — | Orchestration, docs |
 
-Dépôt : 123 commits, branche `main`. Équipe de 4 (projet scolaire S5 2026).
+Dépôt : 123 commits, équipe de 4 (projet scolaire S5 2026).
 
-## Résultats d'exécution
+## Résultats d'exécution initiaux
 
-| Contrôle | Résultat |
+| Contrôle | Résultat initial |
 |---|---|
-| Backend `mvn -o compile` | OK (JDK local 21, cible 17) |
-| Backend tests | Un seul test (`ProjetFinalApplicationTests`, contexte Spring) — non exécuté, nécessite PostgreSQL |
-| `web-react` `eslint .` | **Plante** (stack trace dans le config-loader d'ESLint, avant lint) — cause à investiguer |
-| `mobile-vue` `eslint .` | 9 erreurs |
-| `mobile-vue` `vue-tsc --noEmit` | sortie non lue entièrement — à refaire en Phase 1 |
-| Tests front | `mobile-vue/tests/unit/example.spec.ts` et `e2e/specs/test.cy.ts` = gabarits Ionic par défaut ; `web-react` : aucun |
+| Backend compile | OK |
+| Backend tests | 1 test (contexte Spring), nécessitait PostgreSQL |
+| `web-react` ESLint | Plantait (`reactHooks.configs.flat` inexistant en v5.2) |
+| `mobile-vue` ESLint | 9 erreurs, dont un **marqueur de conflit git** dans `capacitor.config.ts` |
+| Tests front | Gabarits Ionic par défaut / aucun |
 
 ## Problèmes
 
 ### Bloquants
 
-1. **Secrets commités** : `cloud-back/src/main/resources/firebase-service-account.json` contient une clé privée (suivi par git, malgré `.gitignore`) ; `mobile-vue/android/google-services.json`, `mobile-vue/src/environments/*.ts`, `*/firebase.*` (clé API Firebase) ; `.env` commité ; `admin.secret-key=MySecretKey2026` et mot de passe DB `sql` en clair dans `application.properties` et `docker-compose.yml`. **Une clé privée de compte de service doit être révoquée/régénérée côté Firebase** : la nettoyer de l'historique ne suffit pas.
-2. **Artefacts de build suivis** : 3 fichiers sous `cloud-back/target/` sont versionnés.
-3. **Aucun filet de test** sur la logique métier (auth, verrouillage, sessions, statuts, sync).
+| # | Problème | Suite |
+|---|---|---|
+| 1 | Secrets versionnés : clé privée `firebase-service-account.json`, `.env`, mot de passe DB, `admin.secret-key=MySecretKey2026` | Retirés de l'index, externalisés. **Clé à révoquer côté Firebase ; historique git non réécrit** |
+| 2 | `cloud-back/target/` versionné | Retiré |
+| 3 | Création de signalement impossible (`status_id NOT NULL`, TODO non traité) | Corrigé |
+| 4 | Conflit de fusion non résolu dans `capacitor.config.ts` | Corrigé |
+| 5 | Aucun test de logique métier | Tests ajoutés (backend, web, mobile) |
 
 ### Importants
 
-4. TODO non terminés dans le code :
-   - `SignalementController.java:148` — statut par défaut / `dto.statusId` non géré.
-   - `SignalementService.java:191` — synchronisation Firebase non implémentée.
-5. Tâches inachevées d'après `TodoProjetCloud.xlsx` (heures passées < estimées) : statistiques Web (avancement global, délai moyen), modification de statut côté carte Web, section photos du détail signalement, service de notifications mobile, finitions CSS/responsive mobile, init Web (env, Firebase).
-6. `application.properties` : `ddl-auto=update`, `spring.sql.init.continue-on-error=true` (erreurs SQL avalées), logs `DEBUG`/`TRACE` Hibernate + Spring Security activés par défaut (fuite de données possible), Swagger activé sans condition.
-7. Docs et fichiers parasites versionnés : `~$ojet Cloud S5.docx`, `~WRL0005.tmp`, `cloud-back/.idea/**` (dont `workspace.xml`, `dataSources.local.xml`), fichiers `*.txt` dans les packages Java (`mg.projetfinal.*.txt`), `mcd2.txt`, `new_struct.txt`, `rest.txt`, `projet.md` (guide d'un autre projet : « auth-service », port 8080, `auth_db`).
-8. README racine : mentionne `docker-compose.prod.yml` (inexistant dans la liste git) et des commandes non vérifiées ; Postgres 15 sans PostGIS alors que la TODO parle de PostGIS.
-9. `web-react/docker-compose.yml`, `Makefile`, `start.sh` en doublon avec le compose racine.
+| # | Problème | Suite |
+|---|---|---|
+| 6 | `SecurityConfig` : `anyRequest().permitAll()` — aucun contrôle de rôle sur `/api/admin`, `/api/sync`, `/api/users`… | **Non corrigé** (risque de régression front) → ROADMAP #1 |
+| 7 | `users.password_temp` contient le mot de passe en clair jusqu'à la sync Firebase | **Non corrigé** → ROADMAP #2 |
+| 8 | Gestion des utilisateurs (web) entièrement simulée ; `UserForm` appelait une méthode inexistante | Branchée sur l'API |
+| 9 | Web : photos factices (picsum), statistiques sans délai moyen, `changeStatus` vers un endpoint inexistant, bouton « Synchroniser » vers un endpoint inexistant | Corrigés |
+| 10 | Sync Firebase : NPE si signalement sans entreprise | Corrigé |
+| 11 | Logs DEBUG/TRACE (SQL, Security) par défaut ; `sql.init.continue-on-error=true` | Corrigé (valeurs par défaut sûres) |
+| 12 | `VITE_API_URL` sans `/api` dans Docker → front web cassé | Corrigé |
+| 13 | Dockerfile prod : `COPY firebase-service-account.json` (fichier non versionné) et healthcheck sur `/actuator/health` (actuator absent) | Corrigé |
+| 14 | Notifications mobile : données simulées locales, `getAll(userId)` ignorait `userId` ; réception FCM non faite | Filtre corrigé ; FCM **non fait** (voir RAPPORT_FINAL) |
+| 15 | Erreurs métier (`IllegalArgumentException`) renvoyées en 500 | Handler global → 400 |
+| 16 | Fichiers parasites versionnés (`.idea`, `~$*.docx`, `~WRL*.tmp`, dumps `.txt`, `projet.md` d'un autre projet) | Retirés / archivés dans `docs/archive/` |
+| 17 | `data.sql` à la racine de `cloud-back` : jamais chargé par Spring | Non traité (le `DataInitializer` crée les données de base) → ROADMAP #4 |
 
 ### Confort
 
-10. Pas de formateur/linter/CI/pre-commit uniformes ; pas de lockfile à la racine utile (`package-lock.json` de 88 octets).
-11. `~$` / `.iml` / `.idea` non ignorés à la racine (pas de `.gitignore` racine).
-12. Versions dépendances non auditées (`npm audit`, `mvn dependency-check` à lancer).
-
-## Prochaine étape
-
-Voir questions ouvertes dans la réponse (Phase 1). Complément d'audit nécessaire : lecture du code métier, `npm audit`, `vue-tsc` complet, cause du crash ESLint web, démarrage Docker.
+| # | Problème | Suite |
+|---|---|---|
+| 18 | Pas de formateur / pre-commit uniformes | CI + lint ; pre-commit non ajouté |
+| 19 | Beaucoup de code commenté dans `web-react` / `mobile-vue` | Partiellement nettoyé → ROADMAP #7 |
+| 20 | Doublons `web-react/docker-compose.yml`, `Makefile`, `start.sh` avec le compose racine | Non traité |
+| 21 | `ddl-auto=update` sans migrations | Non traité → ROADMAP #4 |
+| 22 | Warnings `react-hooks/exhaustive-deps` (2) | Non traité |
