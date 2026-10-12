@@ -16,3 +16,5 @@ build/
 # Office temp files
 ~$*
 ~WRL*.tmp
+secrets/*
+!secrets/.gitkeep
