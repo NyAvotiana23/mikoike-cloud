@@ -1,0 +1,20 @@
+# Secrets
+.env
+firebase-service-account.json
+
+# Build / deps
+target/
+node_modules/
+dist/
+build/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+
+# Office temp files
+~$*
+~WRL*.tmp
+secrets/*
+!secrets/.gitkeep

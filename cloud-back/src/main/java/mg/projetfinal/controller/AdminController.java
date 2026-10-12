@@ -29,12 +29,22 @@ public class AdminController {
     @Value("${admin.secret-key}")
     private String adminSecretKey;
 
+    /** Compare en temps constant ; refuse toute clé tant que ADMIN_SECRET_KEY n'est pas configurée. */
+    private boolean isValidSecretKey(String candidate) {
+        if (candidate == null || adminSecretKey == null || adminSecretKey.isBlank()) {
+            return false;
+        }
+        return java.security.MessageDigest.isEqual(
+                candidate.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                adminSecretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
     @PostMapping("/register")
     @Operation(summary = "Créer un compte administrateur (MANAGER)")
     public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest request) {
         try {
             // Vérifier la clé secrète
-            if (request.getSecretKey() == null || !request.getSecretKey().equals(adminSecretKey)) {
+            if (!isValidSecretKey(request.getSecretKey())) {
                 log.warn("Tentative de création admin avec clé secrète invalide");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                         AuthResponse.builder()

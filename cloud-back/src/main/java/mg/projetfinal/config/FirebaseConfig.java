@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
@@ -27,6 +28,9 @@ public class FirebaseConfig {
     @Value("${firebase.config.file:firebase-service-account.json}")
     private String firebaseConfigFile;
 
+    @Value("${firebase.config.path:}")
+    private String firebaseConfigPath;
+
     @PostConstruct
     public void initFirebase() {
 
@@ -37,11 +41,13 @@ public class FirebaseConfig {
 
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                Resource resource = new ClassPathResource(firebaseConfigFile);
+                Resource resource = firebaseConfigPath.isBlank()
+                        ? new ClassPathResource(firebaseConfigFile)
+                        : new FileSystemResource(firebaseConfigPath);
 
                 if (!resource.exists()) {
                     logger.warn("Fichier Firebase '{}' introuvable. Firebase ne sera pas disponible.", firebaseConfigFile);
-                    logger.warn("Pour activer Firebase, placez votre fichier JSON dans src/main/resources/");
+                    logger.warn("Pour activer Firebase, définissez FIREBASE_CREDENTIALS_PATH (voir .env.example)");
                     return;
                 }
 

@@ -12,17 +12,17 @@ services:
     image: postgres:15
     container_name: mikoike-postgres
     environment:
-      POSTGRES_DB: projet_cloud
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: sql
+      POSTGRES_DB: ${POSTGRES_DB:-projet_cloud}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Définir POSTGRES_PASSWORD dans .env}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - mikoike-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d projet_cloud"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,16 +38,21 @@ services:
       dockerfile: Dockerfile
     container_name: mikoike-backend-dev
     ports:
-      - "8002:8002"
+      - "${BACKEND_PORT:-8002}:8002"
     volumes:
       - ./cloud-back/src:/app/src
       - ./cloud-back/pom.xml:/app/pom.xml
+      - ./secrets:/run/secrets:ro
       - maven-cache:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/projet_cloud
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=sql
+      - DB_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-projet_cloud}
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - ADMIN_SECRET_KEY=${ADMIN_SECRET_KEY:-}
+      - FIREBASE_ENABLED=${FIREBASE_ENABLED:-false}
+      - FIREBASE_CREDENTIALS_PATH=/run/secrets/firebase-service-account.json
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,7 +78,8 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
-      - VITE_API_URL=http://localhost:8002
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8002/api}
+      - VITE_MAP_SERVER_URL=${VITE_MAP_SERVER_URL:-http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png}
     networks:
       - mikoike-network
     stdin_open: true
@@ -97,7 +103,8 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_HOST=0.0.0.0
-      - VITE_API_URL=http://localhost:8002
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8002/api}
+      - VITE_MAP_SERVER_URL=${VITE_MAP_SERVER_URL:-http://localhost:8081/styles/basic-preview/512/{z}/{x}/{y}.png}
     networks:
       - mikoike-network
     stdin_open: true

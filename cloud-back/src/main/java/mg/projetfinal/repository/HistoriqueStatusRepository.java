@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface HistoriqueStatusRepository extends JpaRepository<HistoriqueStatus, Long> {
     List<HistoriqueStatus> findBySignalementOrderByChangedAtDesc(Signalement signalement);
+
+    List<HistoriqueStatus> findByNouveauStatusCode(String code);
 }

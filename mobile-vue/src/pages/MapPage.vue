@@ -305,7 +305,7 @@ import {
 } from '@ionic/vue';
 import {
   add, informationCircle, locationOutline,
-  businessOutline, resizeOutline, cashOutline, checkmark, close,
+  businessOutline, resizeOutline, checkmark, close,
   globeOutline, personOutline, cameraOutline, imagesOutline, closeCircle,
   checkmarkCircle, alertCircle, eyeOutline
 } from 'ionicons/icons';

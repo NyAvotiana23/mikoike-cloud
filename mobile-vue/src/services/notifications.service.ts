@@ -150,7 +150,7 @@ class NotificationsService {
 
   // Récupérer toutes les notifications d'un utilisateur
   getAll(userId: string): Notification[] {
-    return this.notifications.value;
+    return this.notifications.value.filter(n => n.userId === userId);
   }
 
   // Récupérer les notifications non lues d'un utilisateur

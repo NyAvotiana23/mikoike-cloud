@@ -34,7 +34,7 @@ public class SignalementMapper {
                 .surface(calculateSurface(signalement))
                 .budget(calculateBudget(signalement))
                 .niveau(signalement.getNiveau())
-                .entreprise(signalement.getEntreprise().getNom())
+                .entreprise(signalement.getEntreprise() != null ? signalement.getEntreprise().getNom() : null)
                 .location(signalement.getAdresse())
                 .description(signalement.getDescription())
                 .actions(mapActions(signalement))

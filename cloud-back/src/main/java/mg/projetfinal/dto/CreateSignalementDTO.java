@@ -26,6 +26,6 @@ public class CreateSignalementDTO {
     private String adresse;
     private String photoUrl;
 
-    @NotNull(message = "Le statut est obligatoire")
+    /** Optionnel : statut initial. Par défaut NOUVEAU. */
     private Long statusId;
 }

@@ -52,7 +52,7 @@ class GeolocationService {
         };
       } else {
         // Sur le web, utiliser l'API navigator.geolocation
-        return new Promise<{ lat: number, lng: number }>((resolve, reject) => {
+        return new Promise<{ lat: number, lng: number }>((resolve) => {
           if (!('geolocation' in navigator)) {
             console.warn('Géolocalisation non disponible, utilisation de la position par défaut');
             resolve(this.getDefaultLocation());

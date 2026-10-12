@@ -47,9 +47,6 @@ RUN groupadd -r spring && useradd -r -g spring spring
 # Copier le JAR depuis le stage builder
 COPY --from=builder /app/target/*.jar app.jar
 
-# Copier le fichier de configuration Firebase
-COPY src/main/resources/firebase-service-account.json /app/firebase-service-account.json
-
 # Changer le propriétaire des fichiers
 RUN chown -R spring:spring /app
 
@@ -62,10 +59,6 @@ EXPOSE 8002
 # Variables d'environnement par défaut
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 ENV SPRING_PROFILES_ACTIVE=prod
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8002/actuator/health || exit 1
 
 # Démarrer l'application
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

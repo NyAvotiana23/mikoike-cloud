@@ -110,38 +110,6 @@ const SignalementList = () => {
     }));
   };
 
-  const getStatusColor = (status) => {
-    const statusLower = status.toLowerCase();
-    switch (statusLower) {
-      case 'nouveau':
-        return 'bg-red-100 text-red-800';
-      case 'en cours':
-      case 'en_cours':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'terminé':
-      case 'termine':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    const statusLower = status.toLowerCase();
-    switch (statusLower) {
-      case 'nouveau':
-        return <AlertCircle className="w-4 h-4" />;
-      case 'en cours':
-      case 'en_cours':
-        return <Clock className="w-4 h-4" />;
-      case 'terminé':
-      case 'termine':
-        return <CheckCircle className="w-4 h-4" />;
-      default:
-        return null;
-    }
-  };
-
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) {
       return <ArrowUpDown className="w-4 h-4 text-gray-400" />;

@@ -7,6 +7,8 @@ import mg.projetfinal.entity.Signalement;
 import mg.projetfinal.entity.SignalementStatus;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.mapper.SignalementMapper;
+import mg.projetfinal.config.FirebaseConfig;
+import mg.projetfinal.service.FirebaseSyncService;
 import mg.projetfinal.service.SignalementService;
 import mg.projetfinal.service.SignalementStatusService;
 import mg.projetfinal.service.ConfigurationService;
@@ -31,6 +33,7 @@ public class SignalementController {
     private final SignalementStatusService statusService;
     private final SignalementMapper signalementMapper;
     private final ConfigurationService configurationService;
+    private final FirebaseSyncService firebaseSyncService;
 
     /**
      * GET /api/signalements
@@ -129,6 +132,8 @@ public class SignalementController {
                 .enCours((int) enCours)
                 .termine((int) termine)
                 .avancement(Math.round(avancement * 10.0) / 10.0)
+                .delaiMoyenJours(signalementService.averageProcessingDays()
+                        .map(d -> Math.round(d * 10.0) / 10.0).orElse(null))
                 .build();
 
         return ResponseEntity.ok(stats);
@@ -145,15 +150,17 @@ public class SignalementController {
 
         log.info("POST /api/signalements - Création d'un nouveau signalement");
 
-        // TODO: Récupérer le statut par défaut ou utiliser dto.statusId
-        // SignalementStatus status = statusService.findById(dto.getStatusId()).orElseThrow();
+        // Sans statusId, le service applique le statut par défaut (NOUVEAU).
+        SignalementStatus status = dto.getStatusId() != null
+                ? statusService.findById(dto.getStatusId().intValue())
+                : null;
 
         Signalement signalement = Signalement.builder()
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .description(dto.getDescription())
                 .adresse(dto.getAdresse())
-                // .status(status)
+                .status(status)
                 .build();
 
         Signalement created = signalementService.create(signalement, currentUser);
@@ -236,6 +243,25 @@ public class SignalementController {
         SignalementResponseDTO response = signalementMapper.toResponseDTO(updated);
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/signalements/{id}/synchroniser
+     * Pousse un signalement vers Firestore. 503 si Firebase n'est pas initialisé.
+     */
+    @PostMapping("/{id}/synchroniser")
+    public ResponseEntity<SignalementResponseDTO> synchroniser(@PathVariable Long id) throws Exception {
+        log.info("POST /api/signalements/{}/synchroniser", id);
+
+        if (!FirebaseConfig.isInitialized()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
+
+        Signalement signalement = signalementService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Signalement non trouvé avec l'ID: " + id));
+        firebaseSyncService.syncSignalementToFirebase(signalement);
+
+        return ResponseEntity.ok(signalementMapper.toResponseDTO(signalement));
     }
 
     /**

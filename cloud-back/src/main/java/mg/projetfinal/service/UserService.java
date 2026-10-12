@@ -6,10 +6,13 @@ import mg.projetfinal.entity.Role;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +41,35 @@ public class UserService {
     public List<UserDTO> getAllUserDTOs() {
         List<User> users = userRepository.findAll();
         return users.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * @return l'utilisateur sous forme de DTO
+     * @throws NoSuchElementException si l'identifiant est inconnu
+     */
+    public UserDTO getUserDTO(Long id) {
+        return userRepository.findById(id)
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new NoSuchElementException("Utilisateur non trouvé : " + id));
+    }
+
+    /**
+     * Supprime un utilisateur.
+     *
+     * @throws NoSuchElementException si l'identifiant est inconnu
+     * @throws IllegalStateException  si l'utilisateur est référencé (signalements, sessions...)
+     */
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new NoSuchElementException("Utilisateur non trouvé : " + id);
+        }
+        try {
+            userRepository.deleteById(id);
+            userRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("Utilisateur référencé par d'autres données, suppression impossible", e);
+        }
     }
 
     private UserDTO mapToDTO(User user) {

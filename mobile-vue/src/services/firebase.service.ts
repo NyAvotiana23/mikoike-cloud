@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, Auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { environment } from '@/environments/environment';
-import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL, StorageReference } from 'firebase/storage';
+import { getStorage } from 'firebase/storage';
 export interface AuthResponse {
   success: boolean;
   user?: User;

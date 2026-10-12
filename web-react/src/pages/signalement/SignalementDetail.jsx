@@ -48,7 +48,7 @@ const SignalementDetail = () => {
     }
   };
 
-  const handleStatusChange = async (newStatus) => {
+  const handleStatusChange = async () => {
     if (!id) return;
     
     // Recharger le signalement pour obtenir les données à jour
