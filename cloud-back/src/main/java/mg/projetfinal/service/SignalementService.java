@@ -6,6 +6,7 @@ import mg.projetfinal.entity.Signalement;
 import mg.projetfinal.entity.SignalementStatus;
 import mg.projetfinal.entity.User;
 import mg.projetfinal.repository.SignalementRepository;
+import mg.projetfinal.repository.SignalementStatusRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class SignalementService {
     private final SignalementRepository signalementRepository;
     private final HistoriqueStatusService historiqueStatusService;
     private final FirebasePushNotificationService pushNotificationService;
+    private final SignalementStatusRepository statusRepository;
+
+    static final String DEFAULT_STATUS_CODE = "NOUVEAU";
 
     public Signalement create(Signalement signalement, User user) {
         log.info("Création d'un nouveau signalement pour l'utilisateur: {}", user.getId());
@@ -36,14 +40,17 @@ public class SignalementService {
             throw new IllegalArgumentException("La description est obligatoire");
         }
         
+        if (signalement.getStatus() == null) {
+            signalement.setStatus(statusRepository.findByCode(DEFAULT_STATUS_CODE)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Statut par défaut introuvable : " + DEFAULT_STATUS_CODE)));
+        }
+
         signalement.setUser(user);
         signalement.setFirebaseSynced(false);
         
         Signalement savedSignalement = signalementRepository.save(signalement);
-        
-        if (signalement.getStatus() != null) {
-            historiqueStatusService.createInitialHistorique(savedSignalement, user);
-        }
+        historiqueStatusService.createInitialHistorique(savedSignalement, user);
         
         return savedSignalement;
     }
@@ -167,48 +174,6 @@ public class SignalementService {
         }
 
         return saved;
-    }
-
-    public void markAsSynced(Long id, String firebaseId) {
-        log.info("Marquage du signalement ID: {} comme synchronisé avec Firebase ID: {}", id, firebaseId);
-        
-        Signalement signalement = signalementRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Signalement non trouvé avec l'ID: " + id));
-        
-        signalement.setFirebaseId(firebaseId);
-        signalement.setFirebaseSynced(true);
-        signalement.setLastSyncAt(LocalDateTime.now());
-        
-        signalementRepository.save(signalement);
-    }
-
-    public void syncWithFirebase(Long id) {
-        log.info("Synchronisation du signalement ID: {} avec Firebase", id);
-        
-        Signalement signalement = signalementRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Signalement non trouvé avec l'ID: " + id));
-        
-        // TODO: Implémenter la logique de synchronisation avec Firebase
-        signalement.setFirebaseSynced(true);
-        signalement.setLastSyncAt(LocalDateTime.now());
-        
-        signalementRepository.save(signalement);
-    }
-
-    public List<Signalement> syncAllPending() {
-        log.info("Synchronisation de tous les signalements en attente avec Firebase");
-        
-        List<Signalement> pendingSignalements = findNonSyncedWithFirebase();
-        
-        for (Signalement signalement : pendingSignalements) {
-            try {
-                syncWithFirebase(signalement.getId());
-            } catch (Exception e) {
-                log.error("Erreur lors de la synchronisation du signalement ID: {}", signalement.getId(), e);
-            }
-        }
-        
-        return pendingSignalements;
     }
 
     @Transactional(readOnly = true)

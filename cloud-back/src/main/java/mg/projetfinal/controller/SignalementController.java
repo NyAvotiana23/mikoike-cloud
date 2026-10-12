@@ -145,15 +145,17 @@ public class SignalementController {
 
         log.info("POST /api/signalements - Création d'un nouveau signalement");
 
-        // TODO: Récupérer le statut par défaut ou utiliser dto.statusId
-        // SignalementStatus status = statusService.findById(dto.getStatusId()).orElseThrow();
+        // Sans statusId, le service applique le statut par défaut (NOUVEAU).
+        SignalementStatus status = dto.getStatusId() != null
+                ? statusService.findById(dto.getStatusId().intValue())
+                : null;
 
         Signalement signalement = Signalement.builder()
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .description(dto.getDescription())
                 .adresse(dto.getAdresse())
-                // .status(status)
+                .status(status)
                 .build();
 
         Signalement created = signalementService.create(signalement, currentUser);
